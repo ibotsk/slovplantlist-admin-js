@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import CTable from './CTable';
 
+import helper from '../utils/helper';
+
 class Checklist extends Component {
 
     state = {
@@ -13,9 +15,10 @@ class Checklist extends Component {
             const noms = response.data.map(d => {
                 return {
                     id: d.id,
-                    genus: d.genus,
-                    species: d.species,
-                    type: d.ntype
+                    type: d.ntype,
+                    name: helper.listOfSpieces(d, {italic: true}) ,
+                    publication: d.publication,
+                    acceptedName: ''
                 }
             });
             
@@ -29,7 +32,7 @@ class Checklist extends Component {
     }
 
     render() {
-        const header = ["id", "type", "name"];
+        const header = ["ID", "Type", "Name", "Publication", "Accepted name"];
         return (
             <CTable head={header} rows={this.state.nomenclature} />
         );
