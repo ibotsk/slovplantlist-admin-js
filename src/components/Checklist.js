@@ -29,8 +29,9 @@ class Checklist extends Component {
     }
 
     render() {
+        const header = ["id", "type", "name"];
         return (
-            <CTable rows={this.state.nomenclature} />
+            <CTable head={header} rows={this.state.nomenclature} />
         );
     }
 }
