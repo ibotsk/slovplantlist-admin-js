@@ -4,7 +4,7 @@ import { Table } from 'react-bootstrap';
 const TR = (props) => {
     return (
         <tr>
-            {Object.keys(props.value).map(k => <td>{props.value[k]}</td>)}
+            {Object.keys(props.value).map((k, i) => <td key={i}>{props.value[k]}</td>)}
         </tr>
     );
 }
@@ -15,7 +15,7 @@ const CTable = (props) => {
         <Table striped bordered condensed>
             <thead>
                 <tr>
-                    {head.map(title => <th>{title}</th>)}
+                    {head.map(title => <th key={title}>{title}</th>)}
                 </tr>
             </thead>
             <tbody>

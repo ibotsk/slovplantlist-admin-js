@@ -11,12 +11,12 @@ class Checklist extends Component {
     };
 
     componentDidMount() {
-        axios.get('http://localhost:3001/api/nomenclatures?filter={"limit":5}').then(response => {
+        axios.get('http://localhost:3001/api/nomenclatures?filter={"limit":20}').then(response => {
             const noms = response.data.map(d => {
                 return {
                     id: d.id,
                     type: d.ntype,
-                    name: helper.listOfSpieces(d, {italic: true}) ,
+                    name: helper.listOfSpieces(d, {italic: true}),
                     publication: d.publication,
                     acceptedName: ''
                 }
