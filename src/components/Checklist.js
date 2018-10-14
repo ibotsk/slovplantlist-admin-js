@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import CTable from './CTable';
-
-import helper from '../utils/helper';
+import LosName from './LosName';
 
 class Checklist extends Component {
 
@@ -16,7 +15,7 @@ class Checklist extends Component {
                 return {
                     id: d.id,
                     type: d.ntype,
-                    name: helper.listOfSpieces(d, {italic: true}),
+                    name: <LosName nomen={d} italic={true} />,
                     publication: d.publication,
                     acceptedName: ''
                 }

@@ -15,6 +15,10 @@ export default {
             tribus: 'tribus',
         }
     },
+    format: {
+        italic: "italic",
+        plain: "plain",
+    },
 
     logging: {
         level: 'debug'

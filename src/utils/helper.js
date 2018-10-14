@@ -2,6 +2,15 @@ import React from 'react';
 import config from '../config/config';
 
 const config_name = config.nomenclature.name;
+const itf = config.format.italic;
+const plf = config.format.plain;
+
+const o = (string, format) => {
+    return { string: string.trim(), format: format };
+}
+
+const It = (string) => o(string, itf);
+const Pl = (string) => o(string, plf);
 
 const sl = (string) => {
 
@@ -13,79 +22,94 @@ const sl = (string) => {
     return string;
 }
 
-const it = (string, isItalic) => {
-    if (isItalic) {
-        return <i>{string}</i>;
+const subspecies = (subsp) => {
+    const result = [];
+    let isUnrankedOrProles = false;
+    if (subsp.includes(config_name.unranked)) {
+        result.push(Pl(config_name.unranked));
+        isUnrankedOrProles = true;
     }
-    return string;
-}
+    if (subsp.includes(config_name.proles)) {
+        result.push(Pl(config_name.proles));
+        isUnrankedOrProles = true;
+    }
+    subsp = subsp.replace(/\[unranked\]|proles/g, '');
 
-const subspecies = (subsp, isItalic = false) => {
-    if (isItalic) {
-        subsp = subsp.replace(/(?!(?:\[unranked\]|proles)$)(\w+)$/g, <i>{"$1"}</i>);
+    if (!isUnrankedOrProles) {
+        result.push(Pl(config_name.subsp));
     }
-    if (subsp.includes(config_name.proles) || subsp.includes(config_name.unranked)) {
-        return ` ${subsp}`;
-    }
-    return ` ${config_name.subsp} ${subsp}`;
+    result.push(It(subsp));
+    return result;
 }
 
 /*
     Nothosubsp and nothoforma not used
 */
-const infras = (subsp, vari, subvar, forma, nothosubsp, nothoforma) => {
-    let str = '';
+const infraTaxa = (subsp, vari, subvar, forma, nothosubsp, nothoforma) => {
+    let infs = [];
     if (subsp) {
-        str += subspecies(subsp, false);
+        infs = infs.concat(subspecies(subsp));
     }
     if (vari) {
-        str += ` ${config_name.var} ${vari}`;
+        infs = infs.concat([Pl(config_name.var), It(vari)]);
     }
     if (subvar) {
-        str += ` ${config_name.subvar} ${subvar}`;
+        infs = infs.concat([Pl(config_name.subvar), It(subvar)]);
     }
     if (forma) {
-        str += ` ${config_name.forma} ${forma}`;
+        infs = infs.concat([Pl(config_name.forma), It(forma)]);
     }
 
-    return str;
+    return infs;
 }
 
-const listOfSpieces = (nomenclature, opts = {}) => {
+const invalidDesignation = (name, syntype) => {
+    if (syntype === '1') {
+        let newname = [];
+        newname.push(Pl('"'));
+        newname = newname.concat(name);
+        newname.push(Pl('"'));
+        return newname;
+    }
+    return name;
+}
 
-    const options = Object.assign({}, {
-        isItalic: false,
+const listOfSpieces = (nomenclature, options = {}) => {
+
+    let opts = Object.assign({}, {
         isPublication: false,
-        isTribus: false
-    }, opts);
+        isTribus: false,
+    }, options);
 
-    console.log(nomenclature, options);
-
-    const isItalic = options.isItalic;
     let isAuthorLast = true;
 
-    let name = it(`${nomenclature.genus} ${nomenclature.species}`, isItalic);
-    name = sl(name);
+    let name = [];
+    name.push(It(`${nomenclature.genus} ${nomenclature.species}`));
+
+    const infras = infraTaxa(nomenclature.subsp, nomenclature.var, nomenclature.subvar, nomenclature.forma, nomenclature.nothosubsp, nomenclature.nothoforma);
+
+    // name = sl(name);
 
     if (nomenclature.species === nomenclature.subsp || nomenclature.species === nomenclature.var || nomenclature.species === nomenclature.forma) {
-        name += ` ${nomenclature.authors}`;
+        name.push(Pl(nomenclature.authors));
         isAuthorLast = false;
     }
 
-    name += infras(nomenclature.subsp, nomenclature.var, nomenclature.subvar, nomenclature.forma, nomenclature.nothosubsp, nomenclature.nothoforma);
+    name = name.concat(infras);
 
     if (isAuthorLast) {
-        name += ` ${nomenclature.authors}`;
+        name.push(Pl(nomenclature.authors));
     }
-    if (nomenclature.syntype === '1') {
-        name = `"${name}"`;
-    }
+
+    name = invalidDesignation(name, options.syntype);
+
     if (options.isPublication) {
-        name += ` ${nomenclature.publication}`;
+        name.push(Pl(nomenclature.publication));
     }
     if (options.isTribus) {
-        name += ` (${config_name.tribus} ${nomenclature.tribus})`;
+        name.push(Pl(nomenclature.tribus));
     }
+    
     return name;
 
 }
