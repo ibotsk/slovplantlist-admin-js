@@ -19,6 +19,7 @@ export default {
     format: {
         formatted: "formatted",
         plain: "plain",
+        recordsPerPage: 50,
     },
 
     logging: {

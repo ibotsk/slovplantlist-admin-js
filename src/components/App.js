@@ -17,12 +17,12 @@ const Routing = () => {
 class App extends Component {
   render() {
     return (
-      <div id="main">
+      <React.Fragment>
         <CNavbar />
         <Grid fluid={true}>
           <Routing />
         </Grid>
-      </div>
+      </React.Fragment>
     );
   }
 }
