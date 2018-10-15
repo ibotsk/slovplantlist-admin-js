@@ -1,8 +1,7 @@
-import React from 'react';
 import config from '../config/config';
 
 const config_name = config.nomenclature.name;
-const itf = config.format.italic;
+const ff = config.format.formatted;
 const plf = config.format.plain;
 
 const o = (string, format) => {
@@ -13,8 +12,8 @@ const o = (string, format) => {
     return { string: s, format: format };
 }
 
-const It = (string) => o(string, itf);
-const Pl = (string) => o(string, plf);
+const Formatted = (string) => o(string, ff);
+const Plain = (string) => o(string, plf);
 
 const sl = (string) => {
     const sl = config_name.sl;
@@ -29,19 +28,19 @@ const subspecies = (subsp) => {
     const result = [];
     let isUnrankedOrProles = false;
     if (subsp.includes(config_name.unranked)) {
-        result.push(Pl(config_name.unranked));
+        result.push(Plain(config_name.unranked));
         isUnrankedOrProles = true;
     }
     if (subsp.includes(config_name.proles)) {
-        result.push(Pl(config_name.proles));
+        result.push(Plain(config_name.proles));
         isUnrankedOrProles = true;
     }
     subsp = subsp.replace(/\[unranked\]|proles/g, '');
 
     if (!isUnrankedOrProles) {
-        result.push(Pl(config_name.subsp));
+        result.push(Plain(config_name.subsp));
     }
-    result.push(It(subsp));
+    result.push(Formatted(subsp));
     return result;
 }
 
@@ -54,13 +53,13 @@ const infraTaxa = (subsp, vari, subvar, forma, nothosubsp, nothoforma) => {
         infs = infs.concat(subspecies(subsp));
     }
     if (vari) {
-        infs = infs.concat([Pl(config_name.var), It(vari)]);
+        infs = infs.concat([Plain(config_name.var), Formatted(vari)]);
     }
     if (subvar) {
-        infs = infs.concat([Pl(config_name.subvar), It(subvar)]);
+        infs = infs.concat([Plain(config_name.subvar), Formatted(subvar)]);
     }
     if (forma) {
-        infs = infs.concat([Pl(config_name.forma), It(forma)]);
+        infs = infs.concat([Plain(config_name.forma), Formatted(forma)]);
     }
 
     return infs;
@@ -69,9 +68,9 @@ const infraTaxa = (subsp, vari, subvar, forma, nothosubsp, nothoforma) => {
 const invalidDesignation = (name, syntype) => {
     if (syntype === '1') {
         let newname = [];
-        newname.push(Pl('"'));
+        newname.push(Plain('"'));
         newname = newname.concat(name);
-        newname.push(Pl('"'));
+        newname.push(Plain('"'));
         return newname;
     }
     return name;
@@ -89,24 +88,24 @@ const listOfSpieces = (nomenclature, options = {}) => {
     let name = [];
     let slResult = sl(nomenclature.species);
 
-    name.push(It(nomenclature.genus));
-    name.push(It(slResult.s));
-    
+    name.push(Formatted(nomenclature.genus));
+    name.push(Formatted(slResult.s));
+
     if (slResult.hasSl) {
-        name.push(Pl(config_name.sl));
+        name.push(Plain(config_name.sl));
     }
 
     const infras = infraTaxa(nomenclature.subsp, nomenclature.var, nomenclature.subvar, nomenclature.forma, nomenclature.nothosubsp, nomenclature.nothoforma);
 
     if (nomenclature.species === nomenclature.subsp || nomenclature.species === nomenclature.var || nomenclature.species === nomenclature.forma) {
-        name.push(Pl(nomenclature.authors));
+        name.push(Plain(nomenclature.authors));
         isAuthorLast = false;
     }
 
     name = name.concat(infras);
 
     if (isAuthorLast) {
-        name.push(Pl(nomenclature.authors));
+        name.push(Plain(nomenclature.authors));
     }
 
     if (nomenclature.hybrid) {
@@ -121,17 +120,17 @@ const listOfSpieces = (nomenclature, options = {}) => {
             nothoforma: nomenclature.nothoforma_h,
             authors: nomenclature.authors_h,
         }
-        name.push(Pl(config_name.hybrid));
+        name.push(Plain(config_name.hybrid));
         name = name.concat(listOfSpieces(h));
     }
 
     name = invalidDesignation(name, options.syntype);
 
     if (opts.isPublication) {
-        name.push(Pl(nomenclature.publication));
+        name.push(Plain(nomenclature.publication));
     }
     if (opts.isTribus) {
-        name.push(Pl(nomenclature.tribus));
+        name.push(Plain(nomenclature.tribus));
     }
     
     return name;

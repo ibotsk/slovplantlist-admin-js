@@ -15,7 +15,7 @@ class Checklist extends Component {
                 return {
                     id: d.id,
                     type: d.ntype,
-                    name: <LosName key={d.id} nomen={d} italic={true} />,
+                    name: <LosName key={d.id} nomen={d} format='italic' />,
                     publication: d.publication,
                     acceptedName: ''
                 }
