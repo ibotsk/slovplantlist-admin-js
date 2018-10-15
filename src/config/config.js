@@ -13,6 +13,7 @@ export default {
             proles: 'proles',
             unranked: '[unranked]',
             tribus: 'tribus',
+            hybrid: 'x',
         }
     },
     format: {

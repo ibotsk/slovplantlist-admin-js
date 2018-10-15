@@ -6,16 +6,19 @@ const itf = config.format.italic;
 const plf = config.format.plain;
 
 const o = (string, format) => {
-    return { string: string.trim(), format: format };
+    let s = '';
+    if (string) {
+        s = string.trim();
+    }
+    return { string: s, format: format };
 }
 
 const It = (string) => o(string, itf);
 const Pl = (string) => o(string, plf);
 
 const sl = (string) => {
-
     const sl = config_name.sl;
-    if (string.includes(sl)) {
+    if (string && string.includes(sl)) {
         let modString = string.replace(sl, '');
         return { s: modString, hasSl: true};
     }
@@ -86,7 +89,9 @@ const listOfSpieces = (nomenclature, options = {}) => {
     let name = [];
     let slResult = sl(nomenclature.species);
 
-    name.push(It(`${nomenclature.genus} ${slResult.s}`));
+    name.push(It(nomenclature.genus));
+    name.push(It(slResult.s));
+    
     if (slResult.hasSl) {
         name.push(Pl(config_name.sl));
     }
@@ -102,6 +107,22 @@ const listOfSpieces = (nomenclature, options = {}) => {
 
     if (isAuthorLast) {
         name.push(Pl(nomenclature.authors));
+    }
+
+    if (nomenclature.hybrid) {
+        let h = {
+            genus: nomenclature.genus_h,
+            species: nomenclature.species_h,
+            subsp: nomenclature.subsp_h,
+            var: nomenclature.var_h,
+            subvar: nomenclature.subvar_h,
+            forma: nomenclature.forma_h,
+            nothosubsp: nomenclature.nothosubsp_h,
+            nothoforma: nomenclature.nothoforma_h,
+            authors: nomenclature.authors_h,
+        }
+        name.push(Pl(config_name.hybrid));
+        name = name.concat(listOfSpieces(h));
     }
 
     name = invalidDesignation(name, options.syntype);
