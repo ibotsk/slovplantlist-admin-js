@@ -10,14 +10,14 @@ class Checklist extends Component {
     };
 
     componentDidMount() {
-        axios.get('http://localhost:3001/api/nomenclatures?filter={"limit":50}').then(response => {
+        axios.get('http://localhost:3001/api/nomenclatures?filter={"limit":50,"include":"accepted"}').then(response => {
             const noms = response.data.map(d => {
                 return {
                     id: d.id,
                     type: d.ntype,
-                    name: <LosName key={d.id} nomen={d} format='italic' />,
+                    name: <LosName key={d.id} nomen={d} format='plain' />,
                     publication: d.publication,
-                    acceptedName: ''
+                    acceptedName: <LosName key={`acc${d.id}`} nomen={d.accepted} format='plain' />
                 }
             });
             

@@ -7,9 +7,12 @@ import format from '../utils/formatter';
 const LosName = (props) => {
 
     const nomen = props.nomen;
+    if (!nomen) {
+        return '';
+    }
 
     const nameArr = helper.listOfSpieces(nomen).map(t => {
-        console.log(t);
+        
         if (t.format === config.format.formatted) {
             return format(t.string, props.format);
         } else {
