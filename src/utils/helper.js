@@ -17,9 +17,9 @@ const sl = (string) => {
     const sl = config_name.sl;
     if (string.includes(sl)) {
         let modString = string.replace(sl, '');
-        return `${modString} ${sl}`;
+        return { s: modString, hasSl: true};
     }
-    return string;
+    return { s: string, hasSl: false };
 }
 
 const subspecies = (subsp) => {
@@ -84,11 +84,14 @@ const listOfSpieces = (nomenclature, options = {}) => {
     let isAuthorLast = true;
 
     let name = [];
-    name.push(It(`${nomenclature.genus} ${nomenclature.species}`));
+    let slResult = sl(nomenclature.species);
+
+    name.push(It(`${nomenclature.genus} ${slResult.s}`));
+    if (slResult.hasSl) {
+        name.push(Pl(config_name.sl));
+    }
 
     const infras = infraTaxa(nomenclature.subsp, nomenclature.var, nomenclature.subvar, nomenclature.forma, nomenclature.nothosubsp, nomenclature.nothoforma);
-
-    // name = sl(name);
 
     if (nomenclature.species === nomenclature.subsp || nomenclature.species === nomenclature.var || nomenclature.species === nomenclature.forma) {
         name.push(Pl(nomenclature.authors));
@@ -103,10 +106,10 @@ const listOfSpieces = (nomenclature, options = {}) => {
 
     name = invalidDesignation(name, options.syntype);
 
-    if (options.isPublication) {
+    if (opts.isPublication) {
         name.push(Pl(nomenclature.publication));
     }
-    if (options.isTribus) {
+    if (opts.isTribus) {
         name.push(Pl(nomenclature.tribus));
     }
     
