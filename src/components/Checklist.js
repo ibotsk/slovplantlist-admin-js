@@ -16,15 +16,12 @@ class Checklist extends Component {
     };
 
     handlePageChange(activePage) {
-        console.log(activePage);
         const page = Math.max(activePage - 1, 0);
         const limit = config.format.recordsPerPage;
         const offset = page * limit;
         return this.fetchRecords(offset, limit).then(response => {
             const noms = this.formatResult(response);
-            this.updateState({
-                nomenclature: noms
-            });
+            this.setState({ nomenclature: noms });
         }).catch(e => console.error(e));
     }
 
@@ -44,34 +41,26 @@ class Checklist extends Component {
         return axios.get(`http://localhost:3001/api/nomenclatures?filter={"offset":${offset},"limit":${limit},"include":"accepted"}`);
     }
 
-    updateState(updated) {
-        const newState = Object.assign({}, this.state, updated);
-        // store the new state object in the component's state
-        this.setState(newState);
-    }
-
     componentDidMount() {
-        this.fetchRecords(0, config.format.recordsPerPage).then(response => {
+        return axios.get('http://localhost:3001/api/nomenclatures/count').then(response => {
+            this.setState({ numOfRecords: response.data.count });
+            return this.fetchRecords(0, config.format.recordsPerPage);
+        }).then(response => {
             const noms = this.formatResult(response);
-            this.updateState({
-                nomenclature: noms
-            });
-        }).catch(e => console.error(e));
-
-        axios.get('http://localhost:3001/api/nomenclatures/count').then(response => {
-
-            this.updateState({
-                numOfRecords: response.count
-            });
-
-        }).catch(e => console.error(e));
+            this.setState({ nomenclature: noms });
+        }).catch(e => console.log(e));
     }
 
     render() {
         const header = ["ID", "Type", "Name", "Publication", "Accepted name"];
+        console.log(this.state.numOfRecords);
         return (
             <div id='checklist'>
-                <CPaginator onHandleSelect={(activePage) => this.handlePageChange(activePage)} />
+                <CPaginator 
+                    totalItems={this.state.numOfRecords} 
+                    recordsPerPage={config.format.recordsPerPage} 
+                    onHandleSelect={(activePage) => this.handlePageChange(activePage)} 
+                />
                 <CTable head={header} rows={this.state.nomenclature} />
             </div>
         );

@@ -3,49 +3,42 @@ import { Pagination } from 'react-bootstrap';
 
 class CPaginator extends Component {
 
-    onHandleSelect = null;
-
     constructor(props) {
         super(props);
-        this.onHandleSelect = props.onHandleSelect;
         this.state = {
             activePage: 1
         }
     }
 
-    countNumOfPages = (total, recordsPerPage) => {
-        const pages = total / recordsPerPage;
+    countNumOfPages() {
+        return Math.ceil(this.props.totalItems / this.props.recordsPerPage);
     }
 
     handleSelect(activePage) {
-        // const newState = Object.assign({}, this.state, {
-        //     activePage: eventKey
-        // });
+        this.setState({ activePage: activePage });
+        this.props.onHandleSelect(activePage);
+    }
 
-        // this.setState(newState);
-        this.onHandleSelect(activePage);
+    createItems(pages, active) {
+        let items = [];
+        for (let i = 1; i <= pages; i++) {
+            items.push(
+                <Pagination.Item key={i} active={i === active} onClick={() => this.handleSelect(i)}>{i}</Pagination.Item>
+            );
+        }
+        return items;
     }
 
     render() {
+        const pages = this.countNumOfPages();
         return (
             <div id='paginator' className='text-center'>
                 <Pagination>
-                    <Pagination.First />
-                    <Pagination.Prev />
-                    <Pagination.Item onClick={() => this.handleSelect(1)}>{1}</Pagination.Item>
-                    <Pagination.Item onClick={() => this.handleSelect(2)}>{2}</Pagination.Item>
-                    {/* <Pagination.Ellipsis /> */}
-
-                    {/* <Pagination.Item>{10}</Pagination.Item> */}
-                    {/* <Pagination.Item>{11}</Pagination.Item>
-                    <Pagination.Item active>{12}</Pagination.Item>
-                    <Pagination.Item>{13}</Pagination.Item>
-                    <Pagination.Item disabled>{14}</Pagination.Item>
-
-                    <Pagination.Ellipsis /> */}
-                    {/* <Pagination.Item>{20}</Pagination.Item> */}
-                    <Pagination.Next />
-                    <Pagination.Last />
+                    <Pagination.First onClick={() => this.handleSelect(1)} />
+                    <Pagination.Prev onClick={() => this.handleSelect(this.state.activePage - 1)} />
+                    {this.createItems(pages, this.state.activePage)}
+                    <Pagination.Next onClick={() => this.handleSelect(this.state.activePage + 1)} />
+                    <Pagination.Last onClick={() => this.handleSelect(pages)} />
                 </Pagination>
             </div>
         );
