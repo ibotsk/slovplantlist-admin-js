@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import CNavbar from './Navbar';
-import Checklist from "./Checklist";
+import Checklist from './Checklist';
+import LosDetail from './LosDetail';
 
 import { Route, Switch } from 'react-router-dom';
 import { Grid } from 'react-bootstrap';
@@ -8,9 +9,10 @@ import { Grid } from 'react-bootstrap';
 
 const Routing = () => {
   return (
-      <Switch>
-          <Route path="/checklist" component={Checklist} />
-      </Switch>
+    <Switch>
+      <Route path="/checklist/detail/:id" component={LosDetail} />
+      <Route path="/checklist" component={Checklist} />
+    </Switch>
   );
 }
 

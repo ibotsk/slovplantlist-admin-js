@@ -7,6 +7,8 @@ import LosName from './LosName';
 
 import config from '../config/config';
 
+const PAGE_DETAIL = "/checklist/detail/";
+
 class Checklist extends Component {
 
     state = {
@@ -30,9 +32,9 @@ class Checklist extends Component {
             return {
                 id: d.id,
                 type: d.ntype,
-                name: <LosName key={d.id} nomen={d} format='plain' />,
+                name: <a href={`${PAGE_DETAIL}${d.id}`} ><LosName key={d.id} nomen={d} format='plain' /></a>,
                 publication: d.publication,
-                acceptedName: <LosName key={`acc${d.id}`} nomen={d.accepted} format='plain' />
+                acceptedName: <a href={d.accepted ? `${PAGE_DETAIL}${d.accepted.id}` : ""}><LosName key={`acc${d.id}`} nomen={d.accepted} format='plain' /></a>
             }
         });
     }

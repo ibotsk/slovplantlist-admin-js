@@ -9,7 +9,7 @@ class CPaginator extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            activePage: 10
+            activePage: 1
         }
     }
 
