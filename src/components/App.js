@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import CNavbar from './Navbar';
-import Checklist from "./Checklist";
+import Checklist from './Checklist';
+import LosDetail from './LosDetail';
 
 import { Route, Switch } from 'react-router-dom';
 import { Grid } from 'react-bootstrap';
@@ -8,21 +9,22 @@ import { Grid } from 'react-bootstrap';
 
 const Routing = () => {
   return (
-      <Switch>
-          <Route path="/checklist" component={Checklist} />
-      </Switch>
+    <Switch>
+      <Route exact path="/checklist" component={Checklist} />
+      <Route path="/checklist/detail/:id" component={LosDetail} />
+    </Switch>
   );
 }
 
 class App extends Component {
   render() {
     return (
-      <div id="main">
+      <React.Fragment>
         <CNavbar />
         <Grid fluid={true}>
           <Routing />
         </Grid>
-      </div>
+      </React.Fragment>
     );
   }
 }
