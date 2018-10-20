@@ -10,8 +10,8 @@ import { Grid } from 'react-bootstrap';
 const Routing = () => {
   return (
     <Switch>
+      <Route exact path="/checklist" component={Checklist} />
       <Route path="/checklist/detail/:id" component={LosDetail} />
-      <Route path="/checklist" component={Checklist} />
     </Switch>
   );
 }
