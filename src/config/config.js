@@ -20,6 +20,8 @@ export default {
         formatted: "formatted",
         plain: "plain",
         recordsPerPage: 50,
+        rangeDisplayed: 7,
+        numOfElementsAtEnds: 1,
     },
 
     logging: {

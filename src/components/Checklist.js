@@ -48,17 +48,18 @@ class Checklist extends Component {
         }).then(response => {
             const noms = this.formatResult(response);
             this.setState({ nomenclature: noms });
-        }).catch(e => console.log(e));
+        }).catch(e => console.error(e));
     }
 
     render() {
         const header = ["ID", "Type", "Name", "Publication", "Accepted name"];
-        console.log(this.state.numOfRecords);
         return (
             <div id='checklist'>
                 <CPaginator 
                     totalItems={this.state.numOfRecords} 
-                    recordsPerPage={config.format.recordsPerPage} 
+                    recordsPerPage={config.format.recordsPerPage}
+                    displayRange={config.format.rangeDisplayed}
+                    numOfElementsAtEnds={config.format.numOfElementsAtEnds}
                     onHandleSelect={(activePage) => this.handlePageChange(activePage)} 
                 />
                 <CTable head={header} rows={this.state.nomenclature} />
