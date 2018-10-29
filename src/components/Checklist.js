@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import { Grid, Well } from 'react-bootstrap';
 import axios from 'axios';
 
+import Filter from './Filter';
 import CPaginator from './CPaginator';
 import CTable from './CTable';
 import LosName from './LosName';
@@ -15,13 +17,14 @@ class Checklist extends Component {
         nomenclature: [],
         numOfRecords: 0,
         activePage: 1,
+        where: { ntype: "S" }
     };
 
     handlePageChange(activePage) {
         const page = Math.max(activePage - 1, 0);
         const limit = config.format.recordsPerPage;
         const offset = page * limit;
-        return this.fetchRecords(offset, limit).then(response => {
+        return this.fetchRecords(this.state.where, offset, limit).then(response => {
             const noms = this.formatResult(response);
             this.setState({ nomenclature: noms });
         }).catch(e => console.error(e));
@@ -39,14 +42,15 @@ class Checklist extends Component {
         });
     }
 
-    fetchRecords(offset, limit) {
-        return axios.get(`http://localhost:3001/api/nomenclatures?filter={"offset":${offset},"limit":${limit},"include":"accepted"}`);
+    fetchRecords(where, offset, limit) {
+        return axios.get(`http://localhost:3001/api/nomenclatures?filter={"offset":${offset},"where":${JSON.stringify(where)},"limit":${limit},"include":"accepted"}`);
     }
 
     componentDidMount() {
-        return axios.get('http://localhost:3001/api/nomenclatures/count').then(response => {
+        const whereString = JSON.stringify(this.state.where);
+        return axios.get(`http://localhost:3001/api/nomenclatures/count?where=${whereString}`).then(response => {
             this.setState({ numOfRecords: response.data.count });
-            return this.fetchRecords(0, config.format.recordsPerPage);
+            return this.fetchRecords(this.state.where, 0, config.format.recordsPerPage);
         }).then(response => {
             const noms = this.formatResult(response);
             this.setState({ nomenclature: noms });
@@ -56,15 +60,22 @@ class Checklist extends Component {
     render() {
         const header = ["ID", "Type", "Name", "Publication", "Accepted name"];
         return (
-            <div id='checklist'>
-                <CPaginator 
-                    totalItems={this.state.numOfRecords} 
-                    recordsPerPage={config.format.recordsPerPage}
-                    displayRange={config.format.rangeDisplayed}
-                    numOfElementsAtEnds={config.format.numOfElementsAtEnds}
-                    onHandleSelect={(activePage) => this.handlePageChange(activePage)} 
-                />
-                <CTable head={header} rows={this.state.nomenclature} />
+            <div id="checklist">
+                <Grid id="functions">
+                    <Well>
+                        <Filter />
+                    </Well>
+                </Grid>
+                <Grid fluid={true}>
+                    <CPaginator
+                        totalItems={this.state.numOfRecords}
+                        recordsPerPage={config.format.recordsPerPage}
+                        displayRange={config.format.rangeDisplayed}
+                        numOfElementsAtEnds={config.format.numOfElementsAtEnds}
+                        onHandleSelect={(activePage) => this.handlePageChange(activePage)}
+                    />
+                    <CTable head={header} rows={this.state.nomenclature} />
+                </Grid>
             </div>
         );
     }

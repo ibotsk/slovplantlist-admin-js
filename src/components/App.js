@@ -21,9 +21,7 @@ class App extends Component {
     return (
       <React.Fragment>
         <CNavbar />
-        <Grid fluid={true}>
-          <Routing />
-        </Grid>
+        <Routing />
       </React.Fragment>
     );
   }
