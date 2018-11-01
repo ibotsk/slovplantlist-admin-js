@@ -4,8 +4,6 @@ import Checklist from './Checklist';
 import LosDetail from './LosDetail';
 
 import { Route, Switch } from 'react-router-dom';
-import { Grid } from 'react-bootstrap';
-
 
 const Routing = () => {
   return (

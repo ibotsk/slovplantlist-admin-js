@@ -17,14 +17,26 @@ class Checklist extends Component {
         nomenclature: [],
         numOfRecords: 0,
         activePage: 1,
-        where: { ntype: "S" }
+        where: { }
     };
 
     handlePageChange(activePage) {
-        const page = Math.max(activePage - 1, 0);
-        const limit = config.format.recordsPerPage;
-        const offset = page * limit;
-        return this.fetchRecords(this.state.where, offset, limit).then(response => {
+        this.handleChange(activePage, this.state.where);
+        this.setState({activePage: activePage});
+    }
+
+    handleFilterChange(where) {
+        this.handleChange(this.state.activePage, where);
+        this.setState({where: where});
+    }
+
+    handleChange(activePage, where) {
+        return this.fetchCount(where).then(() => {
+            const page = Math.max(activePage - 1, 0);
+            const limit = config.format.recordsPerPage;
+            const offset = page * limit;
+            return this.fetchRecords(where, offset, limit);
+        }).then(response => {
             const noms = this.formatResult(response);
             this.setState({ nomenclature: noms });
         }).catch(e => console.error(e));
@@ -43,18 +55,18 @@ class Checklist extends Component {
     }
 
     fetchRecords(where, offset, limit) {
-        return axios.get(`http://localhost:3001/api/nomenclatures?filter={"offset":${offset},"where":${JSON.stringify(where)},"limit":${limit},"include":"accepted"}`);
+        const uri = `http://localhost:3001/api/nomenclatures?filter={"offset":${offset},"where":${JSON.stringify(where)},"limit":${limit},"include":"accepted"}`;
+        return axios.get(uri);
+    }
+
+    fetchCount(where) {
+        const whereString = JSON.stringify(where);
+        const uri = `http://localhost:3001/api/nomenclatures/count?where=${whereString}`;
+        return axios.get(uri).then(response => this.setState({numOfRecords: response.data.count}));
     }
 
     componentDidMount() {
-        const whereString = JSON.stringify(this.state.where);
-        return axios.get(`http://localhost:3001/api/nomenclatures/count?where=${whereString}`).then(response => {
-            this.setState({ numOfRecords: response.data.count });
-            return this.fetchRecords(this.state.where, 0, config.format.recordsPerPage);
-        }).then(response => {
-            const noms = this.formatResult(response);
-            this.setState({ nomenclature: noms });
-        }).catch(e => console.error(e));
+        this.handleChange(this.state.activePage, this.state.where);
     }
 
     render() {
@@ -63,7 +75,7 @@ class Checklist extends Component {
             <div id="checklist">
                 <Grid id="functions">
                     <Well>
-                        <Filter />
+                        <Filter onHandleChange={(where) => this.handleFilterChange(where)} />
                     </Well>
                 </Grid>
                 <Grid fluid={true}>
