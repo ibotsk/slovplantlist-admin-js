@@ -10,6 +10,9 @@ import LosName from './LosName';
 import config from '../config/config';
 
 const PAGE_DETAIL = "/checklist/detail/";
+const searchFields = ["genus", "species", "genus", "species", "subsp", "var", "subvar", "forma",
+    "nothosubsp", "nothoforma", "authors", "genus_h", "species_h", "subsp_h", "var_h", "subvar_h", "forma_h",
+    "nothosubsp_h", "nothoforma_h", "authors_h", "publication", "tribus", "vernacular"];
 
 class Checklist extends Component {
 
@@ -17,17 +20,17 @@ class Checklist extends Component {
         nomenclature: [],
         numOfRecords: 0,
         activePage: 1,
-        where: { }
+        where: {}
     };
 
     handlePageChange(activePage) {
         this.handleChange(activePage, this.state.where);
-        this.setState({activePage: activePage});
+        this.setState({ activePage: activePage });
     }
 
     handleFilterChange(where) {
         this.handleChange(this.state.activePage, where);
-        this.setState({where: where});
+        this.setState({ where: where });
     }
 
     handleChange(activePage, where) {
@@ -62,7 +65,7 @@ class Checklist extends Component {
     fetchCount(where) {
         const whereString = JSON.stringify(where);
         const uri = `http://localhost:3001/api/nomenclatures/count?where=${whereString}`;
-        return axios.get(uri).then(response => this.setState({numOfRecords: response.data.count}));
+        return axios.get(uri).then(response => this.setState({ numOfRecords: response.data.count }));
     }
 
     componentDidMount() {
@@ -75,7 +78,11 @@ class Checklist extends Component {
             <div id="checklist">
                 <Grid id="functions">
                     <Well>
-                        <Filter onHandleChange={(where) => this.handleFilterChange(where)} />
+                        <Filter
+                            onHandleChange={(where) => this.handleFilterChange(where)}
+                            searchFields={searchFields}
+                            searchFieldMinLength={config.format.searchFieldMinLength}
+                        />
                     </Well>
                 </Grid>
                 <Grid fluid={true}>
