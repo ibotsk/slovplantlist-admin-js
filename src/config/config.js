@@ -22,6 +22,7 @@ export default {
         recordsPerPage: 50,
         rangeDisplayed: 7,
         numOfElementsAtEnds: 1,
+        searchFieldMinLength: 4
     },
 
     logging: {
