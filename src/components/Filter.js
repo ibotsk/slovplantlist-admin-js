@@ -25,14 +25,6 @@ class Filter extends Component {
         };
     }
 
-    getValidationState() {
-        const length = this.state.value.length;
-        if (length > 10) return 'success';
-        else if (length > 5) return 'warning';
-        else if (length > 0) return 'error';
-        return null;
-    }
-
     composeWhere(ntypes, value) {
         const checkedItems = Object.entries(ntypes).filter(entry => entry[1] === true);
         const clauses = [];
@@ -48,8 +40,8 @@ class Filter extends Component {
             this.props.searchFields.forEach(field => {
                 or.push({
                     [field]: {
-                        like: "%25" + value + "%25",
-                        options: "i"
+                        like: "%25" + value + "%25"
+                        // options: "i"
                     }
                 });
             });
@@ -63,13 +55,32 @@ class Filter extends Component {
 
     handleChange(ntypes, searchValue) {
         const where = this.composeWhere(ntypes, searchValue);
-        console.log(where);
         this.props.onHandleChange(where);
     }
 
     handleChangeTypes(element) {
         const ntypes = this.state.ntypes;
+
         ntypes[element.value] = element.checked;
+
+        const isUncheckedGroup = () => {
+            return NTYPES_GROUP.filter(t => ntypes[t] === true).length === 0;
+        };
+        
+        if (NTYPES_GROUP.includes(element.value)) { //clicked element is not All
+            ntypes[element.value] = element.checked;
+            //check All if no other specific element left checked, uncheck All if any specific element is checked
+            ntypes.All = isUncheckedGroup(); 
+        } else {
+            // clicked element is All, uncheck rest
+            if (ntypes.All === false && isUncheckedGroup()) {
+                ntypes.All = true;
+            }
+            NTYPES_GROUP.forEach(t => {
+                ntypes[t] = false;
+            });
+        }
+
 
         this.handleChange(ntypes, this.state.value);
         this.setState({ ntypes: ntypes });
@@ -87,10 +98,10 @@ class Filter extends Component {
                     <Col md={2}>
                         <h4>View records</h4>
                         <FormGroup>
-                            <Radio name="filterrecords">
+                            <Radio name="filterrecords" disabled={true}>
                                 Mine
                             </Radio>
-                            <Radio name="filterrecords">
+                            <Radio name="filterrecords" disabled={true}>
                                 All
                             </Radio>
                         </FormGroup>
@@ -120,6 +131,7 @@ class Filter extends Component {
                                 onChange={(e) => this.handleChangeSearch(e.target.value)}
                             />
                         </InputGroup>
+                        <p>Case sensitive (for now)</p>
                     </Col>
                 </form>
             </Row>
