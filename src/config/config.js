@@ -1,4 +1,6 @@
 
+const backendBase = "http://localhost:3001";
+
 export default {
 
     nomenclature: {
@@ -23,6 +25,12 @@ export default {
         rangeDisplayed: 7,
         numOfElementsAtEnds: 1,
         searchFieldMinLength: 4
+    },
+    uris: {
+        nomenclaturesUri: {
+            getAll: `${backendBase}/api/nomenclatures?filter=`,
+            count: `${backendBase}/api/nomenclatures/count?where={whereString}`
+        }
     },
 
     logging: {

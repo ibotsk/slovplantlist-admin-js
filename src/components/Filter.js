@@ -81,7 +81,6 @@ class Filter extends Component {
             });
         }
 
-
         this.handleChange(ntypes, this.state.value);
         this.setState({ ntypes: ntypes });
     }

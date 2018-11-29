@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Grid, Well } from 'react-bootstrap';
 import axios from 'axios';
+import template from 'url-template';
 
 import Filter from './Filter';
 import CPaginator from './CPaginator';
@@ -15,6 +16,9 @@ const searchFields = ["genus", "species", "genus", "species", "subsp", "var", "s
     "nothosubsp_h", "nothoforma_h", "authors_h", "publication", "tribus", "vernacular"];
 
 class Checklist extends Component {
+
+    getAllUri = config.uris.nomenclaturesUri.getAll;
+    getCountUri = template.parse(config.uris.nomenclaturesUri.count);
 
     state = {
         nomenclature: [],
@@ -58,13 +62,15 @@ class Checklist extends Component {
     }
 
     fetchRecords(where, offset, limit) {
-        const uri = `http://localhost:3001/api/nomenclatures?filter={"offset":${offset},"where":${JSON.stringify(where)},"limit":${limit},"include":"accepted"}`;
+        const filter = `{"offset":${offset},"where":${JSON.stringify(where)},"limit":${limit},"include":"accepted"}`;
+        const uri = this.getAllUri + filter;
+        console.log(uri);
         return axios.get(uri);
     }
 
     fetchCount(where) {
         const whereString = JSON.stringify(where);
-        const uri = `http://localhost:3001/api/nomenclatures/count?where=${whereString}`;
+        const uri = this.getCountUri.expand({ base: config.uris.backendBase, whereString: whereString });
         return axios.get(uri).then(response => this.setState({ numOfRecords: response.data.count }));
     }
 
