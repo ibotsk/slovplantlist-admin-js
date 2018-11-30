@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import CNavbar from './Navbar';
+import CNavbar from '../segments/Navbar';
 import Checklist from './Checklist';
 import LosDetail from './LosDetail';
 

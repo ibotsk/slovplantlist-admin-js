@@ -3,12 +3,12 @@ import { Grid, Well } from 'react-bootstrap';
 import axios from 'axios';
 import template from 'url-template';
 
-import Filter from './Filter';
-import CPaginator from './CPaginator';
-import CTable from './CTable';
-import LosName from './LosName';
+import Filter from '../segments/Filter';
+import CPaginator from '../segments/CPaginator';
+import CTable from '../segments/CTable';
+import LosName from '../segments/LosName';
 
-import config from '../config/config';
+import config from '../../config/config';
 
 const PAGE_DETAIL = "/checklist/detail/";
 const searchFields = ["genus", "species", "genus", "species", "subsp", "var", "subvar", "forma",

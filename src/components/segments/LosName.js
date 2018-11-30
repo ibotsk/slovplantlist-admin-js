@@ -1,7 +1,7 @@
 
-import config from '../config/config';
-import helper from '../utils/helper';
-import format from '../utils/formatter';
+import config from '../../config/config';
+import helper from '../../utils/helper';
+import format from '../../utils/formatter';
 
 const LosName = (props) => {
 
