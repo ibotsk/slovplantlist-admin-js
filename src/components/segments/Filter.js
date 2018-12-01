@@ -40,7 +40,7 @@ class Filter extends Component {
             this.props.searchFields.forEach(field => {
                 or.push({
                     [field]: {
-                        like: "%25" + value + "%25"
+                        like: "%" + value + "%"
                         // options: "i"
                     }
                 });

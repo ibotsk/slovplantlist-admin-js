@@ -28,8 +28,12 @@ export default {
     },
     uris: {
         nomenclaturesUri: {
-            getAll: `${backendBase}/api/nomenclatures?filter=`,
+            getAll: `${backendBase}/api/nomenclatures?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted"%7D`,
             count: `${backendBase}/api/nomenclatures/count?where={whereString}`
+        },
+        generaUri: {
+            getAll: `${backendBase}/api/genera?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["familyApg","family"]%7D`,
+            count: `${backendBase}/api/genera/count?where={whereString}`
         }
     },
 

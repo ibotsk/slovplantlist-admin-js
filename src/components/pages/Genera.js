@@ -1,27 +1,20 @@
 import React, { Component } from 'react';
-import { Grid, Well } from 'react-bootstrap';
+import { Grid } from 'react-bootstrap';
 import axios from 'axios';
 import template from 'url-template';
 
-import Filter from '../segments/Filter';
 import CPaginator from '../segments/CPaginator';
 import CTable from '../segments/CTable';
-import LosName from '../segments/LosName';
 
 import config from '../../config/config';
 
-const PAGE_DETAIL = "/checklist/detail/";
-const searchFields = ["genus", "species", "genus", "species", "subsp", "var", "subvar", "forma",
-    "nothosubsp", "nothoforma", "authors", "genus_h", "species_h", "subsp_h", "var_h", "subvar_h", "forma_h",
-    "nothosubsp_h", "nothoforma_h", "authors_h", "publication", "tribus", "vernacular"];
+class Genera extends Component {
 
-class Checklist extends Component {
-
-    getAllUri = template.parse(config.uris.nomenclaturesUri.getAll);
-    getCountUri = template.parse(config.uris.nomenclaturesUri.count);
+    getAllUri = template.parse(config.uris.generaUri.getAll);
+    getCountUri = template.parse(config.uris.generaUri.count);
 
     state = {
-        nomenclature: [],
+        records: [],
         numOfRecords: 0,
         activePage: 1,
         where: {}
@@ -32,11 +25,6 @@ class Checklist extends Component {
         this.setState({ activePage: activePage });
     }
 
-    handleFilterChange(where) {
-        this.handleChange(this.state.activePage, where);
-        this.setState({ where: where });
-    }
-
     handleChange(activePage, where) {
         return this.fetchCount(where).then(() => {
             const page = Math.max(activePage - 1, 0);
@@ -45,7 +33,7 @@ class Checklist extends Component {
             return this.fetchRecords(where, offset, limit);
         }).then(response => {
             const noms = this.formatResult(response);
-            this.setState({ nomenclature: noms });
+            this.setState({ records: noms });
         }).catch(e => console.error(e));
     }
 
@@ -53,16 +41,17 @@ class Checklist extends Component {
         return result.data.map(d => {
             return {
                 id: d.id,
-                type: d.ntype,
-                name: <a href={`${PAGE_DETAIL}${d.id}`} ><LosName key={d.id} nomen={d} format='plain' /></a>,
-                publication: d.publication,
-                acceptedName: <a href={d.accepted ? `${PAGE_DETAIL}${d.accepted.id}` : ""}><LosName key={`acc${d.id}`} nomen={d.accepted} format='plain' /></a>
+                name: d.name,
+                authors: d.authors,
+                vernacular: d.vernacular,
+                familyAPG: "",
+                family: ""
             }
         });
     }
 
     fetchRecords(where, offset, limit) {
-        const uri = this.getAllUri.expand({ offset: offset, where: JSON.stringify(where), limit: limit });
+        const uri = this.getAllUri.expand({ offset: offset, where: JSON.stringify(where), limit: limit});
         return axios.get(uri);
     }
 
@@ -77,18 +66,9 @@ class Checklist extends Component {
     }
 
     render() {
-        const header = ["ID", "Type", "Name", "Publication", "Accepted name"];
+        const header = ["ID", "Name", "Authors", "Vernacular", "Family APG", "Family"];
         return (
             <div id="checklist">
-                <Grid id="functions">
-                    <Well>
-                        <Filter
-                            onHandleChange={(where) => this.handleFilterChange(where)}
-                            searchFields={searchFields}
-                            searchFieldMinLength={config.format.searchFieldMinLength}
-                        />
-                    </Well>
-                </Grid>
                 <Grid fluid={true}>
                     <CPaginator
                         totalItems={this.state.numOfRecords}
@@ -97,11 +77,12 @@ class Checklist extends Component {
                         numOfElementsAtEnds={config.format.numOfElementsAtEnds}
                         onHandleSelect={(activePage) => this.handlePageChange(activePage)}
                     />
-                    <CTable head={header} rows={this.state.nomenclature} />
+                    <CTable head={header} rows={this.state.records} />
                 </Grid>
             </div>
         );
     }
+
 }
 
-export default Checklist;
+export default Genera;
