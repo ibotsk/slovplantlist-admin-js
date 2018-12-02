@@ -5,6 +5,7 @@ import LosDetail from './LosDetail';
 import Genera from './Genera';
 
 import { Route, Switch } from 'react-router-dom';
+import FamiliesAPG from './FamiliesAPG';
 
 const Routing = () => {
   return (
@@ -12,6 +13,7 @@ const Routing = () => {
       <Route exact path="/checklist" component={Checklist} />
       <Route path="/checklist/detail/:id" component={LosDetail} />
       <Route exact path="/genera" component={Genera} />
+      <Route exact path="/families-apg" component={FamiliesAPG} />
     </Switch>
   );
 }

@@ -34,6 +34,10 @@ export default {
         generaUri: {
             getAll: `${backendBase}/api/genera?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["familyApg","family"]%7D`,
             count: `${backendBase}/api/genera/count?where={whereString}`
+        },
+        familiesApgUri: {
+            getAll: `${backendBase}/api/family_apgs?filter=%7B"offset":{offset},"where":{where},"limit":{limit}%7D`,
+            count: `${backendBase}/api/family_apgs/count?where={whereString}`
         }
     },
 
