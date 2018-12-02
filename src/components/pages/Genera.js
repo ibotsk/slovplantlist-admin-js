@@ -24,8 +24,8 @@ const formatResult = (result) => {
             name: d.name,
             authors: d.authors,
             vernacular: d.vernacular,
-            familyAPG: "",
-            family: ""
+            familyAPG: d.familyApg ? d.familyApg.name : "",
+            family: d.family ? d.family.name : ""
         }
     });
 }
