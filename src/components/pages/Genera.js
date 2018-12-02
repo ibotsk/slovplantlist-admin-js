@@ -11,6 +11,7 @@ const Genera = (props) => {
 
     return (
         <div id='genera'>
+            <h2>Genera</h2>
             {props.children}
         </div>
     )

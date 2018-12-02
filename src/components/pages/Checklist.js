@@ -27,6 +27,7 @@ const Checklist = (props) => {
 
     return (
         <div id='checklist'>
+            <h2>Checklist</h2>
             {props.children}
         </div>
     )

@@ -7,11 +7,11 @@ import config from '../../config/config';
 const tableHeader = ["ID", "Name", "Vernacular"];
 const searchFields = ["name", "vernacular"];
 
-const FamiliesAPG = (props) => {
+const Families = (props) => {
 
     return (
-        <div id='families-apg'>
-            <h2>Families APG</h2>
+        <div id='families'>
+            <h2>Families</h2>
             {props.children}
         </div>
     )
@@ -29,9 +29,9 @@ const formatResult = (result) => {
 }
 
 export default TabledPage({ 
-    getAll: config.uris.familiesApgUri.getAll, 
-    getCount: config.uris.familiesApgUri.count, 
+    getAll: config.uris.familiesUri.getAll, 
+    getCount: config.uris.familiesUri.count, 
     tableHeader,
     searchFields,
     formatResult 
-})(FamiliesAPG);
+})(Families);
