@@ -16,6 +16,9 @@ export default {
             unranked: '[unranked]',
             tribus: 'tribus',
             hybrid: 'x',
+        },
+        filter: {
+            ntypesGroup: ["A", "PA", "S", "DS"]
         }
     },
     format: {

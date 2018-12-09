@@ -1,6 +1,7 @@
 import React from 'react';
 
 import TabledPage from './TabledPageParent';
+// import ComponentsAvailable from '../segments/Filter';
 
 import config from '../../config/config';
 
@@ -33,5 +34,6 @@ export default TabledPage({
     getCount: config.uris.familiesUri.count, 
     tableHeader,
     searchFields,
-    formatResult 
+    formatResult,
+    filterInclude: [ 'searchfield' ]
 })(Families);

@@ -2,6 +2,7 @@ import React from 'react';
 
 import LosName from '../segments/LosName';
 import TabledPage from './TabledPageParent';
+// import ComponentsAvailable from '../segments/Filter';
 
 import config from '../../config/config';
 
@@ -39,5 +40,6 @@ export default TabledPage({
     getCount: config.uris.nomenclaturesUri.count, 
     tableHeader,
     searchFields,
-    formatResult 
+    formatResult,
+    filterInclude: [ 'filterrecords', 'ntypes', 'searchfield' ]
 })(Checklist);

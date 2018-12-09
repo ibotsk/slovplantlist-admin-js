@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Well } from 'react-bootstrap';
+import { Grid } from 'react-bootstrap';
 import axios from 'axios';
 import template from 'url-template';
 
@@ -67,13 +67,12 @@ const TabledPage = injectedProps => WrappingComponent => {
             return (
                 <WrappingComponent>
                     <Grid id="functions">
-                        <Well>
-                            <Filter
-                                onHandleChange={(where) => this.handleFilterChange(where)}
-                                searchFields={injectedProps.searchFields}
-                                searchFieldMinLength={config.format.searchFieldMinLength}
-                            />
-                        </Well>
+                        <Filter
+                            include={injectedProps.filterInclude}
+                            onHandleChange={(where) => this.handleFilterChange(where)}
+                            searchFields={injectedProps.searchFields}
+                            searchFieldMinLength={config.format.searchFieldMinLength}
+                        />
                     </Grid>
                     <Grid fluid={true}>
                         <CPaginator

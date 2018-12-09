@@ -3,24 +3,35 @@ import {
     Col, Checkbox,
     FormGroup, FormControl, InputGroup,
     Row, Radio,
-    Button, Glyphicon
+    Button, Glyphicon,
+    Well
 } from 'react-bootstrap';
 
-const NTYPES_GROUP = ["A", "PA", "S", "DS"];
+import config from '../../config/config';
+
+const NTYPES_GROUP = config.nomenclature.filter.ntypesGroup;
+
+const ComponentsAvailable = {
+    ownership: 'filterrecords',
+    ntypes: 'ntypes',
+    searchfield: 'searchfield'
+};
 
 class Filter extends Component {
 
     constructor(props, context) {
         super(props, context);
 
+        const initTypes = {};
+        for (const g of config.nomenclature.filter.ntypesGroup) {
+            initTypes[g] = false;
+        }
+
         this.state = {
             value: '',
             ntypes: {
                 All: true,
-                A: false,
-                PA: false,
-                S: false,
-                DS: false
+                ...initTypes
             }
         };
     }
@@ -66,11 +77,11 @@ class Filter extends Component {
         const isUncheckedGroup = () => {
             return NTYPES_GROUP.filter(t => ntypes[t] === true).length === 0;
         };
-        
+
         if (NTYPES_GROUP.includes(element.value)) { //clicked element is not All
             ntypes[element.value] = element.checked;
             //check All if no other specific element left checked, uncheck All if any specific element is checked
-            ntypes.All = isUncheckedGroup(); 
+            ntypes.All = isUncheckedGroup();
         } else {
             // clicked element is All, uncheck rest
             if (ntypes.All === false && isUncheckedGroup()) {
@@ -90,50 +101,88 @@ class Filter extends Component {
         this.setState({ value: value });
     }
 
-    render() {
+    renderFilterRecords() {
+        if (!this.props.include || !this.props.include.includes(ComponentsAvailable.ownership)) {
+            return null;
+        }
         return (
-            <Row>
-                <form onSubmit={(e) => e.preventDefault()}>
-                    <Col md={2}>
-                        <h4>View records</h4>
-                        <FormGroup>
-                            <Radio name="filterrecords" disabled={true}>
-                                Mine
+            <Col md={2}>
+                <h4>View records</h4>
+                <FormGroup>
+                    <Radio name="filterrecords" disabled={true}>
+                        Mine
                             </Radio>
-                            <Radio name="filterrecords" disabled={true}>
-                                All
+                    <Radio name="filterrecords" disabled={true}>
+                        All
                             </Radio>
-                        </FormGroup>
-                    </Col>
-                    <Col md={2}>
-                        <h4>Types</h4>
-                        <FormGroup>
-                            <Checkbox name="ntype" value="All" checked={this.state.ntypes.All} onChange={(e) => this.handleChangeTypes(e.target)} >All</Checkbox>
-                            <hr />
-                            <Checkbox name="ntype" value="A" checked={this.state.ntypes.A} onChange={(e) => this.handleChangeTypes(e.target)} >A</Checkbox>
-                            <Checkbox name="ntype" value="PA" checked={this.state.ntypes.PA} onChange={(e) => this.handleChangeTypes(e.target)} >PA</Checkbox>
-                            <Checkbox name="ntype" value="S" checked={this.state.ntypes.S} onChange={(e) => this.handleChangeTypes(e.target)} >S</Checkbox>
-                            <Checkbox name="ntype" value="DS" checked={this.state.ntypes.DS} onChange={(e) => this.handleChangeTypes(e.target)} >DS</Checkbox>
-                        </FormGroup>
-                    </Col>
-                    <Col md={8}>
-                        <InputGroup>
-                            <InputGroup.Button>
-                                <Button onClick={() => this.handleChangeSearch('')}>
-                                    <Glyphicon glyph="erase" />
-                                </Button>
-                            </InputGroup.Button>
-                            <FormControl
-                                type="text"
-                                value={this.state.value}
-                                placeholder="Search"
-                                onChange={(e) => this.handleChangeSearch(e.target.value)}
-                            />
-                        </InputGroup>
-                        <p>Case sensitive (for now)</p>
-                    </Col>
-                </form>
-            </Row>
+                </FormGroup>
+            </Col>
+        );
+    }
+
+    renderTypes() {
+        if (!this.props.include || !this.props.include.includes(ComponentsAvailable.ntypes)) {
+            return null;
+        }
+        const groupsCheckboxes = [];
+        for (const ntype of NTYPES_GROUP) {
+            groupsCheckboxes.push(<Checkbox name="ntype" value={ntype} checked={this.state.ntypes[ntype]} onChange={(e) => this.handleChangeTypes(e.target)} >{ntype}</Checkbox>);
+        }
+
+        return (
+            <Col md={2}>
+                <h4>Types</h4>
+                <FormGroup>
+                    <Checkbox name="ntype" value="All" checked={this.state.ntypes.All} onChange={(e) => this.handleChangeTypes(e.target)} >All</Checkbox>
+                    <hr />
+                    {groupsCheckboxes}
+                </FormGroup>
+            </Col>
+        );
+    }
+
+    renderSearch() {
+        if (!this.props.include || !this.props.include.includes(ComponentsAvailable.searchfield)) {
+            return null;
+        }
+        return (
+            <Col md={8}>
+                <InputGroup>
+                    <InputGroup.Button>
+                        <Button onClick={() => this.handleChangeSearch('')}>
+                            <Glyphicon glyph="erase" />
+                        </Button>
+                    </InputGroup.Button>
+                    <FormControl
+                        type="text"
+                        value={this.state.value}
+                        placeholder="Search"
+                        onChange={(e) => this.handleChangeSearch(e.target.value)}
+                    />
+                </InputGroup>
+                <p>Case sensitive (for now)</p>
+            </Col>
+        );
+    }
+
+    render() {
+        if (!this.props.include) {
+            return null;
+        }
+        const filterrecords = this.renderFilterRecords();
+        const ntypes = this.renderTypes();
+        const searchfield = this.renderSearch();
+
+        return (
+            <Well>
+                <Row>
+                    <form onSubmit={(e) => e.preventDefault()}>
+                        {filterrecords}
+                        {ntypes}
+                        {searchfield}
+                    </form>
+                </Row>
+            </Well>
         );
     }
 

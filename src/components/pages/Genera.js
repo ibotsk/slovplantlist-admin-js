@@ -36,5 +36,6 @@ export default TabledPage({
     getCount: config.uris.generaUri.count, 
     tableHeader,
     searchFields,
-    formatResult 
+    formatResult,
+    filterInclude: [ 'searchfield' ]
 })(Genera);

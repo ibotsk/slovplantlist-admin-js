@@ -33,5 +33,6 @@ export default TabledPage({
     getCount: config.uris.familiesApgUri.count, 
     tableHeader,
     searchFields,
-    formatResult 
+    formatResult,
+    filterInclude: [ 'searchfield' ]
 })(FamiliesAPG);
