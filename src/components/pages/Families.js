@@ -1,7 +1,7 @@
 import React from 'react';
 
 import TabledPage from './TabledPageParent';
-// import ComponentsAvailable from '../segments/Filter';
+import { ComponentsAvailable } from '../segments/Filter';
 
 import config from '../../config/config';
 
@@ -35,5 +35,5 @@ export default TabledPage({
     tableHeader,
     searchFields,
     formatResult,
-    filterInclude: [ 'searchfield' ]
+    filterInclude: [ ComponentsAvailable.searchfield ]
 })(Families);
