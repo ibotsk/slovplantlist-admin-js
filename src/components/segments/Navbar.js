@@ -19,21 +19,21 @@ const CNavbar = (props) => {
                         </NavItem>
                         <NavItem eventKey={2} href="/genera">
                             Genera
-                    </NavItem>
-                        <NavItem eventKey={2} href="families-apg">
+                        </NavItem>
+                        <NavItem eventKey={3} href="families-apg">
                             Families APG4
-                    </NavItem>
-                        <NavItem eventKey={2} href="/families">
+                        </NavItem>
+                        <NavItem eventKey={4} href="/families">
                             Families
-                    </NavItem>
+                        </NavItem>
                     </Nav>
                     <Nav pullRight>
                         <NavItem eventKey={1} href="#">
                             Users
-                    </NavItem>
+                        </NavItem>
                         <NavItem eventKey={2} href="#">
                             <Glyphicon glyph="log-out" /> Logout
-                    </NavItem>
+                        </NavItem>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
