@@ -60,20 +60,20 @@ export default {
     },
     uris: {
         nomenclaturesUri: {
-            getAll: `${backendBase}/api/nomenclatures?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted"%7D`,
-            count: `${backendBase}/api/nomenclatures/count?where={whereString}`
+            getAllWFilter: `${backendBase}/api/nomenclatures?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":["genus","species","subsp","var","subvar","forma","authors","id"]%7D`,
+            countUri: `${backendBase}/api/nomenclatures/count?where={whereString}`
         },
         generaUri: {
-            getAll: `${backendBase}/api/genera?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["familyApg","family"],"order":"name"%7D`,
-            count: `${backendBase}/api/genera/count?where={whereString}`
+            getAllWFilterUri: `${backendBase}/api/genera?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["familyApg","family"],"order":"name"%7D`,
+            countUri: `${backendBase}/api/genera/count?where={whereString}`
         },
         familiesApgUri: {
-            getAll: `${backendBase}/api/family_apgs?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"order":"name"%7D`,
-            count: `${backendBase}/api/family_apgs/count?where={whereString}`
+            getAllWOrderUri: `${backendBase}/api/family_apgs?filter=%7B"order":["name","id"]%7D`,
+            countUri: `${backendBase}/api/family_apgs/count?where={whereString}`
         },
         familiesUri: {
-            getAll: `${backendBase}/api/families?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"order":"name"%7D`,
-            count: `${backendBase}/api/families/count?where={whereString}`
+            getAllWOrderUri: `${backendBase}/api/families?filter=%7B"order":["name","id"]%7D`,
+            countUri: `${backendBase}/api/families/count?where={whereString}`
         }
     },
 

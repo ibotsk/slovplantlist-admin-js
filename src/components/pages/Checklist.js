@@ -64,11 +64,11 @@ const Checklist = ({ data, paginationOptions, onTableChange }) => {
                 />
             </Grid>
         </div>
-    )
+    );
 
 }
 
 export default TabledPage({
-    getAll: config.uris.nomenclaturesUri.getAll,
-    getCount: config.uris.nomenclaturesUri.count
+    getAll: config.uris.nomenclaturesUri.getAllWFilter,
+    getCount: config.uris.nomenclaturesUri.countUri
 })(Checklist);
