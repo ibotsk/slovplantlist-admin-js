@@ -126,7 +126,7 @@ class Filter extends Component {
         }
         const groupsCheckboxes = [];
         for (const ntype of NTYPES_GROUP) {
-            groupsCheckboxes.push(<Checkbox name="ntype" value={ntype} checked={this.state.ntypes[ntype]} onChange={(e) => this.handleChangeTypes(e.target)} >{ntype}</Checkbox>);
+            groupsCheckboxes.push(<Checkbox key={ntype} name="ntype" value={ntype} checked={this.state.ntypes[ntype]} onChange={(e) => this.handleChangeTypes(e.target)} >{ntype}</Checkbox>);
         }
 
         return (
