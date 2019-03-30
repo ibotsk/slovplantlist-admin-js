@@ -3,7 +3,7 @@ import React from 'react';
 import { Grid } from 'react-bootstrap';
 
 import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory from 'react-bootstrap-table2-filter';
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import TabledPage from '../wrappers/TabledPageParent';
 
@@ -12,15 +12,20 @@ import config from '../../config/config';
 const columns = [
     {
         dataField: 'id',
-        text: 'ID'
+        text: 'ID',
+        sort: true
     },
     {
         dataField: 'name',
-        text: 'Name'
+        text: 'Name',
+        filter: textFilter(),
+        sort: true
     },
     {
         dataField: 'vernacular',
-        text: 'Vernacular'
+        text: 'Vernacular',
+        filter: textFilter(),
+        sort: true
     }
 ];
 
@@ -37,7 +42,7 @@ const FamiliesAPG = ({ data, onTableChange }) => {
     return (
         <div id='families-apg'>
             <Grid id='functions-panel'>
-                <h2>Families</h2>
+                <h2>Families APG</h2>
             </Grid>
             <Grid fluid={true}>
                 <BootstrapTable hover striped condensed
