@@ -23,11 +23,31 @@ export default {
     },
     format: {
         formatted: "formatted",
-        plain: "plain",
-        recordsPerPage: 50,
-        rangeDisplayed: 7,
-        numOfElementsAtEnds: 1,
-        searchFieldMinLength: 4
+        plain: "plain"
+    },
+    mappings: {
+        losType: {
+            A: {
+                text: "Accepted name",
+                colour: "#57ab27"
+            },
+            PA: {
+                text: "Provisionally accepted",
+                colour: "#ee7f00"
+            },
+            S: {
+                text: "Synonym",
+                colour: "#008fc8"
+            },
+            DS: {
+                text: "Doubtful synonym",
+                colour: "#0089a0"
+            },
+            U: {
+                text: "Unresolved",
+                colour: "#bb9d00"
+            }
+        },
     },
     pagination: {
         paginationSize: 7,
@@ -48,10 +68,10 @@ export default {
         // paginationTotalRenderer: customTotal, //custom renderer is in TablePageParent
         sizePerPageList: [
             {
-                text: '25', 
+                text: '25',
                 value: 25
             }, {
-                text: '50', 
+                text: '50',
                 value: 50
             }, {
                 text: '100',
@@ -60,7 +80,7 @@ export default {
     },
     uris: {
         nomenclaturesUri: {
-            getAllWFilter: `${backendBase}/api/nomenclatures?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":["genus","species","subsp","var","subvar","forma","authors","id"]%7D`,
+            getAllWFilter: `${backendBase}/api/nomenclatures?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":{order}%7D`,
             countUri: `${backendBase}/api/nomenclatures/count?where={whereString}`
         },
         generaUri: {

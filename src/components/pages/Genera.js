@@ -13,7 +13,8 @@ import config from '../../config/config';
 const columns = [
     {
         dataField: 'id',
-        text: 'ID'
+        text: 'ID',
+        sort: true
     },
     {
         dataField: 'name',

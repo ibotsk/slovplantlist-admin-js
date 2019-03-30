@@ -3,24 +3,33 @@ import React from 'react';
 import { Grid } from 'react-bootstrap';
 
 import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory from 'react-bootstrap-table2-filter';
+import filterFactory, { textFilter, multiSelectFilter, Comparator } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import LosName from '../segments/LosName';
 import TabledPage from '../wrappers/TabledPageParent';
 
 import config from '../../config/config';
+import helper from '../../utils/helper';
 
 const PAGE_DETAIL = "/checklist/detail/";
+
+const ntypesOptions = helper.buildOptionsFromKeys(config.mappings.losType);
 
 const columns = [
     {
         dataField: 'id',
-        text: 'ID'
+        text: 'ID',
+        sort: true
     },
     {
-        dataField: 'type',
-        text: 'Type'
+        dataField: 'ntype',
+        text: 'Type',
+        filter: multiSelectFilter({
+            options: ntypesOptions,
+            comparator: Comparator.EQ
+        }),
+        sort: true
     },
     {
         dataField: 'name',
@@ -28,17 +37,24 @@ const columns = [
     },
     {
         dataField: 'publication',
-        text: 'Publication'
+        text: 'Publication',
+        filter: textFilter({ caseSensitive: true }),
+        sort: true
     },
     {
         dataField: 'acceptedName',
         text: 'Accepted name'
     }];
 
+const defaultSorted = [{
+    dataField: 'id',
+    order: 'asc'
+}];
+
 const formatResult = data => {
     return data.map(d => ({
         id: d.id,
-        type: d.ntype,
+        ntype: d.ntype,
         name: <a href={`${PAGE_DETAIL}${d.id}`} ><LosName key={d.id} nomen={d} format='plain' /></a>,
         publication: d.publication,
         acceptedName: <a href={d.accepted ? `${PAGE_DETAIL}${d.accepted.id}` : ""}><LosName key={`acc${d.id}`} nomen={d.accepted} format='plain' /></a>
@@ -58,6 +74,7 @@ const Checklist = ({ data, paginationOptions, onTableChange }) => {
                     keyField='id'
                     data={formatResult(data)}
                     columns={columns}
+                    defaultSorted={defaultSorted}
                     filter={filterFactory()}
                     onTableChange={onTableChange}
                     pagination={paginationFactory(paginationOptions)}

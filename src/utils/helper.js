@@ -138,25 +138,47 @@ const listOfSpieces = (nomenclature, options = {}) => {
 }
 
 const makeWhere = filters => {
-    const whereList = [];
+    const whereItems = [];
     const keys = Object.keys(filters);
+    // keys of filters are joined with 'and'
     for (const key of keys) {
-        whereList.push(resolveByComparator(filters[key].comparator, key, filters[key].filterVal));
+        // array of filterVal are joined by 'or'
+        whereItems.push(filterToWhereItem(filters[key], key));
     }
-    if (whereList.length > 1) {
-        return { 'and': whereList };
+    if (whereItems.length > 1) {
+        return { 'and': whereItems };
     }
-    if (whereList.length === 1) {
-        return whereList[0];
+    if (whereItems.length === 1) {
+        return whereItems[0];
     }
     return {};
 }
 
 const makeOrder = (sortField, sortOrder = 'ASC') => {
-    if (sortOrder.toUpperCase() !== 'ASC' || sortOrder.toUpperCase() !== 'DESC') {
+    if (sortOrder.toUpperCase() !== 'ASC' && sortOrder.toUpperCase() !== 'DESC') {
         sortOrder = 'ASC';
     };
     return [`${sortField} ${sortOrder.toUpperCase()}`];
+}
+
+const buildOptionsFromKeys = keys => {
+    const obj = {};
+    Object.keys(keys).forEach(t => {
+        obj[t] = t;
+    });
+    return obj;
+}
+
+function filterToWhereItem(filter, key) {
+    const filterVal = filter.filterVal;
+    if (Array.isArray(filterVal) && filterVal.length > 1) {
+        const valsOr = [];
+        for (const val of filterVal) {
+            valsOr.push(resolveByComparator(filter.comparator, key, val));
+        }
+        return { 'or': valsOr };
+    }
+    return resolveByComparator(filter.comparator, key, filter.filterVal);
 }
 
 /**
@@ -182,4 +204,4 @@ function resolveByComparator(comparator, key, value) {
     }
 }
 
-export default { listOfSpieces, makeWhere, makeOrder };
+export default { listOfSpieces, makeWhere, makeOrder, buildOptionsFromKeys };
