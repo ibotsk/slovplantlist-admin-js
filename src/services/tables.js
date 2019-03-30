@@ -1,8 +1,13 @@
 import template from 'url-template';
 import axios from './axios';
 
-const getAll = async (uri, offset, where, limit, accessToken) => {
-    const getAllUri = template.parse(uri).expand({ offset, where: JSON.stringify(where), limit, accessToken });
+const getAll = async (uri, offset, where, order, limit, accessToken) => {
+    const getAllUri = template.parse(uri).expand({ 
+        offset, 
+        where: JSON.stringify(where), 
+        order: JSON.stringify(order), 
+        limit, 
+        accessToken });
     const response = await axios.get(getAllUri);
     return response.data;
 }

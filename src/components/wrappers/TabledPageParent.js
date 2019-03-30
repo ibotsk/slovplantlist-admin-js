@@ -27,43 +27,46 @@ const TabledPage = injectedProps => WrappedComponent => {
                 totalSize: 0,
                 page: 1,
                 sizePerPage: paginationOptions.sizePerPageList[0].value,
-                where: {}
+                where: {},
+                order: ['id']
             }
         }
 
-        handleTableChange = async (type, { page = this.state.page, sizePerPage = this.state.sizePerPage, filters = {} }) => {
+        handleTableChange = async (type, { page, sizePerPage, filters, sortField, sortOrder }) => {
             const where = helper.makeWhere(filters); //TODO make function to take into account existing where
-            await this.handleChange(page, sizePerPage, where);
+            const order = helper.makeOrder(sortField, sortOrder);
+
+            await this.handleChange(page, sizePerPage, where, order);
         }
 
-        handleChange = async (page, sizePerPage, where) => {
-            await this.fetchCount(where);
+        handleChange = async (page, sizePerPage, where, order) => {
+            const totalSize = await this.fetchCount(where);
             const offset = (page - 1) * sizePerPage;
-            const records = await this.fetchRecords(where, offset, sizePerPage);
+            const records = await this.fetchRecords(where, order, offset, sizePerPage);
             this.setState({
                 records,
                 sizePerPage,
                 page,
-                where
+                where,
+                order,
+                totalSize
             });
         }
 
-        fetchRecords = async (where, offset, limit) => {
+        fetchRecords = async (where, order, offset, limit) => {
             const accessToken = this.props.accessToken;
-            return await tablesService.getAll(injectedProps.getAll, offset, where, limit, accessToken);
+            return await tablesService.getAll(injectedProps.getAll, offset, where, order, limit, accessToken);
         }
 
         fetchCount = async where => {
             const accessToken = this.props.accessToken;
             const whereString = JSON.stringify(where);
             const countResponse = await tablesService.getCount(injectedProps.getCount, whereString, accessToken);
-            this.setState({
-                totalSize: countResponse.count
-            });
+            return countResponse.count;
         }
 
         componentDidMount() {
-            this.handleChange(this.state.page, paginationOptions.sizePerPageList[0].value, this.state.where);
+            this.handleChange(this.state.page, paginationOptions.sizePerPageList[0].value, this.state.where, this.state.order);
         }
 
         render() {

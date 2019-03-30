@@ -3,7 +3,7 @@ import React from 'react';
 import { Grid } from 'react-bootstrap';
 
 import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory from 'react-bootstrap-table2-filter';
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import TabledPage from '../wrappers/TabledPageParent';
@@ -17,15 +17,21 @@ const columns = [
     },
     {
         dataField: 'name',
-        text: 'Name'
+        text: 'Name',
+        filter: textFilter({ caseSensitive: true }),
+        sort: true
     },
     {
         dataField: 'authors',
-        text: 'Authors'
+        text: 'Authors',
+        filter: textFilter({ caseSensitive: true }),
+        sort: true
     },
     {
         dataField: 'vernacular',
-        text: 'Vernacular'
+        text: 'Vernacular',
+        filter: textFilter({ caseSensitive: true }),
+        sort: true
     },
     {
         dataField: 'familyAPG',
@@ -36,6 +42,11 @@ const columns = [
         text: 'Family'
     },
 ];
+
+const defaultSorted = [{
+    dataField: 'name',
+    order: 'asc'
+}];
 
 const formatResult = data => {
     return data.map(d => ({
@@ -61,6 +72,7 @@ const Genera = ({ data, paginationOptions, onTableChange }) => {
                     keyField='id'
                     data={formatResult(data)}
                     columns={columns}
+                    defaultSorted={defaultSorted}
                     filter={filterFactory()}
                     onTableChange={onTableChange}
                     pagination={paginationFactory(paginationOptions)}
@@ -70,7 +82,6 @@ const Genera = ({ data, paginationOptions, onTableChange }) => {
     );
 
 }
-
 
 export default TabledPage({
     getAll: config.uris.generaUri.getAllWFilterUri,

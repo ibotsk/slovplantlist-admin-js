@@ -19,7 +19,7 @@ const sl = (string) => {
     const sl = config_name.sl;
     if (string && string.includes(sl)) {
         let modString = string.replace(sl, '');
-        return { s: modString, hasSl: true};
+        return { s: modString, hasSl: true };
     }
     return { s: string, hasSl: false };
 }
@@ -132,23 +132,19 @@ const listOfSpieces = (nomenclature, options = {}) => {
     if (opts.isTribus) {
         name.push(Plain(nomenclature.tribus));
     }
-    
+
     return name;
 
 }
 
-const makeWhere = (filters) => {
+const makeWhere = filters => {
     const whereList = [];
     const keys = Object.keys(filters);
     for (const key of keys) {
-        whereList.push({
-            [key]: {
-                like: `%${filters[key].filterVal}%`
-            }
-        });
+        whereList.push(resolveByComparator(filters[key].comparator, key, filters[key].filterVal));
     }
     if (whereList.length > 1) {
-        return { 'OR': whereList };
+        return { 'and': whereList };
     }
     if (whereList.length === 1) {
         return whereList[0];
@@ -156,4 +152,34 @@ const makeWhere = (filters) => {
     return {};
 }
 
-export default { listOfSpieces, makeWhere };
+const makeOrder = (sortField, sortOrder = 'ASC') => {
+    if (sortOrder.toUpperCase() !== 'ASC' || sortOrder.toUpperCase() !== 'DESC') {
+        sortOrder = 'ASC';
+    };
+    return [`${sortField} ${sortOrder.toUpperCase()}`];
+}
+
+/**
+ * For resolving filter comparator. Supports LIKE and EQ.
+ * Loopback mysql connector does not support case insensitive.
+ * @param {*} comparator 
+ * @param {*} key 
+ * @param {*} value 
+ */
+function resolveByComparator(comparator, key, value) {
+    switch (comparator) {
+        case 'LIKE':
+            return {
+                [key]: {
+                    like: `%${value}%`
+                }
+            };
+        case 'EQ':
+        default:
+            return {
+                [key]: value
+            };
+    }
+}
+
+export default { listOfSpieces, makeWhere, makeOrder };

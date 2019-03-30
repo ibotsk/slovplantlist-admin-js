@@ -64,7 +64,7 @@ export default {
             countUri: `${backendBase}/api/nomenclatures/count?where={whereString}`
         },
         generaUri: {
-            getAllWFilterUri: `${backendBase}/api/genera?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["familyApg","family"],"order":"name"%7D`,
+            getAllWFilterUri: `${backendBase}/api/genera?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["familyApg","family"],"order":{order}%7D`,
             countUri: `${backendBase}/api/genera/count?where={whereString}`
         },
         familiesApgUri: {
