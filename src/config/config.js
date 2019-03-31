@@ -3,6 +3,9 @@ const backendBase = "http://localhost:3001";
 
 export default {
 
+    constants: {
+        listOfSpeciesColumn: 'listOfSpecies'
+    },
     nomenclature: {
         name: {
             sl: 's.l.',
@@ -18,7 +21,27 @@ export default {
             hybrid: 'x',
         },
         filter: {
-            ntypesGroup: ["A", "PA", "S", "DS"]
+            ntypesGroup: ["A", "PA", "S", "DS"],
+            listOfSpecies: [
+                "genus",
+                "species",
+                "subsp",
+                "var",
+                "subvar",
+                "forma",
+                "nothosubsp",
+                "nothoforma",
+                "authors",
+                "genus_h",
+                "species_h",
+                "subsp_h",
+                "var_h",
+                "subvar_h",
+                "forma_h",
+                "nothosubsp_h",
+                "nothoforma_h",
+                "authors_h"
+            ]
         }
     },
     format: {

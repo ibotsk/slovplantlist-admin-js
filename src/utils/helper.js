@@ -154,11 +154,15 @@ const makeWhere = filters => {
     return {};
 }
 
-const makeOrder = (sortField, sortOrder = 'ASC') => {
-    if (sortOrder.toUpperCase() !== 'ASC' && sortOrder.toUpperCase() !== 'DESC') {
-        sortOrder = 'ASC';
+const makeOrder = (sortFields, sortOrder = 'ASC') => {
+    let soUpperCase = sortOrder.toUpperCase();
+    if (soUpperCase !== 'ASC' && soUpperCase !== 'DESC') {
+        soUpperCase = 'ASC';
     };
-    return [`${sortField} ${sortOrder.toUpperCase()}`];
+    if (Array.isArray(sortFields)) {
+        return sortFields.map(f => `${f} ${soUpperCase}`);
+    }
+    return [`${sortFields} ${soUpperCase}`];
 }
 
 const buildOptionsFromKeys = keys => {
@@ -169,12 +173,46 @@ const buildOptionsFromKeys = keys => {
     return obj;
 }
 
+/**
+ * If filter key is in config.nomenclature.filter then modify that filter such as new
+ * filterVal = [{ field, value }] where field is for every value from the config nad value is original filterVal.
+ * @param {*} filters 
+ */
+const curateSearchFilters = filters => {
+    let curatedFilters = {...filters};
+    const keys = Object.keys(filters);
+    for (const key of keys) { //listofspecies
+        const fields = config.nomenclature.filter[key]; // genus, species, ...
+        if (fields) {
+            const filterContent = filters[key];
+            const filterVal = filterContent.filterVal;
+            const newFilterValue = fields.map(f => ({ field: f, value: filterVal }));
+            filterContent.filterVal = newFilterValue;
+            filters[key] = filterContent;
+        }
+    }
+    return curatedFilters;
+}
+
+const curateSortFields = sortField => {
+    const fields = config.nomenclature.filter[sortField];
+    if (fields) {
+        return fields;
+    }
+    return sortField;
+}
+
 function filterToWhereItem(filter, key) {
     const filterVal = filter.filterVal;
     if (Array.isArray(filterVal) && filterVal.length > 1) {
         const valsOr = [];
         for (const val of filterVal) {
-            valsOr.push(resolveByComparator(filter.comparator, key, val));
+            let itemKey = key, value = val;
+            if (typeof val !== 'string') {
+                itemKey = val.field;
+                value = val.value;
+            }
+            valsOr.push(resolveByComparator(filter.comparator, itemKey, value));
         }
         return { 'or': valsOr };
     }
@@ -204,4 +242,4 @@ function resolveByComparator(comparator, key, value) {
     }
 }
 
-export default { listOfSpieces, makeWhere, makeOrder, buildOptionsFromKeys };
+export default { listOfSpieces, makeWhere, makeOrder, buildOptionsFromKeys, curateSearchFilters, curateSortFields };

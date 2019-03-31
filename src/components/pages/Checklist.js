@@ -14,6 +14,7 @@ import helper from '../../utils/helper';
 
 const PAGE_DETAIL = "/checklist/detail/";
 
+const listOfSpeciesColumn = config.constants.listOfSpeciesColumn;
 const ntypesOptions = helper.buildOptionsFromKeys(config.mappings.losType);
 
 const columns = [
@@ -32,8 +33,10 @@ const columns = [
         sort: true
     },
     {
-        dataField: 'name',
-        text: 'Name'
+        dataField: listOfSpeciesColumn,
+        text: 'Name',
+        filter: textFilter({ caseSensitive: true }),
+        sort: true
     },
     {
         dataField: 'publication',
@@ -55,7 +58,7 @@ const formatResult = data => {
     return data.map(d => ({
         id: d.id,
         ntype: d.ntype,
-        name: <a href={`${PAGE_DETAIL}${d.id}`} ><LosName key={d.id} nomen={d} format='plain' /></a>,
+        [listOfSpeciesColumn]: <a href={`${PAGE_DETAIL}${d.id}`} ><LosName key={d.id} nomen={d} format='plain' /></a>,
         publication: d.publication,
         acceptedName: <a href={d.accepted ? `${PAGE_DETAIL}${d.accepted.id}` : ""}><LosName key={`acc${d.id}`} nomen={d.accepted} format='plain' /></a>
     }));

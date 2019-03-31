@@ -33,8 +33,10 @@ const TabledPage = injectedProps => WrappedComponent => {
         }
 
         handleTableChange = async (type, { page, sizePerPage, filters, sortField, sortOrder }) => {
-            const where = helper.makeWhere(filters); //TODO make function to take into account existing where
-            const order = helper.makeOrder(sortField, sortOrder);
+            const curatedFilters = helper.curateSearchFilters(filters);
+            const curatedSortField = helper.curateSortFields(sortField);
+            const where = helper.makeWhere(curatedFilters); //TODO make function to take into account existing where
+            const order = helper.makeOrder(curatedSortField, sortOrder);
             await this.handleChange(page, sizePerPage, where, order);
         }
 
