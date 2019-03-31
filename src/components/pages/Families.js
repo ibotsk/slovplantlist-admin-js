@@ -43,6 +43,7 @@ const Families = ({ data, onTableChange }) => {
         <div id='families'>
             <Grid id='functions-panel'>
                 <h2>Families</h2>
+                <p>All filters are case sensitive</p>
             </Grid>
             <Grid fluid={true}>
                 <BootstrapTable hover striped condensed

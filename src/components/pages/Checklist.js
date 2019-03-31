@@ -70,6 +70,7 @@ const Checklist = ({ data, paginationOptions, onTableChange }) => {
         <div id='checklist'>
             <Grid id='functions-panel'>
                 <h2>Checklist</h2>
+                <p>All filters are case sensitive</p>
             </Grid>
             <Grid fluid={true}>
                 <BootstrapTable hover striped condensed

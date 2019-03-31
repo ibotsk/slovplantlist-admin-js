@@ -43,6 +43,7 @@ const FamiliesAPG = ({ data, onTableChange }) => {
         <div id='families-apg'>
             <Grid id='functions-panel'>
                 <h2>Families APG</h2>
+                <p>All filters are case sensitive</p>
             </Grid>
             <Grid fluid={true}>
                 <BootstrapTable hover striped condensed

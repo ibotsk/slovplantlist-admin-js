@@ -66,6 +66,7 @@ const Genera = ({ data, paginationOptions, onTableChange }) => {
         <div id='genera'>
             <Grid id='functions-panel'>
                 <h2>Genera</h2>
+                <p>All filters are case sensitive</p>
             </Grid>
             <Grid fluid={true}>
                 <BootstrapTable hover striped condensed
