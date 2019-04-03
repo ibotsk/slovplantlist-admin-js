@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Grid } from 'react-bootstrap';
+import { Grid, Button } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter, multiSelectFilter, Comparator } from 'react-bootstrap-table2-filter';
@@ -13,6 +14,7 @@ import config from '../../config/config';
 import helper from '../../utils/helper';
 
 const PAGE_DETAIL = "/checklist/detail/";
+const EDIT_RECORD = "/checklist/edit/";
 
 const listOfSpeciesColumn = config.constants.listOfSpeciesColumn;
 const ntypesOptions = helper.buildOptionsFromKeys(config.mappings.losType);
@@ -22,6 +24,10 @@ const columns = [
         dataField: 'id',
         text: 'ID',
         sort: true
+    },
+    {
+        dataField: 'action',
+        text: 'Action'
     },
     {
         dataField: 'ntype',
@@ -57,6 +63,11 @@ const defaultSorted = [{
 const formatResult = data => {
     return data.map(d => ({
         id: d.id,
+        action: (
+            <LinkContainer to={`${EDIT_RECORD}${d.id}`}>
+                <Button bsStyle="warning" bsSize="xsmall">Edit</Button>
+            </LinkContainer>
+        ),
         ntype: d.ntype,
         [listOfSpeciesColumn]: <a href={`${PAGE_DETAIL}${d.id}`} ><LosName key={d.id} nomen={d} format='plain' /></a>,
         publication: d.publication,
@@ -90,6 +101,6 @@ const Checklist = ({ data, paginationOptions, onTableChange }) => {
 }
 
 export default TabledPage({
-    getAll: config.uris.nomenclaturesUri.getAllWFilter,
+    getAll: config.uris.nomenclaturesUri.getAllWFilterUri,
     getCount: config.uris.nomenclaturesUri.countUri
 })(Checklist);

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import CNavbar from '../segments/Navbar';
 import Checklist from './Checklist';
-import LosDetail from './LosDetail';
+import SpeciesRecord from './SpeciesRecord';
 import Genera from './Genera';
 
 import { Route, Switch } from 'react-router-dom';
@@ -12,7 +12,8 @@ const Routing = () => {
   return (
     <Switch>
       <Route exact path="/checklist" component={Checklist} />
-      <Route path="/checklist/detail/:id" component={LosDetail} />
+      <Route path="/checklist/detail/:id" component={SpeciesRecord} />
+      <Route path="/checklist/edit/:id" component={SpeciesRecord} />
       <Route exact path="/genera" component={Genera} />
       <Route exact path="/families-apg" component={FamiliesAPG} />
       <Route exact path="/families" component={Families} />

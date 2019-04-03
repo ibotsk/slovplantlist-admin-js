@@ -103,7 +103,8 @@ export default {
     },
     uris: {
         nomenclaturesUri: {
-            getAllWFilter: `${backendBase}/api/nomenclatures?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":{order}%7D`,
+            getAllWFilterUri: `${backendBase}/api/nomenclatures?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":{order}%7D`,
+            getByIdWFilterUri: `${backendBase}/api/nomenclatures/{id}`,
             countUri: `${backendBase}/api/nomenclatures/count?where={whereString}`
         },
         generaUri: {

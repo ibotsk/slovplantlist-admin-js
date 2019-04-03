@@ -1,3 +1,4 @@
+import formatter from './formatter';
 import config from '../config/config';
 
 const config_name = config.nomenclature.name;
@@ -76,7 +77,7 @@ const invalidDesignation = (name, syntype) => {
     return name;
 }
 
-const listOfSpieces = (nomenclature, options = {}) => {
+const listOfSpeciesFormat = (nomenclature, options = {}) => {
 
     let opts = Object.assign({}, {
         isPublication: false,
@@ -110,18 +111,18 @@ const listOfSpieces = (nomenclature, options = {}) => {
 
     if (nomenclature.hybrid) {
         let h = {
-            genus: nomenclature.genus_h,
-            species: nomenclature.species_h,
-            subsp: nomenclature.subsp_h,
-            var: nomenclature.var_h,
-            subvar: nomenclature.subvar_h,
-            forma: nomenclature.forma_h,
-            nothosubsp: nomenclature.nothosubsp_h,
-            nothoforma: nomenclature.nothoforma_h,
-            authors: nomenclature.authors_h,
+            genus: nomenclature.genusH,
+            species: nomenclature.speciesH,
+            subsp: nomenclature.subspH,
+            var: nomenclature.varH,
+            subvar: nomenclature.subvarH,
+            forma: nomenclature.formaH,
+            nothosubsp: nomenclature.nothosubspH,
+            nothoforma: nomenclature.nothoformaH,
+            authors: nomenclature.authorsH,
         }
         name.push(Plain(config_name.hybrid));
-        name = name.concat(listOfSpieces(h));
+        name = name.concat(listOfSpeciesFormat(h));
     }
 
     name = invalidDesignation(name, options.syntype);
@@ -135,6 +136,25 @@ const listOfSpieces = (nomenclature, options = {}) => {
 
     return name;
 
+}
+
+const listOfSpeciesForComponent = (name, formatString) => {
+
+    const nameArr = listOfSpeciesFormat(name);
+
+    const formattedNameArr = nameArr.map(t => {
+        if (t.format === ff) {
+            return formatter.format(t.string, formatString);
+        } else {
+            return t.string;
+        }
+    });
+
+    return formattedNameArr.reduce((acc, el) => acc.concat(el, ' '), []).slice(0, -1);
+}
+
+const listOfSpeciesString = (name) => {
+    return listOfSpeciesForComponent(name, 'plain').join('');
 }
 
 const makeWhere = filters => {
@@ -179,7 +199,7 @@ const buildOptionsFromKeys = keys => {
  * @param {*} filters 
  */
 const curateSearchFilters = filters => {
-    let curatedFilters = {...filters};
+    let curatedFilters = { ...filters };
     const keys = Object.keys(filters);
     for (const key of keys) { //listofspecies
         const fields = config.nomenclature.filter[key]; // genus, species, ...
@@ -242,4 +262,4 @@ function resolveByComparator(comparator, key, value) {
     }
 }
 
-export default { listOfSpieces, makeWhere, makeOrder, buildOptionsFromKeys, curateSearchFilters, curateSortFields };
+export default { listOfSpeciesForComponent, listOfSpeciesString, makeWhere, makeOrder, buildOptionsFromKeys, curateSearchFilters, curateSortFields };
