@@ -69,9 +69,9 @@ const formatResult = data => {
             </LinkContainer>
         ),
         ntype: d.ntype,
-        [listOfSpeciesColumn]: <a href={`${PAGE_DETAIL}${d.id}`} ><LosName key={d.id} nomen={d} format='plain' /></a>,
+        [listOfSpeciesColumn]: <a href={`${PAGE_DETAIL}${d.id}`} ><LosName key={d.id} data={d} /></a>,
         publication: d.publication,
-        acceptedName: <a href={d.accepted ? `${PAGE_DETAIL}${d.accepted.id}` : ""}><LosName key={`acc${d.id}`} nomen={d.accepted} format='plain' /></a>
+        acceptedName: <a href={d.accepted ? `${PAGE_DETAIL}${d.accepted.id}` : ""}><LosName key={`acc${d.id}`} data={d.accepted} /></a>
     }));
 }
 
