@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 
 import {
-    Grid, Col, Well,
-    Form, FormControl, FormGroup, ControlLabel
+    Grid, Col, Well, Panel,
+    Form, FormControl, FormGroup, ControlLabel,
+    Checkbox
 } from 'react-bootstrap';
 
 import LosName from '../segments/LosName';
@@ -30,6 +31,10 @@ class SpeciesRecord extends Component {
         this.handleChange(e.target.id, e.target.value);
     }
 
+    handleChangeCheckbox = e => {
+        this.handleChange(e.target.id, e.target.checked);
+    }
+
     handleChange = (property, value) => {
         const record = { ...this.state.record };
         record[property] = value;
@@ -46,6 +51,134 @@ class SpeciesRecord extends Component {
         });
     }
 
+    renderHybridFields = (isHybrid) => {
+        if (isHybrid) {
+            return (
+                <Panel>
+                    <Panel.Body>
+                        <FormGroup controlId="genus_h" bsSize='sm'>
+                            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                Hybrid Genus
+                            </Col>
+                            <Col sm={CONTENT_COL_WIDTH}>
+                                <FormControl
+                                    type="text"
+                                    value={this.state.record.genus_h || ''}
+                                    onChange={this.handleChangeInput}
+                                    placeholder="Hybrid Genus"
+                                />
+                            </Col>
+                        </FormGroup>
+                        <FormGroup controlId="species_h" bsSize='sm'>
+                            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                Hybrid Species
+                            </Col>
+                            <Col sm={CONTENT_COL_WIDTH}>
+                                <FormControl
+                                    type="text"
+                                    value={this.state.record.species_h || ''}
+                                    onChange={this.handleChangeInput}
+                                    placeholder="Hybrid Species"
+                                />
+                            </Col>
+                        </FormGroup>
+                        <FormGroup controlId="subsp_h" bsSize='sm'>
+                            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                Hybrid Subsp
+                            </Col>
+                            <Col sm={CONTENT_COL_WIDTH}>
+                                <FormControl
+                                    type="text"
+                                    value={this.state.record.subsp_h || ''}
+                                    onChange={this.handleChangeInput}
+                                    placeholder="Hybrid Subsp"
+                                />
+                            </Col>
+                        </FormGroup>
+                        <FormGroup controlId="var_h" bsSize='sm'>
+                            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                Hybrid Var
+                            </Col>
+                            <Col sm={CONTENT_COL_WIDTH}>
+                                <FormControl
+                                    type="text"
+                                    value={this.state.record.var_h || ''}
+                                    onChange={this.handleChangeInput}
+                                    placeholder="Hybrid Var"
+                                />
+                            </Col>
+                        </FormGroup>
+                        <FormGroup controlId="subvar_h" bsSize='sm'>
+                            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                Hybrid Subvar
+                            </Col>
+                            <Col sm={CONTENT_COL_WIDTH}>
+                                <FormControl
+                                    type="text"
+                                    value={this.state.record.subvar_h || ''}
+                                    onChange={this.handleChangeInput}
+                                    placeholder="Hybrid Subvar"
+                                />
+                            </Col>
+                        </FormGroup>
+                        <FormGroup controlId="forma_h" bsSize='sm'>
+                            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                Hybrid Forma
+                            </Col>
+                            <Col sm={CONTENT_COL_WIDTH}>
+                                <FormControl
+                                    type="text"
+                                    value={this.state.record.forma_h || ''}
+                                    onChange={this.handleChangeInput}
+                                    placeholder="Hybrid Forma"
+                                />
+                            </Col>
+                        </FormGroup>
+                        <FormGroup controlId="nothosubsp_h" bsSize='sm'>
+                            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                Hybrid Nothosubsp
+                            </Col>
+                            <Col sm={CONTENT_COL_WIDTH}>
+                                <FormControl
+                                    type="text"
+                                    value={this.state.record.nothosubsp_h || ''}
+                                    onChange={this.handleChangeInput}
+                                    placeholder="Hybrid Nothosubsp"
+                                />
+                            </Col>
+                        </FormGroup>
+                        <FormGroup controlId="nothoforma_h" bsSize='sm'>
+                            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                Hybrid Nothoforma
+                            </Col>
+                            <Col sm={CONTENT_COL_WIDTH}>
+                                <FormControl
+                                    type="text"
+                                    value={this.state.record.nothoforma_h || ''}
+                                    onChange={this.handleChangeInput}
+                                    placeholder="Hybrid Nothoforma"
+                                />
+                            </Col>
+                        </FormGroup>
+                        <FormGroup controlId="authors_h" bsSize='sm'>
+                            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                Hybrid Authors
+                            </Col>
+                            <Col sm={CONTENT_COL_WIDTH}>
+                                <FormControl
+                                    type="text"
+                                    value={this.state.record.authors_h || ''}
+                                    onChange={this.handleChangeInput}
+                                    placeholder="Hybrid Authors"
+                                />
+                            </Col>
+                        </FormGroup>
+                    </Panel.Body>
+                </Panel>
+            )
+        }
+    }
+
     render() {
         console.log(this.state);
 
@@ -60,7 +193,7 @@ class SpeciesRecord extends Component {
                             <Well>
                                 <FormGroup controlId="ntype" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Type
+                                        Type:
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
@@ -150,19 +283,6 @@ class SpeciesRecord extends Component {
                                         />
                                     </Col>
                                 </FormGroup>
-                                <FormGroup controlId="authors" bsSize='sm'>
-                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Authors:
-                                    </Col>
-                                    <Col sm={CONTENT_COL_WIDTH}>
-                                        <FormControl
-                                            type="text"
-                                            value={this.state.record.authors || ''}
-                                            placeholder="Authors"
-                                            onChange={this.handleChangeInput}
-                                        />
-                                    </Col>
-                                </FormGroup>
                                 <FormGroup controlId="nothosubsp" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                                         Nothosubsp:
@@ -185,6 +305,72 @@ class SpeciesRecord extends Component {
                                             type="text"
                                             value={this.state.record.nothoforma || ''}
                                             placeholder="Nothoforma"
+                                            onChange={this.handleChangeInput}
+                                        />
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId="authors" bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Authors:
+                                    </Col>
+                                    <Col sm={CONTENT_COL_WIDTH}>
+                                        <FormControl
+                                            type="text"
+                                            value={this.state.record.authors || ''}
+                                            placeholder="Authors"
+                                            onChange={this.handleChangeInput}
+                                        />
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId="hybrid">
+                                    <Col sm={CONTENT_COL_WIDTH} smOffset={LABEL_COL_WIDTH} xs={12}>
+                                        <Checkbox inline
+                                            id="hybrid"
+                                            value={this.state.hybrid}
+                                            checked={this.state.hybrid}
+                                            onChange={this.handleChangeCheckbox}>Hybrid</Checkbox>
+                                    </Col>
+                                </FormGroup>
+                                {
+                                    this.renderHybridFields(this.state.record.hybrid)
+                                }
+                            </Well>
+                            <Well>
+                                <FormGroup controlId="publication" bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Publication:
+                                    </Col>
+                                    <Col sm={CONTENT_COL_WIDTH}>
+                                        <FormControl
+                                            type="text"
+                                            value={this.state.record.publication || ''}
+                                            placeholder="Publication"
+                                            onChange={this.handleChangeInput}
+                                        />
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId="vernacular" bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Vernacular:
+                                    </Col>
+                                    <Col sm={CONTENT_COL_WIDTH}>
+                                        <FormControl
+                                            type="text"
+                                            value={this.state.record.vernacular || ''}
+                                            placeholder="Vernacular"
+                                            onChange={this.handleChangeInput}
+                                        />
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId="tribus" bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Tribus:
+                                    </Col>
+                                    <Col sm={CONTENT_COL_WIDTH}>
+                                        <FormControl
+                                            type="text"
+                                            value={this.state.record.tribus || ''}
+                                            placeholder="Tribus"
                                             onChange={this.handleChangeInput}
                                         />
                                     </Col>
