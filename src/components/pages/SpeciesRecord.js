@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import {
     Grid, Col, Row, Well, Panel,
     Form, FormControl, FormGroup, ControlLabel,
-    Checkbox, Button
+    Checkbox, Button, Glyphicon
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
@@ -11,12 +11,16 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import { NotificationContainer } from 'react-notifications';
 import notifications from '../../utils/notifications';
 
+import AddableList from '../segments/AddableList';
 import LosName from '../segments/LosName';
+import SynonymListItem from '../segments/SynonymListItem';
 
 import speciesFacade from '../../facades/species';
 
 import helper from '../../utils/helper';
 import config from '../../config/config';
+
+import '../../styles/custom.css';
 
 const LABEL_COL_WIDTH = 2;
 const CONTENT_COL_WIDTH = 10;
@@ -25,9 +29,33 @@ const ID_ACCEPTED_NAME_PROP = 'id_accepted_name';
 const ID_BASIONYM_NAME_PROP = 'id_basionym';
 const ID_REPLACED_NAME_PROP = 'id_replaced';
 const ID_NOMEN_NOVUM_NAME_PROP = 'id_nomen_novum';
+
 const CHECKLIST_LIST_URI = '/checklist';
 
 const ntypes = config.mappings.losType;
+
+const synonymFormatter = (synonym, prefix) => (
+    {
+        id: synonym.id,
+        prefix,
+        value: synonym
+    }
+);
+
+const addSynonymToList = async (selected, synonyms, accessToken) => {
+    if (!selected) {
+        return null;
+    }
+    if (synonyms.find(s => s.id === selected.id)) {
+        notifications.warning('The item is already in the list');
+        return null;
+    }
+    const { speciesRecord } = await speciesFacade.getRecordById(selected.id);
+    
+    synonyms.push(speciesRecord);
+    synonyms.sort(helper.listOfSpeciesSorterLex);
+    return synonyms;
+}
 
 class SpeciesRecord extends Component {
 
@@ -42,6 +70,10 @@ class SpeciesRecord extends Component {
             [`${ID_BASIONYM_NAME_PROP}_selected`]: undefined,
             [`${ID_REPLACED_NAME_PROP}_selected`]: undefined,
             [`${ID_NOMEN_NOVUM_NAME_PROP}_selected`]: undefined,
+
+            nomenclatoricSynonyms: [], // contains objects of list-of-species
+            taxonomicSynonyms: [], // contains objects of list-of-species
+            invalidDesignations: [],
         };
 
     }
@@ -87,6 +119,124 @@ class SpeciesRecord extends Component {
         });
     }
 
+    handleAddNomenclatoricSynonym = async selected => {
+        const accessToken = this.props.accessToken;
+        const nomenclatoricSynonyms = await addSynonymToList(selected, [...this.state.nomenclatoricSynonyms], accessToken);
+        this.setState({
+            nomenclatoricSynonyms,
+            isNomenclatoricSynonymsChanged: true
+        });
+    }
+
+    handleAddTaxonomicSynonym = async selected => {
+        const accessToken = this.props.accessToken;
+        const taxonomicSynonyms = await addSynonymToList(selected, [...this.state.taxonomicSynonyms], accessToken);
+        this.setState({
+            taxonomicSynonyms,
+            isTaxonomicSynonymsChanged: true
+        });
+    }
+
+    handleAddInvalidDesignation = async selected => {
+        const accessToken = this.props.accessToken;
+        const invalidDesignations = await addSynonymToList(selected, [...this.state.invalidDesignations], accessToken);
+        this.setState({
+            invalidDesignations,
+            isInvalidDesignationsChanged: true
+        });
+    }
+
+    handleRemoveNomenclatoricSynonym = id => {
+        const nomenclatoricSynonyms = this.state.nomenclatoricSynonyms.filter(s => s.id !== id);
+        this.setState({
+            nomenclatoricSynonyms,
+            isNomenclatoricSynonymsChanged: true
+        });
+    }
+
+    handleRemoveTaxonomicSynonym = id => {
+        const taxonomicSynonyms = this.state.taxonomicSynonyms.filter(s => s.id !== id);
+        this.setState({
+            taxonomicSynonyms,
+            isTaxonomicSynonymsChanged: true
+        });
+    }
+
+    handleRemoveInvalidDesignation = id => {
+        const invalidDesignations = this.state.invalidDesignations.filter(s => s.id !== id);
+        this.setState({
+            invalidDesignations,
+            isInvalidDesignationsChanged: true
+        });
+    }
+
+    handleChangeToTaxonomic = async (id, fromList) => {
+        // const selected = this.state.nomenclatoricSynonyms.find(s => s.id === id);
+        const selected = fromList.find(s => s.id === id);
+        await this.handleAddTaxonomicSynonym(selected);
+        // remove from all others
+        await this.handleRemoveNomenclatoricSynonym(id);
+        await this.handleRemoveInvalidDesignation(id);
+    }
+
+    handleChangeToNomenclatoric = async (id, fromList) => {
+        const selected = fromList.find(s => s.id === id);
+        await this.handleAddNomenclatoricSynonym(selected);
+        // remove from all others
+        await this.handleRemoveTaxonomicSynonym(id);
+        await this.handleRemoveInvalidDesignation(id);
+    }
+
+    handleChangeToInvalid = async (id, fromList) => {
+        const selected = fromList.find(s => s.id === id);
+        await this.handleAddInvalidDesignation(selected);
+        //remove from all others
+        await this.handleRemoveNomenclatoricSynonym(id);
+        await this.handleRemoveTaxonomicSynonym(id);
+    }
+
+    NomenclatoricSynonymListItem = ({ rowId, ...props }) => {
+        const fromList = this.state.nomenclatoricSynonyms;
+        const Additions = () => (
+            <React.Fragment>
+                <Button bsStyle="primary" bsSize="xsmall" onClick={() => this.handleChangeToTaxonomic(rowId, fromList)} title="Change to taxonomic synonym"><Glyphicon glyph="share-alt" /> {config.mappings.synonym.taxonomic.prefix}</Button>
+                &nbsp;
+                <Button bsStyle="primary" bsSize="xsmall" onClick={() => this.handleChangeToInvalid(rowId, fromList)} title="Change to invalid designation"><Glyphicon glyph="share-alt" /> {config.mappings.synonym.invalid.prefix}</Button>
+            </React.Fragment>
+        );
+        return (
+            <SynonymListItem {...props} additions={Additions} />
+        );
+    }
+
+    TaxonomicSynonymListItem = ({ rowId, ...props }) => {
+        const fromList = this.state.taxonomicSynonyms;
+        const Additions = p => (
+            <React.Fragment>
+                <Button bsStyle="primary" bsSize="xsmall" onClick={() => this.handleChangeToNomenclatoric(rowId, fromList)} title="Change to nomenclatoric synonym"><Glyphicon glyph="share-alt" /> {config.mappings.synonym.nomenclatoric.prefix}</Button>
+                &nbsp;
+                <Button bsStyle="primary" bsSize="xsmall" onClick={() => this.handleChangeToInvalid(rowId, fromList)} title="Change to invalid designation"><Glyphicon glyph="share-alt" /> {config.mappings.synonym.invalid.prefix}</Button>
+            </React.Fragment>
+        );
+        return (
+            <SynonymListItem {...props} additions={Additions} />
+        );
+    }
+
+    InvalidSynonymListItem = ({ rowId, ...props }) => {
+        const fromList = this.state.invalidDesignations;
+        const Additions = p => (
+            <React.Fragment>
+                <Button bsStyle="primary" bsSize="xsmall" onClick={() => this.handleChangeToNomenclatoric(rowId, fromList)} title="Change to nomenclatoric synonym"><Glyphicon glyph="share-alt" /> {config.mappings.synonym.nomenclatoric.prefix}</Button>
+                &nbsp;
+                <Button bsStyle="primary" bsSize="xsmall" onClick={() => this.handleChangeToTaxonomic(rowId, fromList)} title="Change to taxonomic synonym"><Glyphicon glyph="share-alt" /> {config.mappings.synonym.taxonomic.prefix}</Button>
+            </React.Fragment>
+        );
+        return (
+            <SynonymListItem {...props} additions={Additions} />
+        );
+    }
+
     submitForm = async e => {
         e.preventDefault();
         try {
@@ -104,12 +254,17 @@ class SpeciesRecord extends Component {
         const recordId = this.props.match.params.id;
         const { speciesRecord, accepted, basionym, replaced, nomenNovum } = await speciesFacade.getRecordById(recordId);
 
+        const { nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations } = await speciesFacade.getSynonyms(recordId);
+
         this.setState({
             record: speciesRecord,
             [`${ID_ACCEPTED_NAME_PROP}_selected`]: accepted,
             [`${ID_BASIONYM_NAME_PROP}_selected`]: basionym,
             [`${ID_REPLACED_NAME_PROP}_selected`]: replaced,
-            [`${ID_NOMEN_NOVUM_NAME_PROP}_selected`]: nomenNovum
+            [`${ID_NOMEN_NOVUM_NAME_PROP}_selected`]: nomenNovum,
+            nomenclatoricSynonyms,
+            taxonomicSynonyms,
+            invalidDesignations
         });
     }
 
@@ -503,6 +658,56 @@ class SpeciesRecord extends Component {
                                             selected={this.getSelectedName(ID_NOMEN_NOVUM_NAME_PROP)}
                                             onChange={selected => this.handleChangeTypeaheadSingle(selected, ID_NOMEN_NOVUM_NAME_PROP)}
                                             placeholder="Start by typing a species present in the database"
+                                        />
+                                    </Col>
+                                </FormGroup>
+                            </Well>
+                        </div>
+                        <div id="synonyms">
+                            <h3>Synonyms</h3>
+                            <Well>
+                                <FormGroup controlId="nomenclatoric-synonyms" bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Nomenclatoric Synonyms
+                                    </Col>
+                                    <Col xs={CONTENT_COL_WIDTH}>
+                                        <AddableList
+                                            id={`nomenclatoric-synonyms-autocomplete`}
+                                            data={this.state.nomenclatoricSynonyms.map(s => synonymFormatter(s, config.mappings.synonym.nomenclatoric.prefix))}
+                                            options={this.state.listOfSpecies}
+                                            onAddItemToList={this.handleAddNomenclatoricSynonym}
+                                            onRowDelete={this.handleRemoveNomenclatoricSynonym}
+                                            itemComponent={this.NomenclatoricSynonymListItem}
+                                        />
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId="taxonomic-synonyms" bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Taxonomic Synonyms
+                                    </Col>
+                                    <Col xs={CONTENT_COL_WIDTH}>
+                                        <AddableList
+                                            id={`taxonomic-synonyms-autocomplete`}
+                                            data={this.state.taxonomicSynonyms.map(s => synonymFormatter(s, config.mappings.synonym.taxonomic.prefix))}
+                                            options={this.state.listOfSpecies}
+                                            onAddItemToList={this.handleAddTaxonomicSynonym}
+                                            onRowDelete={this.handleRemoveTaxonomicSynonym}
+                                            itemComponent={this.TaxonomicSynonymListItem}
+                                        />
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId="invalid-designations" bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Invalid Designations
+                                    </Col>
+                                    <Col xs={CONTENT_COL_WIDTH}>
+                                        <AddableList
+                                            id={`invalid-designations`}
+                                            data={this.state.invalidDesignations.map(s => synonymFormatter(s, config.mappings.synonym.invalid.prefix))}
+                                            options={this.state.listOfSpecies}
+                                            onAddItemToList={this.handleAddInvalidDesignation}
+                                            onRowDelete={this.handleRemoveInvalidDesignation}
+                                            itemComponent={this.InvalidSynonymListItem}
                                         />
                                     </Col>
                                 </FormGroup>

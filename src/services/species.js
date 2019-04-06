@@ -21,6 +21,31 @@ const getAllSpeciesBySearchTerm = async term => {
     return response.data;
 }
 
+/**
+ * The result is ordered by id, the sorting from uri is not taken into account
+ * @param {*} id 
+ * @param {*} accessToken 
+ */
+const getSynonymsNomenclatoricOf = async ({ id, accessToken }) => {
+    const getSynonymsNomenclatoricUri = template.parse(config.uris.nomenclaturesUri.getNomenclatoricSynonymsUri).expand({ id });
+    const response = await axios.get(getSynonymsNomenclatoricUri);
+    return response.data;
+}
+
+// same
+const getSynonymsTaxonomicOf = async ({ id, accessToken }) => {
+    const getSynonymsTaxonomicUri = template.parse(config.uris.nomenclaturesUri.getTaxonomicSynonymsUri).expand({ id });
+    const response = await axios.get(getSynonymsTaxonomicUri);
+    return response.data;
+}
+
+//same
+const getInvalidDesignationsOf = async ({ id, accessToken }) => {
+    const getInvalidDesignationsUri = template.parse(config.uris.nomenclaturesUri.getInvalidSynonymsUri).expand({ id });
+    const response = await axios.get(getInvalidDesignationsUri);
+    return response.data;
+}
+
 const putNomenclature = async ({ data }) => {
     const nomenclaturesUri = template.parse(config.uris.nomenclaturesUri.baseUri).expand();
     await axios.put(nomenclaturesUri, data);
@@ -30,5 +55,8 @@ export default {
     getSpeciesRecordByIdWithFilter,
     getAllSpecies,
     getAllSpeciesBySearchTerm,
+    getSynonymsNomenclatoricOf,
+    getSynonymsTaxonomicOf,
+    getInvalidDesignationsOf,
     putNomenclature
 }

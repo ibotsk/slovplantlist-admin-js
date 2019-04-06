@@ -1,4 +1,5 @@
 import speciesService from '../services/species';
+import helper from '../utils/helper';
 import formatter from '../utils/formatter';
 
 const getRecordById = async id => {
@@ -42,6 +43,20 @@ const getAllSpeciesBySearchTerm = async (term, format) => {
     return listOfSpeciess.map(format);
 }
 
+const getSynonyms = async (id) => {
+
+    const nomenclatoricSynonyms = await speciesService.getSynonymsNomenclatoricOf({ id });
+    nomenclatoricSynonyms.sort(helper.listOfSpeciesSorterLex);
+
+    const taxonomicSynonyms = await speciesService.getSynonymsTaxonomicOf({ id });
+    taxonomicSynonyms.sort(helper.listOfSpeciesSorterLex);
+
+    const invalidDesignations = await speciesService.getInvalidDesignationsOf({ id });
+    invalidDesignations.sort(helper.listOfSpeciesSorterLex);
+
+    return { nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations };
+}
+
 const saveSpeciesAndSynonyms = async ({ species }) => {
     await speciesService.putNomenclature({ data: species });
 }
@@ -50,5 +65,6 @@ export default {
     getRecordById,
     getAllSpecies,
     getAllSpeciesBySearchTerm,
+    getSynonyms,
     saveSpeciesAndSynonyms
 };

@@ -71,6 +71,20 @@ export default {
                 colour: "#bb9d00"
             }
         },
+        synonym: {
+            nomenclatoric: {
+                numType: 3,
+                prefix: '≡'
+            },
+            taxonomic: {
+                numType: 2,
+                prefix: '='
+            },
+            invalid: {
+                numType: 1,
+                prefix: '–'
+            }
+        }
     },
     pagination: {
         paginationSize: 7,
@@ -151,6 +165,9 @@ export default {
                 %7D%7D
             ]%7D%7D`,
             getByIdWFilterUri: `${backendBase}/api/nomenclatures/{id}?filter=%7B"include":["accepted","basionym","replaced","nomenNovum"]%7D`,
+            getNomenclatoricSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsNomenclatoric?filter=%7B"include":"synonymsNomenclatoric"%7D`,
+            getTaxonomicSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsTaxonomic?filter=%7B"include":"synonymsNomenclatoric"%7D`,
+            getInvalidSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsInvalid`,
             countUri: `${backendBase}/api/nomenclatures/count?where={whereString}`
         },
         generaUri: {
