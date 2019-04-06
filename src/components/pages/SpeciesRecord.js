@@ -6,13 +6,23 @@ import {
     Checkbox
 } from 'react-bootstrap';
 
+import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+
 import LosName from '../segments/LosName';
+
 import speciesFacade from '../../facades/species';
 
+import helper from '../../utils/helper';
+import formatter from '../../utils/formatter';
 import config from '../../config/config';
 
 const LABEL_COL_WIDTH = 2;
 const CONTENT_COL_WIDTH = 10;
+
+const ID_ACCEPTED_NAME_PROP = 'id_accepted_name';
+const ID_BASIONYM_NAME_PROP = 'id_basionym';
+const ID_REPLACED_NAME_PROP = 'id_replaced';
+const ID_NOMEN_NOVUM_NAME_PROP = 'id_nomen_novum';
 
 const ntypes = config.mappings.losType;
 
@@ -22,7 +32,13 @@ class SpeciesRecord extends Component {
         super(props);
 
         this.state = {
-            record: {}
+            record: {},
+            listOfSpecies: [],
+            isLoading: false,
+            [`${ID_ACCEPTED_NAME_PROP}_selected`]: undefined,
+            [`${ID_BASIONYM_NAME_PROP}_selected`]: undefined,
+            [`${ID_REPLACED_NAME_PROP}_selected`]: undefined,
+            [`${ID_NOMEN_NOVUM_NAME_PROP}_selected`]: undefined,
         };
 
     }
@@ -43,15 +59,50 @@ class SpeciesRecord extends Component {
         });
     }
 
-    async componentDidMount() {
-        const recordId = this.props.match.params.id;
-        const record = await speciesFacade.getRecordById(recordId);
+    getSelectedName = id => {
+        return this.state[`${id}_selected`];
+    }
+
+    handleChangeTypeaheadSingle = (selected, prop) => {
+        const id = selected[0] ? selected[0].id : undefined;
+        const propSelected = `${prop}_selected`;
         this.setState({
-            record
+            [propSelected]: selected
+        });
+        this.handleChange(prop, id);
+    }
+
+    handleSearchSpeciesAsyncTypeahead = async query => {
+        this.setState({ isLoading: true });
+        const listOfSpecies = await speciesFacade.getAllSpeciesBySearchTerm(query, l => ({
+            id: l.id,
+            label: helper.listOfSpeciesString(l)
+        }));
+        this.setState({
+            isLoading: false,
+            listOfSpecies,
         });
     }
 
-    renderHybridFields = (isHybrid) => {
+    async componentDidMount() {
+        const recordId = this.props.match.params.id;
+        const record = await speciesFacade.getRecordById(recordId);
+
+        const acceptedSelected = formatter.losToTypeaheadSelected(record.accepted);
+        const basionymSelected = formatter.losToTypeaheadSelected(record.basionym);
+        const replacedSelected = formatter.losToTypeaheadSelected(record.replaced);
+        const nomenNovumSelected = formatter.losToTypeaheadSelected(record.nomenNovum);
+
+        this.setState({
+            record,
+            [`${ID_ACCEPTED_NAME_PROP}_selected`]: acceptedSelected,
+            [`${ID_BASIONYM_NAME_PROP}_selected`]: basionymSelected,
+            [`${ID_REPLACED_NAME_PROP}_selected`]: replacedSelected,
+            [`${ID_NOMEN_NOVUM_NAME_PROP}_selected`]: nomenNovumSelected
+        });
+    }
+
+    renderHybridFields = isHybrid => {
         if (isHybrid) {
             return (
                 <Panel>
@@ -193,13 +244,13 @@ class SpeciesRecord extends Component {
                             <Well>
                                 <FormGroup controlId="ntype" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Type:
+                                        Type
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
                                             componentClass="select"
                                             placeholder="select"
-                                            value={this.state.ntype}
+                                            value={this.state.record.ntype}
                                             onChange={this.handleChangeInput} >
                                             {
                                                 Object.keys(ntypes).map(t => <option value={t} key={t}>{ntypes[t].text}</option>)
@@ -209,7 +260,7 @@ class SpeciesRecord extends Component {
                                 </FormGroup>
                                 <FormGroup controlId="genus" bsSize="sm">
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Genus (text):
+                                        Genus (text)
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
@@ -221,7 +272,7 @@ class SpeciesRecord extends Component {
                                 </FormGroup>
                                 <FormGroup controlId="species" bsSize="sm">
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Species:
+                                        Species
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
@@ -233,7 +284,7 @@ class SpeciesRecord extends Component {
                                 </FormGroup>
                                 <FormGroup controlId="subsp" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Subsp:
+                                        Subsp
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
@@ -246,7 +297,7 @@ class SpeciesRecord extends Component {
                                 </FormGroup>
                                 <FormGroup controlId="var" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Var:
+                                        Var
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
@@ -259,7 +310,7 @@ class SpeciesRecord extends Component {
                                 </FormGroup>
                                 <FormGroup controlId="subvar" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Subvar:
+                                        Subvar
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
@@ -272,7 +323,7 @@ class SpeciesRecord extends Component {
                                 </FormGroup>
                                 <FormGroup controlId="forma" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Forma:
+                                        Forma
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
@@ -285,7 +336,7 @@ class SpeciesRecord extends Component {
                                 </FormGroup>
                                 <FormGroup controlId="nothosubsp" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Nothosubsp:
+                                        Nothosubsp
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
@@ -298,7 +349,7 @@ class SpeciesRecord extends Component {
                                 </FormGroup>
                                 <FormGroup controlId="nothoforma" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Nothoforma:
+                                        Nothoforma
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
@@ -311,7 +362,7 @@ class SpeciesRecord extends Component {
                                 </FormGroup>
                                 <FormGroup controlId="authors" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Authors:
+                                        Authors
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
@@ -338,7 +389,7 @@ class SpeciesRecord extends Component {
                             <Well>
                                 <FormGroup controlId="publication" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Publication:
+                                        Publication
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
@@ -351,7 +402,7 @@ class SpeciesRecord extends Component {
                                 </FormGroup>
                                 <FormGroup controlId="vernacular" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Vernacular:
+                                        Vernacular
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
@@ -364,7 +415,7 @@ class SpeciesRecord extends Component {
                                 </FormGroup>
                                 <FormGroup controlId="tribus" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                                        Tribus:
+                                        Tribus
                                     </Col>
                                     <Col sm={CONTENT_COL_WIDTH}>
                                         <FormControl
@@ -372,6 +423,75 @@ class SpeciesRecord extends Component {
                                             value={this.state.record.tribus || ''}
                                             placeholder="Tribus"
                                             onChange={this.handleChangeInput}
+                                        />
+                                    </Col>
+                                </FormGroup>
+                            </Well>
+                        </div>
+                        <div id="associations">
+                            <h3>Associations</h3>
+                            <Well>
+                                <FormGroup controlId={ID_ACCEPTED_NAME_PROP} bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Accepted name
+                                    </Col>
+                                    <Col xs={CONTENT_COL_WIDTH}>
+                                        <AsyncTypeahead
+                                            id={`${ID_ACCEPTED_NAME_PROP}-autocomplete`}
+                                            isLoading={this.state.isLoading}
+                                            options={this.state.listOfSpecies}
+                                            onSearch={this.handleSearchSpeciesAsyncTypeahead}
+                                            selected={this.getSelectedName(ID_ACCEPTED_NAME_PROP)}
+                                            onChange={selected => this.handleChangeTypeaheadSingle(selected, ID_ACCEPTED_NAME_PROP)}
+                                            placeholder="Start by typing a species present in the database"
+                                        />
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId={ID_BASIONYM_NAME_PROP} bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Basionym
+                                    </Col>
+                                    <Col xs={CONTENT_COL_WIDTH}>
+                                        <AsyncTypeahead
+                                            id={`${ID_BASIONYM_NAME_PROP}-autocomplete`}
+                                            isLoading={this.state.isLoading}
+                                            options={this.state.listOfSpecies}
+                                            onSearch={this.handleSearchSpeciesAsyncTypeahead}
+                                            selected={this.getSelectedName(ID_BASIONYM_NAME_PROP)}
+                                            onChange={selected => this.handleChangeTypeaheadSingle(selected, ID_BASIONYM_NAME_PROP)}
+                                            placeholder="Start by typing a species present in the database"
+                                        />
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId={ID_REPLACED_NAME_PROP} bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Replaced name
+                                    </Col>
+                                    <Col xs={CONTENT_COL_WIDTH}>
+                                        <AsyncTypeahead
+                                            id={`${ID_REPLACED_NAME_PROP}-autocomplete`}
+                                            isLoading={this.state.isLoading}
+                                            options={this.state.listOfSpecies}
+                                            onSearch={this.handleSearchSpeciesAsyncTypeahead}
+                                            selected={this.getSelectedName(ID_REPLACED_NAME_PROP)}
+                                            onChange={selected => this.handleChangeTypeaheadSingle(selected, ID_REPLACED_NAME_PROP)}
+                                            placeholder="Start by typing a species present in the database"
+                                        />
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId={ID_NOMEN_NOVUM_NAME_PROP} bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Nomen novum
+                                    </Col>
+                                    <Col xs={CONTENT_COL_WIDTH}>
+                                        <AsyncTypeahead
+                                            id={`${ID_NOMEN_NOVUM_NAME_PROP}-autocomplete`}
+                                            isLoading={this.state.isLoading}
+                                            options={this.state.listOfSpecies}
+                                            onSearch={this.handleSearchSpeciesAsyncTypeahead}
+                                            selected={this.getSelectedName(ID_NOMEN_NOVUM_NAME_PROP)}
+                                            onChange={selected => this.handleChangeTypeaheadSingle(selected, ID_NOMEN_NOVUM_NAME_PROP)}
+                                            placeholder="Start by typing a species present in the database"
                                         />
                                     </Col>
                                 </FormGroup>

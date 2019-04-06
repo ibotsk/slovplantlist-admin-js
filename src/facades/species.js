@@ -1,9 +1,30 @@
 import speciesService from '../services/species';
 
 const getRecordById = async id => {
-    return speciesService.getSpeciesRecordByIdWithFilter(id);
+    return await speciesService.getSpeciesRecordByIdWithFilter(id);
+}
+
+const getAllSpecies = async format => {
+    const listOfSpeciess = await speciesService.getAllSpecies(format);
+
+    if (!format) {
+        return listOfSpeciess;
+    }
+
+    return listOfSpeciess.map(format);
+}
+
+const getAllSpeciesBySearchTerm = async (term, format) => {
+    const listOfSpeciess = await speciesService.getAllSpeciesBySearchTerm(term);
+
+    if (!format) {
+        return listOfSpeciess;
+    }
+    return listOfSpeciess.map(format);
 }
 
 export default {
-    getRecordById
+    getRecordById,
+    getAllSpecies,
+    getAllSpeciesBySearchTerm
 };

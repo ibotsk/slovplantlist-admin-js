@@ -104,7 +104,52 @@ export default {
     uris: {
         nomenclaturesUri: {
             getAllWFilterUri: `${backendBase}/api/nomenclatures?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":{order}%7D`,
-            getByIdWFilterUri: `${backendBase}/api/nomenclatures/{id}`,
+            getAllWOrderUri: `${backendBase}/api/nomenclatures?filter=%7B"order":["genus","species","subsp","var","subvar","forma","authors","id"]%7D`,
+            getAllBySearchTermUri: `${backendBase}/api/nomenclatures?filter=%7B"where":%7B"or":[
+                %7B"genus":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"species":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"subsp":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"var":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"subvar":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"forma":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"authors":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"genus_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"species_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"subsp_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"var_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"subvar_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"forma_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"authors_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D
+            ]%7D%7D`,
+            getByIdWFilterUri: `${backendBase}/api/nomenclatures/{id}?filter=%7B"include":["accepted","basionym","replaced","nomenNovum"]%7D`,
             countUri: `${backendBase}/api/nomenclatures/count?where={whereString}`
         },
         generaUri: {
