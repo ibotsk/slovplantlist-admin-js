@@ -16,7 +16,6 @@ import LosName from '../segments/LosName';
 import speciesFacade from '../../facades/species';
 
 import helper from '../../utils/helper';
-import formatter from '../../utils/formatter';
 import config from '../../config/config';
 
 const LABEL_COL_WIDTH = 2;
@@ -103,19 +102,14 @@ class SpeciesRecord extends Component {
 
     async componentDidMount() {
         const recordId = this.props.match.params.id;
-        const record = await speciesFacade.getRecordById(recordId);
-
-        const acceptedSelected = formatter.losToTypeaheadSelected(record.accepted);
-        const basionymSelected = formatter.losToTypeaheadSelected(record.basionym);
-        const replacedSelected = formatter.losToTypeaheadSelected(record.replaced);
-        const nomenNovumSelected = formatter.losToTypeaheadSelected(record.nomenNovum);
+        const { speciesRecord, accepted, basionym, replaced, nomenNovum } = await speciesFacade.getRecordById(recordId);
 
         this.setState({
-            record,
-            [`${ID_ACCEPTED_NAME_PROP}_selected`]: acceptedSelected,
-            [`${ID_BASIONYM_NAME_PROP}_selected`]: basionymSelected,
-            [`${ID_REPLACED_NAME_PROP}_selected`]: replacedSelected,
-            [`${ID_NOMEN_NOVUM_NAME_PROP}_selected`]: nomenNovumSelected
+            record: speciesRecord,
+            [`${ID_ACCEPTED_NAME_PROP}_selected`]: accepted,
+            [`${ID_BASIONYM_NAME_PROP}_selected`]: basionym,
+            [`${ID_REPLACED_NAME_PROP}_selected`]: replaced,
+            [`${ID_NOMEN_NOVUM_NAME_PROP}_selected`]: nomenNovum
         });
     }
 

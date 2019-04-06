@@ -1,7 +1,26 @@
 import speciesService from '../services/species';
+import formatter from '../utils/formatter';
 
 const getRecordById = async id => {
-    return await speciesService.getSpeciesRecordByIdWithFilter(id);
+    const speciesRecord = await speciesService.getSpeciesRecordByIdWithFilter(id);
+
+    const accepted = formatter.losToTypeaheadSelected(speciesRecord.accepted);
+    const basionym = formatter.losToTypeaheadSelected(speciesRecord.basionym);
+    const replaced = formatter.losToTypeaheadSelected(speciesRecord.replaced);
+    const nomenNovum = formatter.losToTypeaheadSelected(speciesRecord.nomenNovum);
+
+    delete speciesRecord.accepted;
+    delete speciesRecord.basionym;
+    delete speciesRecord.replaced;
+    delete speciesRecord.nomenNovum;
+
+    return {
+        speciesRecord,
+        accepted,
+        basionym,
+        replaced,
+        nomenNovum
+    };
 }
 
 const getAllSpecies = async format => {
