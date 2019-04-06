@@ -8,6 +8,9 @@ import {
 import { LinkContainer } from 'react-router-bootstrap';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
+import { NotificationContainer } from 'react-notifications';
+import notifications from '../../utils/notifications';
+
 import LosName from '../segments/LosName';
 
 import speciesFacade from '../../facades/species';
@@ -91,7 +94,9 @@ class SpeciesRecord extends Component {
             await speciesFacade.saveSpeciesAndSynonyms({
                 species: this.state.record,
             });
+            notifications.success('Saved');
         } catch (error) {
+            notifications.error('Error saving');
             throw error;
         }
     }
@@ -523,6 +528,7 @@ class SpeciesRecord extends Component {
                         </div>
                     </Form>
                 </Grid>
+                <NotificationContainer />
             </div>
         );
     }

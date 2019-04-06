@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+
+import Footer from '../segments/Footer';
 import CNavbar from '../segments/Navbar';
+
 import Checklist from './Checklist';
 import SpeciesRecord from './SpeciesRecord';
 import Genera from './Genera';
@@ -27,6 +30,7 @@ class App extends Component {
       <React.Fragment>
         <CNavbar />
         <Routing />
+        <Footer />
       </React.Fragment>
     );
   }
