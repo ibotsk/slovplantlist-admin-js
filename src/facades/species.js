@@ -23,8 +23,13 @@ const getAllSpeciesBySearchTerm = async (term, format) => {
     return listOfSpeciess.map(format);
 }
 
+const saveSpeciesAndSynonyms = async ({ species }) => {
+    await speciesService.putNomenclature({ data: species });
+}
+
 export default {
     getRecordById,
     getAllSpecies,
-    getAllSpeciesBySearchTerm
+    getAllSpeciesBySearchTerm,
+    saveSpeciesAndSynonyms
 };

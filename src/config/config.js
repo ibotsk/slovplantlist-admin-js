@@ -103,6 +103,7 @@ export default {
     },
     uris: {
         nomenclaturesUri: {
+            baseUri: `${backendBase}/api/nomenclatures`,
             getAllWFilterUri: `${backendBase}/api/nomenclatures?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":{order}%7D`,
             getAllWOrderUri: `${backendBase}/api/nomenclatures?filter=%7B"order":["genus","species","subsp","var","subvar","forma","authors","id"]%7D`,
             getAllBySearchTermUri: `${backendBase}/api/nomenclatures?filter=%7B"where":%7B"or":[

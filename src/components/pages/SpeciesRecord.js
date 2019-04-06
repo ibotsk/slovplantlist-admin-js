@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 
 import {
-    Grid, Col, Well, Panel,
+    Grid, Col, Row, Well, Panel,
     Form, FormControl, FormGroup, ControlLabel,
-    Checkbox
+    Checkbox, Button
 } from 'react-bootstrap';
-
+import { LinkContainer } from 'react-router-bootstrap';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
 import LosName from '../segments/LosName';
@@ -23,6 +23,7 @@ const ID_ACCEPTED_NAME_PROP = 'id_accepted_name';
 const ID_BASIONYM_NAME_PROP = 'id_basionym';
 const ID_REPLACED_NAME_PROP = 'id_replaced';
 const ID_NOMEN_NOVUM_NAME_PROP = 'id_nomen_novum';
+const CHECKLIST_LIST_URI = '/checklist';
 
 const ntypes = config.mappings.losType;
 
@@ -82,6 +83,17 @@ class SpeciesRecord extends Component {
             isLoading: false,
             listOfSpecies,
         });
+    }
+
+    submitForm = async e => {
+        e.preventDefault();
+        try {
+            await speciesFacade.saveSpeciesAndSynonyms({
+                species: this.state.record,
+            });
+        } catch (error) {
+            throw error;
+        }
     }
 
     async componentDidMount() {
@@ -238,7 +250,7 @@ class SpeciesRecord extends Component {
                 <Grid>
                     <h2>Checklist record <small>({this.state.record ? <LosName data={this.state.record} /> : 'new'})</small></h2>
 
-                    <Form horizontal >
+                    <Form horizontal onSubmit={this.submitForm}>
                         <div id="name">
                             <h3>Name</h3>
                             <Well>
@@ -496,6 +508,18 @@ class SpeciesRecord extends Component {
                                     </Col>
                                 </FormGroup>
                             </Well>
+                        </div>
+                        <div id="controls">
+                            <Row>
+                                <Col sm={5} smOffset={2}>
+                                    <LinkContainer to={CHECKLIST_LIST_URI}>
+                                        <Button bsStyle="default" >Cancel</Button>
+                                    </LinkContainer>
+                                </Col>
+                                <Col sm={5}>
+                                    <Button bsStyle="primary" type='submit' >Save</Button>
+                                </Col>
+                            </Row>
                         </div>
                     </Form>
                 </Grid>

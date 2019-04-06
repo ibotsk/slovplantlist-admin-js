@@ -21,8 +21,14 @@ const getAllSpeciesBySearchTerm = async term => {
     return response.data;
 }
 
+const putNomenclature = async ({ data }) => {
+    const nomenclaturesUri = template.parse(config.uris.nomenclaturesUri.baseUri).expand();
+    await axios.put(nomenclaturesUri, data);
+}
+
 export default {
     getSpeciesRecordByIdWithFilter,
     getAllSpecies,
-    getAllSpeciesBySearchTerm
+    getAllSpeciesBySearchTerm,
+    putNomenclature
 }
