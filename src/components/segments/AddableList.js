@@ -7,7 +7,7 @@ import {
     ListGroup, ListGroupItem
 } from 'react-bootstrap';
 
-import { Typeahead } from 'react-bootstrap-typeahead';
+import { AsyncTypeahead, Typeahead } from 'react-bootstrap-typeahead';
 // import SynonymListItem from './SynonymListItem';
 
 class AddableList extends Component {
@@ -16,7 +16,9 @@ class AddableList extends Component {
         super(props);
 
         this.state = {
-            selected: undefined
+            selected: undefined,
+            options: [],
+            isLoading: false
         }
     }
 
@@ -35,6 +37,40 @@ class AddableList extends Component {
                 selected: undefined
             });
         }
+    }
+
+    handleSearchAsync = async query => {
+        this.setState({ isLoading: true });
+        const options = await this.props.onSearch(query);
+        this.setState({
+            isLoading: false,
+            options,
+        });
+    }
+
+    renderAsync = async => {
+        if (async) {
+            return <AsyncTypeahead
+                id={this.props.id}
+                bsSize='sm'
+                ref={typeahead => this.typeahead = typeahead}
+                isLoading={this.state.isLoading}
+                options={this.state.options}
+                onChange={this.onChange}
+                selected={this.state.selected}
+                onSearch={this.handleSearchAsync}
+                placeholder="Start by typing"
+            />;
+        }
+        return <Typeahead
+            id={this.props.id}
+            bsSize='sm'
+            ref={typeahead => this.typeahead = typeahead}
+            options={this.props.options}
+            onChange={this.onChange}
+            selected={this.state.selected}
+            placeholder="Start by typing"
+        />;
     }
 
     render() {
@@ -58,15 +94,7 @@ class AddableList extends Component {
                         <FormGroup>
                             <Col sm={12}>
                                 <InputGroup bsSize='sm'>
-                                    <Typeahead
-                                        id={this.props.id}
-                                        bsSize='sm'
-                                        ref={(typeahead) => this.typeahead = typeahead}
-                                        options={this.props.options}
-                                        onChange={this.onChange}
-                                        selected={this.state.selected}
-                                        placeholder="Start by typing"
-                                    />
+                                    {this.renderAsync(this.props.async)}
                                     <InputGroup.Button>
                                         <Button
                                             bsStyle='success'

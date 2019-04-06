@@ -109,14 +109,18 @@ class SpeciesRecord extends Component {
 
     handleSearchSpeciesAsyncTypeahead = async query => {
         this.setState({ isLoading: true });
-        const listOfSpecies = await speciesFacade.getAllSpeciesBySearchTerm(query, l => ({
-            id: l.id,
-            label: helper.listOfSpeciesString(l)
-        }));
+        const listOfSpecies = this.handleSearchAsync(query);
         this.setState({
             isLoading: false,
             listOfSpecies,
         });
+    }
+
+    handleSearchAsync = async query => {
+        return await speciesFacade.getAllSpeciesBySearchTerm(query, l => ({
+            id: l.id,
+            label: helper.listOfSpeciesString(l)
+        }));
     }
 
     handleAddNomenclatoricSynonym = async selected => {
@@ -673,10 +677,12 @@ class SpeciesRecord extends Component {
                                     <Col xs={CONTENT_COL_WIDTH}>
                                         <AddableList
                                             id={`nomenclatoric-synonyms-autocomplete`}
+                                            async={true}
                                             data={this.state.nomenclatoricSynonyms.map(s => synonymFormatter(s, config.mappings.synonym.nomenclatoric.prefix))}
                                             options={this.state.listOfSpecies}
                                             onAddItemToList={this.handleAddNomenclatoricSynonym}
                                             onRowDelete={this.handleRemoveNomenclatoricSynonym}
+                                            onSearch={this.handleSearchAsync}
                                             itemComponent={this.NomenclatoricSynonymListItem}
                                         />
                                     </Col>
@@ -688,10 +694,12 @@ class SpeciesRecord extends Component {
                                     <Col xs={CONTENT_COL_WIDTH}>
                                         <AddableList
                                             id={`taxonomic-synonyms-autocomplete`}
+                                            async={true}
                                             data={this.state.taxonomicSynonyms.map(s => synonymFormatter(s, config.mappings.synonym.taxonomic.prefix))}
                                             options={this.state.listOfSpecies}
                                             onAddItemToList={this.handleAddTaxonomicSynonym}
                                             onRowDelete={this.handleRemoveTaxonomicSynonym}
+                                            onSearch={this.handleSearchAsync}
                                             itemComponent={this.TaxonomicSynonymListItem}
                                         />
                                     </Col>
@@ -703,10 +711,12 @@ class SpeciesRecord extends Component {
                                     <Col xs={CONTENT_COL_WIDTH}>
                                         <AddableList
                                             id={`invalid-designations`}
+                                            async={true}
                                             data={this.state.invalidDesignations.map(s => synonymFormatter(s, config.mappings.synonym.invalid.prefix))}
                                             options={this.state.listOfSpecies}
                                             onAddItemToList={this.handleAddInvalidDesignation}
                                             onRowDelete={this.handleRemoveInvalidDesignation}
+                                            onSearch={this.handleSearchAsync}
                                             itemComponent={this.InvalidSynonymListItem}
                                         />
                                     </Col>
