@@ -17,6 +17,7 @@ import LosName from '../segments/LosName';
 import SynonymListItem from '../segments/SynonymListItem';
 
 import speciesFacade from '../../facades/species';
+import genusFacade from '../../facades/genus';
 
 import helper from '../../utils/helper';
 import config from '../../config/config';
@@ -26,6 +27,7 @@ import '../../styles/custom.css';
 const LABEL_COL_WIDTH = 2;
 const CONTENT_COL_WIDTH = 10;
 
+const ID_GENUS_NAME_PROP = 'id_genus';
 const ID_ACCEPTED_NAME_PROP = 'id_accepted_name';
 const ID_BASIONYM_NAME_PROP = 'id_basionym';
 const ID_REPLACED_NAME_PROP = 'id_replaced';
@@ -66,11 +68,15 @@ class SpeciesRecord extends Component {
         this.state = {
             record: {},
             listOfSpecies: [],
+            genera: [],
+            familyApg: '',
+            family: '',
             isLoading: false,
             [`${ID_ACCEPTED_NAME_PROP}_selected`]: undefined,
             [`${ID_BASIONYM_NAME_PROP}_selected`]: undefined,
             [`${ID_REPLACED_NAME_PROP}_selected`]: undefined,
             [`${ID_NOMEN_NOVUM_NAME_PROP}_selected`]: undefined,
+            [`${ID_GENUS_NAME_PROP}_selected`]: undefined,
 
             nomenclatoricSynonyms: [], // contains objects of list-of-species
             taxonomicSynonyms: [], // contains objects of list-of-species
@@ -103,8 +109,13 @@ class SpeciesRecord extends Component {
         });
     }
 
-    getSelectedName = id => {
+    getSelectedTypeahead = id => {
         return this.state[`${id}_selected`];
+    }
+
+    handleChangeGenusTypeahead = (selected, prop) => {
+        //update family and family apg
+        this.handleChangeTypeaheadSingle(selected, prop);
     }
 
     handleChangeTypeaheadSingle = (selected, prop) => {
@@ -118,7 +129,7 @@ class SpeciesRecord extends Component {
 
     handleSearchSpeciesAsyncTypeahead = async query => {
         this.setState({ isLoading: true });
-        const listOfSpecies = await this.handleSearchAsync(query);
+        const listOfSpecies = await this.handleSearchSpeciesAsync(query);
 
         this.setState({
             isLoading: false,
@@ -126,7 +137,20 @@ class SpeciesRecord extends Component {
         });
     }
 
-    handleSearchAsync = async query => {
+    handleSearchGeneraAsyncTypeahead = async query => {
+        this.setState({ isLoading: true });
+        const genera = await genusFacade.getAllGeneraBySearchTerm(query, g => ({
+            id: g.id,
+            label: g.name
+        }));
+
+        this.setState({
+            isLoading: false,
+            genera,
+        });
+    }
+
+    handleSearchSpeciesAsync = async query => {
         return await speciesFacade.getAllSpeciesBySearchTerm(query, l => ({
             id: l.id,
             label: helper.listOfSpeciesString(l)
@@ -292,7 +316,7 @@ class SpeciesRecord extends Component {
 
     async componentDidMount() {
         const recordId = this.props.match.params.id;
-        const { speciesRecord, accepted, basionym, replaced, nomenNovum } = await speciesFacade.getRecordById(recordId);
+        const { speciesRecord, accepted, basionym, replaced, nomenNovum, genus, familyApg, family } = await speciesFacade.getRecordById(recordId);
 
         const { nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations } = await speciesFacade.getSynonyms(recordId);
         const { basionymFor, replacedFor, nomenNovumFor } = await speciesFacade.getBasionymsFor(recordId);
@@ -303,6 +327,9 @@ class SpeciesRecord extends Component {
             [`${ID_BASIONYM_NAME_PROP}_selected`]: basionym,
             [`${ID_REPLACED_NAME_PROP}_selected`]: replaced,
             [`${ID_NOMEN_NOVUM_NAME_PROP}_selected`]: nomenNovum,
+            [`${ID_GENUS_NAME_PROP}_selected`]: genus,
+            familyApg,
+            family,
             nomenclatoricSynonyms,
             taxonomicSynonyms,
             invalidDesignations,
@@ -441,6 +468,8 @@ class SpeciesRecord extends Component {
     }
 
     render() {
+        console.log(this.state);
+
         return (
             <div id='species-detail'>
                 <Grid>
@@ -449,6 +478,40 @@ class SpeciesRecord extends Component {
                     <Form horizontal onSubmit={this.submitForm}>
                         <div id="name">
                             <h3>Name</h3>
+                            <Well>
+                                <FormGroup bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        <ControlLabel>Family APG</ControlLabel>
+                                    </Col>
+                                    <Col sm={CONTENT_COL_WIDTH}>
+                                        <FormControl.Static>{this.state.familyApg}</FormControl.Static>
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        <ControlLabel>Family</ControlLabel>
+                                    </Col>
+                                    <Col sm={CONTENT_COL_WIDTH}>
+                                        <FormControl.Static>{this.state.family}</FormControl.Static>
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId={ID_ACCEPTED_NAME_PROP} bsSize='sm'>
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Genus (reference)
+                                    </Col>
+                                    <Col sm={CONTENT_COL_WIDTH}>
+                                        <AsyncTypeahead
+                                            id={`${ID_GENUS_NAME_PROP}-autocomplete`}
+                                            isLoading={this.state.isLoading}
+                                            options={this.state.genera}
+                                            onSearch={this.handleSearchGeneraAsyncTypeahead}
+                                            selected={this.getSelectedTypeahead(ID_GENUS_NAME_PROP)}
+                                            onChange={selected => this.handleChangeGenusTypeahead(selected, ID_GENUS_NAME_PROP)}
+                                            placeholder="Start by typing a genus present in the database (case sensitive)"
+                                        />
+                                    </Col>
+                                </FormGroup>
+                            </Well>
                             <Well>
                                 <FormGroup controlId="ntype" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
@@ -649,9 +712,9 @@ class SpeciesRecord extends Component {
                                             isLoading={this.state.isLoading}
                                             options={this.state.listOfSpecies}
                                             onSearch={this.handleSearchSpeciesAsyncTypeahead}
-                                            selected={this.getSelectedName(ID_ACCEPTED_NAME_PROP)}
+                                            selected={this.getSelectedTypeahead(ID_ACCEPTED_NAME_PROP)}
                                             onChange={selected => this.handleChangeTypeaheadSingle(selected, ID_ACCEPTED_NAME_PROP)}
-                                            placeholder="Start by typing a species present in the database"
+                                            placeholder="Start by typing a species present in the database (case sensitive)"
                                         />
                                     </Col>
                                 </FormGroup>
@@ -665,9 +728,9 @@ class SpeciesRecord extends Component {
                                             isLoading={this.state.isLoading}
                                             options={this.state.listOfSpecies}
                                             onSearch={this.handleSearchSpeciesAsyncTypeahead}
-                                            selected={this.getSelectedName(ID_BASIONYM_NAME_PROP)}
+                                            selected={this.getSelectedTypeahead(ID_BASIONYM_NAME_PROP)}
                                             onChange={selected => this.handleChangeTypeaheadSingle(selected, ID_BASIONYM_NAME_PROP)}
-                                            placeholder="Start by typing a species present in the database"
+                                            placeholder="Start by typing a species present in the database (case sensitive)"
                                         />
                                     </Col>
                                 </FormGroup>
@@ -681,9 +744,9 @@ class SpeciesRecord extends Component {
                                             isLoading={this.state.isLoading}
                                             options={this.state.listOfSpecies}
                                             onSearch={this.handleSearchSpeciesAsyncTypeahead}
-                                            selected={this.getSelectedName(ID_REPLACED_NAME_PROP)}
+                                            selected={this.getSelectedTypeahead(ID_REPLACED_NAME_PROP)}
                                             onChange={selected => this.handleChangeTypeaheadSingle(selected, ID_REPLACED_NAME_PROP)}
-                                            placeholder="Start by typing a species present in the database"
+                                            placeholder="Start by typing a species present in the database (case sensitive)"
                                         />
                                     </Col>
                                 </FormGroup>
@@ -697,9 +760,9 @@ class SpeciesRecord extends Component {
                                             isLoading={this.state.isLoading}
                                             options={this.state.listOfSpecies}
                                             onSearch={this.handleSearchSpeciesAsyncTypeahead}
-                                            selected={this.getSelectedName(ID_NOMEN_NOVUM_NAME_PROP)}
+                                            selected={this.getSelectedTypeahead(ID_NOMEN_NOVUM_NAME_PROP)}
                                             onChange={selected => this.handleChangeTypeaheadSingle(selected, ID_NOMEN_NOVUM_NAME_PROP)}
-                                            placeholder="Start by typing a species present in the database"
+                                            placeholder="Start by typing a species present in the database (case sensitive)"
                                         />
                                     </Col>
                                 </FormGroup>
@@ -720,7 +783,7 @@ class SpeciesRecord extends Component {
                                             options={this.state.listOfSpecies}
                                             onAddItemToList={this.handleAddNomenclatoricSynonym}
                                             onRowDelete={this.handleRemoveNomenclatoricSynonym}
-                                            onSearch={this.handleSearchAsync}
+                                            onSearch={this.handleSearchSpeciesAsync}
                                             itemComponent={this.NomenclatoricSynonymListItem}
                                         />
                                     </Col>
@@ -737,7 +800,7 @@ class SpeciesRecord extends Component {
                                             options={this.state.listOfSpecies}
                                             onAddItemToList={this.handleAddTaxonomicSynonym}
                                             onRowDelete={this.handleRemoveTaxonomicSynonym}
-                                            onSearch={this.handleSearchAsync}
+                                            onSearch={this.handleSearchSpeciesAsync}
                                             itemComponent={this.TaxonomicSynonymListItem}
                                         />
                                     </Col>
@@ -754,7 +817,7 @@ class SpeciesRecord extends Component {
                                             options={this.state.listOfSpecies}
                                             onAddItemToList={this.handleAddInvalidDesignation}
                                             onRowDelete={this.handleRemoveInvalidDesignation}
-                                            onSearch={this.handleSearchAsync}
+                                            onSearch={this.handleSearchSpeciesAsync}
                                             itemComponent={this.InvalidSynonymListItem}
                                         />
                                     </Col>

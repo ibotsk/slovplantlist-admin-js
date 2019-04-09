@@ -11,18 +11,28 @@ const getRecordById = async id => {
     const basionym = formatter.losToTypeaheadSelected(speciesRecord.basionym);
     const replaced = formatter.losToTypeaheadSelected(speciesRecord.replaced);
     const nomenNovum = formatter.losToTypeaheadSelected(speciesRecord.nomenNovum);
+    const genus = [{
+        id: speciesRecord.genusRel.id,
+        label: speciesRecord.genusRel.name
+    }];
+    const familyApg = speciesRecord.genusRel.familyApg.name;
+    const family = speciesRecord.genusRel.family.name;
 
     delete speciesRecord.accepted;
     delete speciesRecord.basionym;
     delete speciesRecord.replaced;
     delete speciesRecord.nomenNovum;
+    delete speciesRecord.genusRel;
 
     return {
         speciesRecord,
         accepted,
         basionym,
         replaced,
-        nomenNovum
+        nomenNovum,
+        genus,
+        familyApg,
+        family
     };
 }
 

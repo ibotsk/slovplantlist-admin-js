@@ -164,7 +164,7 @@ export default {
                     "like": "%25{term}%25"
                 %7D%7D
             ]%7D%7D`,
-            getByIdWFilterUri: `${backendBase}/api/nomenclatures/{id}?filter=%7B"include":["accepted","basionym","replaced","nomenNovum"]%7D`,
+            getByIdWFilterUri: `${backendBase}/api/nomenclatures/{id}?filter=%7B"include":["accepted","basionym","replaced","nomenNovum",%7B"genusRel":["family","familyApg"]%7D]%7D`,
             getNomenclatoricSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsNomenclatoric?filter=%7B"include":"synonymsNomenclatoric"%7D`,
             getTaxonomicSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsTaxonomic?filter=%7B"include":"synonymsNomenclatoric"%7D`,
             getInvalidSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsInvalid`,
@@ -176,6 +176,11 @@ export default {
         },
         generaUri: {
             getAllWFilterUri: `${backendBase}/api/genera?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["familyApg","family"],"order":{order}%7D`,
+            getAllBySearchTermUri: `${backendBase}/api/genera?filter=%7B"where":
+                %7B"name":%7B
+                    "like": "%25{term}%25"
+                %7D%7D
+            %7D`,
             countUri: `${backendBase}/api/genera/count?where={whereString}`
         },
         familiesApgUri: {

@@ -59,7 +59,7 @@ class AddableList extends Component {
                 onChange={this.onChange}
                 selected={this.state.selected}
                 onSearch={this.handleSearchAsync}
-                placeholder="Start by typing"
+                placeholder="Start by typing (case sensitive)"
             />;
         }
         return <Typeahead
