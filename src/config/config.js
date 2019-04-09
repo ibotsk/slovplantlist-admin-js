@@ -168,6 +168,7 @@ export default {
             getNomenclatoricSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsNomenclatoric?filter=%7B"include":"synonymsNomenclatoric"%7D`,
             getTaxonomicSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsTaxonomic?filter=%7B"include":"synonymsNomenclatoric"%7D`,
             getInvalidSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsInvalid`,
+            getSynonymsOfParent: `${backendBase}/api/nomenclatures/{id}/parentOfSynonyms`,
             countUri: `${backendBase}/api/nomenclatures/count?where={whereString}`
         },
         generaUri: {
@@ -181,7 +182,11 @@ export default {
         familiesUri: {
             getAllWOrderUri: `${backendBase}/api/families?filter=%7B"order":["name","id"]%7D`,
             countUri: `${backendBase}/api/families/count?where={whereString}`
-        }
+        },
+        synonymsUri: {
+            baseUri: `${backendBase}/api/synonyms`,
+            synonymsByIdUri: `${backendBase}/api/synonyms/{id}`
+        },
     },
 
     logging: {

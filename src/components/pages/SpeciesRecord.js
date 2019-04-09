@@ -74,6 +74,10 @@ class SpeciesRecord extends Component {
             nomenclatoricSynonyms: [], // contains objects of list-of-species
             taxonomicSynonyms: [], // contains objects of list-of-species
             invalidDesignations: [],
+
+            isNomenclatoricSynonymsChanged: false,
+            isTaxonomicSynonymsChanged: false,
+            isInvalidDesignationsChanged: false,
         };
 
     }
@@ -246,8 +250,20 @@ class SpeciesRecord extends Component {
         try {
             await speciesFacade.saveSpeciesAndSynonyms({
                 species: this.state.record,
+                nomenclatoricSynonyms: this.state.nomenclatoricSynonyms,
+                taxonomicSynonyms: this.state.taxonomicSynonyms,
+                invalidDesignations: this.state.invalidDesignations,
+                isNomenclatoricSynonymsChanged: this.state.isNomenclatoricSynonymsChanged,
+                isTaxonomicSynonymsChanged: this.state.isTaxonomicSynonymsChanged,
+                isInvalidDesignationsChanged: this.state.isInvalidDesignationsChanged
             });
             notifications.success('Saved');
+
+            this.setState({
+                isNomenclatoricSynonymsChanged: false,
+                isTaxonomicSynonymsChanged: false,
+                isInvalidDesignationsChanged: false
+            });
         } catch (error) {
             notifications.error('Error saving');
             throw error;
@@ -401,8 +417,6 @@ class SpeciesRecord extends Component {
     }
 
     render() {
-        console.log(this.state);
-
         return (
             <div id='species-detail'>
                 <Grid>
