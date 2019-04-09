@@ -59,6 +59,17 @@ const getSynonyms = async (id) => {
     return { nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations };
 }
 
+const getBasionymsFor = async (id) => {
+    const basionymFor = await speciesService.getBasionymFor({ id });
+    const replacedFor = await speciesService.getReplacedFor({ id });
+    const nomenNovumFor = await speciesService.getNomenNovumFor({ id });
+    return {
+        basionymFor,
+        replacedFor,
+        nomenNovumFor
+    }
+}
+
 const saveSpeciesAndSynonyms = async ({
     species,
     nomenclatoricSynonyms,
@@ -144,5 +155,6 @@ export default {
     getAllSpecies,
     getAllSpeciesBySearchTerm,
     getSynonyms,
+    getBasionymsFor,
     saveSpeciesAndSynonyms
 };

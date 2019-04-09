@@ -52,6 +52,24 @@ const getAllSynonymsOf = async ({ id, accessToken }) => {
     return response.data;
 }
 
+const getBasionymFor = async ({ id, accessToken }) => {
+    const getBasionymForUri = template.parse(config.uris.nomenclaturesUri.getBasionymForUri).expand({ id });
+    const response = await axios.get(getBasionymForUri);
+    return response.data;
+}
+
+const getReplacedFor = async ({id, accessToken }) => {
+    const getReplacedForUri = template.parse(config.uris.nomenclaturesUri.getReplacedForUri).expand({ id });
+    const response = await axios.get(getReplacedForUri);
+    return response.data;
+}
+
+const getNomenNovumFor = async ({ id, accessToken }) => {
+    const getNomenNovumForUri = template.parse(config.uris.nomenclaturesUri.getNomenNovumForUri).expand({ id });
+    const response = await axios.get(getNomenNovumForUri);
+    return response.data;
+}
+
 const putNomenclature = async ({ data }) => {
     const nomenclaturesUri = template.parse(config.uris.nomenclaturesUri.baseUri).expand();
     await axios.put(nomenclaturesUri, data);
@@ -75,6 +93,9 @@ export default {
     getSynonymsTaxonomicOf,
     getInvalidDesignationsOf,
     getAllSynonymsOf,
+    getBasionymFor,
+    getReplacedFor,
+    getNomenNovumFor,
     putNomenclature,
     postSynonym,
     deleteSynonym

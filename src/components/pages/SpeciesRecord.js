@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import {
     Grid, Col, Row, Well, Panel,
     Form, FormControl, FormGroup, ControlLabel,
+    ListGroup, ListGroupItem,
     Checkbox, Button, Glyphicon
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -51,7 +52,7 @@ const addSynonymToList = async (selected, synonyms, accessToken) => {
         return null;
     }
     const { speciesRecord } = await speciesFacade.getRecordById(selected.id);
-    
+
     synonyms.push(speciesRecord);
     synonyms.sort(helper.listOfSpeciesSorterLex);
     return synonyms;
@@ -78,6 +79,10 @@ class SpeciesRecord extends Component {
             isNomenclatoricSynonymsChanged: false,
             isTaxonomicSynonymsChanged: false,
             isInvalidDesignationsChanged: false,
+
+            basionymFor: [],
+            replacedFor: [],
+            nomenNovumFor: [],
         };
 
     }
@@ -113,7 +118,8 @@ class SpeciesRecord extends Component {
 
     handleSearchSpeciesAsyncTypeahead = async query => {
         this.setState({ isLoading: true });
-        const listOfSpecies = this.handleSearchAsync(query);
+        const listOfSpecies = await this.handleSearchAsync(query);
+
         this.setState({
             isLoading: false,
             listOfSpecies,
@@ -203,6 +209,20 @@ class SpeciesRecord extends Component {
         await this.handleRemoveTaxonomicSynonym(id);
     }
 
+    renderPlainListOfSpeciesNames = list => {
+        if (!list || list.length === 0) {
+            return <ListGroupItem />
+        }
+        return (
+            <ListGroup>
+                {list.map(b =>
+                    <ListGroupItem key={b.id}>
+                        <LosName data={b} />
+                    </ListGroupItem>)}
+            </ListGroup>
+        )
+    }
+
     NomenclatoricSynonymListItem = ({ rowId, ...props }) => {
         const fromList = this.state.nomenclatoricSynonyms;
         const Additions = () => (
@@ -275,6 +295,7 @@ class SpeciesRecord extends Component {
         const { speciesRecord, accepted, basionym, replaced, nomenNovum } = await speciesFacade.getRecordById(recordId);
 
         const { nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations } = await speciesFacade.getSynonyms(recordId);
+        const { basionymFor, replacedFor, nomenNovumFor } = await speciesFacade.getBasionymsFor(recordId);
 
         this.setState({
             record: speciesRecord,
@@ -284,7 +305,10 @@ class SpeciesRecord extends Component {
             [`${ID_NOMEN_NOVUM_NAME_PROP}_selected`]: nomenNovum,
             nomenclatoricSynonyms,
             taxonomicSynonyms,
-            invalidDesignations
+            invalidDesignations,
+            basionymFor,
+            replacedFor,
+            nomenNovumFor
         });
     }
 
@@ -733,6 +757,35 @@ class SpeciesRecord extends Component {
                                             onSearch={this.handleSearchAsync}
                                             itemComponent={this.InvalidSynonymListItem}
                                         />
+                                    </Col>
+                                </FormGroup>
+                            </Well>
+                        </div>
+                        <div id="associations-inherited">
+                            <h3>Inherited associations</h3>
+                            <Well>
+                                <FormGroup controlId="idBasionymFor">
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Basionym For
+                                    </Col>
+                                    <Col xs={CONTENT_COL_WIDTH}>
+                                        {this.renderPlainListOfSpeciesNames(this.state.basionymFor)}
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId="idReplacedFor">
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Replaced For
+                                    </Col>
+                                    <Col xs={CONTENT_COL_WIDTH}>
+                                        {this.renderPlainListOfSpeciesNames(this.state.replacedFor)}
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId="idNomenNovumFor">
+                                    <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                                        Nomen Novum For
+                                    </Col>
+                                    <Col xs={CONTENT_COL_WIDTH}>
+                                        {this.renderPlainListOfSpeciesNames(this.state.nomenNovumFor)}
                                     </Col>
                                 </FormGroup>
                             </Well>

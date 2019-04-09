@@ -169,6 +169,9 @@ export default {
             getTaxonomicSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsTaxonomic?filter=%7B"include":"synonymsNomenclatoric"%7D`,
             getInvalidSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsInvalid`,
             getSynonymsOfParent: `${backendBase}/api/nomenclatures/{id}/parentOfSynonyms`,
+            getBasionymForUri: `${backendBase}/api/nomenclatures/{id}/basionymFor`,
+            getReplacedForUri: `${backendBase}/api/nomenclatures/{id}/replacedFor`,
+            getNomenNovumForUri: `${backendBase}/api/nomenclatures/{id}/nomenNovumFor`,
             countUri: `${backendBase}/api/nomenclatures/count?where={whereString}`
         },
         generaUri: {
