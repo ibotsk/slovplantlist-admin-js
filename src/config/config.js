@@ -181,6 +181,7 @@ export default {
                     "like": "%25{term}%25"
                 %7D%7D
             %7D`,
+            getByIdWithFamilies: `${backendBase}/api/genera/{id}?filter=%7B"include":["familyApg","family"]%7D`,
             countUri: `${backendBase}/api/genera/count?where={whereString}`
         },
         familiesApgUri: {

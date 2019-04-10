@@ -113,8 +113,15 @@ class SpeciesRecord extends Component {
         return this.state[`${id}_selected`];
     }
 
-    handleChangeGenusTypeahead = (selected, prop) => {
-        //update family and family apg
+    handleChangeGenusTypeahead = async (selected, prop) => {
+        const id = selected[0] ? selected[0].id : undefined;
+        if (id) {
+            const { family, familyApg } = await genusFacade.getGenusByIdWithFamilies(id);
+            this.setState({
+                family: family.name,
+                familyApg: familyApg.name
+            });
+        }
         this.handleChangeTypeaheadSingle(selected, prop);
     }
 
@@ -468,8 +475,6 @@ class SpeciesRecord extends Component {
     }
 
     render() {
-        console.log(this.state);
-
         return (
             <div id='species-detail'>
                 <Grid>
@@ -827,7 +832,7 @@ class SpeciesRecord extends Component {
                         <div id="associations-inherited">
                             <h3>Inherited associations</h3>
                             <Well>
-                                <FormGroup controlId="idBasionymFor">
+                                <FormGroup controlId="idBasionymFor" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                                         Basionym For
                                     </Col>
@@ -835,7 +840,7 @@ class SpeciesRecord extends Component {
                                         {this.renderPlainListOfSpeciesNames(this.state.basionymFor)}
                                     </Col>
                                 </FormGroup>
-                                <FormGroup controlId="idReplacedFor">
+                                <FormGroup controlId="idReplacedFor" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                                         Replaced For
                                     </Col>
@@ -843,7 +848,7 @@ class SpeciesRecord extends Component {
                                         {this.renderPlainListOfSpeciesNames(this.state.replacedFor)}
                                     </Col>
                                 </FormGroup>
-                                <FormGroup controlId="idNomenNovumFor">
+                                <FormGroup controlId="idNomenNovumFor" bsSize='sm'>
                                     <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                                         Nomen Novum For
                                     </Col>

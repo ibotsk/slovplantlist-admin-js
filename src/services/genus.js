@@ -9,6 +9,13 @@ const getAllGeneraBySearchTerm = async (term) => {
     return response.data;
 }
 
+const getGenusByIdWithFamilies = async id => {
+    const getByIdWithFamilies = template.parse(config.uris.generaUri.getByIdWithFamilies).expand({ id });
+    const response = await axios.get(getByIdWithFamilies);
+    return response.data;
+}
+
 export default {
-    getAllGeneraBySearchTerm
+    getAllGeneraBySearchTerm,
+    getGenusByIdWithFamilies
 }
