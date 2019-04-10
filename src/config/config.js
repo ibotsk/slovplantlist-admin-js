@@ -1,5 +1,4 @@
-
-const backendBase = "http://localhost:3001";
+const backendBase = `${process.env.REACT_APP_BACKEND_BASE}:${process.env.REACT_APP_BACKEND_PORT}`;
 
 export default {
 
