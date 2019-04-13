@@ -38,6 +38,11 @@ const columns = [
     }
 ];
 
+const defaultSorted = [{
+    dataField: 'name',
+    order: 'asc'
+}];
+
 class FamiliesAPG extends React.Component {
 
     constructor(props) {
@@ -85,6 +90,7 @@ class FamiliesAPG extends React.Component {
                         keyField='id'
                         data={this.formatResult(this.props.data)}
                         columns={columns}
+                        defaultSorted={defaultSorted}
                         filter={filterFactory()}
                         onTableChange={this.props.onTableChange}
                     />
