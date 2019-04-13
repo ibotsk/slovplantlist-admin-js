@@ -185,6 +185,8 @@ export default {
             countUri: `${backendBase}/api/genera/count?where={whereString}`
         },
         familiesApgUri: {
+            baseUri: `${backendBase}/api/family_apgs`,
+            getByIdUri: `${backendBase}/api/family_apgs/{id}`,
             getAllWOrderUri: `${backendBase}/api/family_apgs?filter=%7B"order":["name","id"]%7D`,
             countUri: `${backendBase}/api/family_apgs/count?where={whereString}`
         },

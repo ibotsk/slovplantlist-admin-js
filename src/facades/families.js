@@ -6,11 +6,22 @@ const getFamilyByIdCurated = async ({ id, accessToken }) => {
     return utils.nullToEmpty(data);
 }
 
+const getFamilyApgByIdCurated = async ({ id, accessToken }) => {
+    const data = await familiesService.getFamilyApgById({ id });
+    return utils.nullToEmpty(data);
+}
+
 const saveFamily = async ({ data }) => {
     await familiesService.putFamily({ data });
 }
 
+const saveFamilyApg = async ({ data }) => {
+    await familiesService.putFamilyApg({ data });
+}
+
 export default {
     getFamilyByIdCurated,
-    saveFamily
+    getFamilyApgByIdCurated,
+    saveFamily,
+    saveFamilyApg
 }
