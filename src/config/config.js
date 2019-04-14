@@ -175,6 +175,7 @@ export default {
             countUri: `${backendBase}/api/nomenclatures/count?where={whereString}`
         },
         generaUri: {
+            baseUri: `${backendBase}/api/genera`,
             getAllWFilterUri: `${backendBase}/api/genera?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["familyApg","family"],"order":{order}%7D`,
             getAllBySearchTermUri: `${backendBase}/api/genera?filter=%7B"where":
                 %7B"name":%7B

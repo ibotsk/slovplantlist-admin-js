@@ -9,9 +9,21 @@ const getFamilyById = async ({ id }) => {
     return response.data;
 }
 
+const getAllFamilies = async () => {
+    const getAllFamiliesUri = template.parse(config.uris.familiesUri.getAllWOrderUri).expand();
+    const response = await axios.get(getAllFamiliesUri);
+    return response.data;
+}
+
 const getFamilyApgById = async ({ id }) => {
     const getFamilyApgByIdUri = template.parse(config.uris.familiesApgUri.getByIdUri).expand({ id });
     const response = await axios.get(getFamilyApgByIdUri);
+    return response.data;
+}
+
+const getAllFamiliesApg = async () => {
+    const getAllFamiliesApgUri = template.parse(config.uris.familiesApgUri.getAllWOrderUri).expand();
+    const response = await axios.get(getAllFamiliesApgUri);
     return response.data;
 }
 
@@ -27,7 +39,9 @@ const putFamilyApg = async ({ data }) => {
 
 export default {
     getFamilyById,
+    getAllFamilies,
     getFamilyApgById,
+    getAllFamiliesApg,
     putFamily,
     putFamilyApg
 }

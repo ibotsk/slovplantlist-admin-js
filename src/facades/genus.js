@@ -9,8 +9,8 @@ const getAllGeneraBySearchTerm = async (term, format) => {
     return genera.map(format);
 }
 
-const getGenusByIdWithFamilies = async (id, format) => {
-    const genus = await genusService.getGenusByIdWithFamilies(id);
+const getGenusByIdWithFamilies = async ({ id }, format) => {
+    const genus = await genusService.getGenusByIdWithFamilies({ id });
 
     const family = genus.family;
     const familyApg = genus.familyApg;
@@ -18,7 +18,7 @@ const getGenusByIdWithFamilies = async (id, format) => {
     delete genus.family;
     delete genus.familyApg;
 
-    let toReturn;
+    let toReturn = genus;
     if (format) {
         toReturn = format(genus);
     }
@@ -26,7 +26,12 @@ const getGenusByIdWithFamilies = async (id, format) => {
     return { genus: toReturn, family, familyApg };
 }
 
+const saveGenus = async ({ data }) => {
+    await genusService.putGenus({ data });
+}
+
 export default {
     getAllGeneraBySearchTerm,
-    getGenusByIdWithFamilies
+    getGenusByIdWithFamilies,
+    saveGenus
 }

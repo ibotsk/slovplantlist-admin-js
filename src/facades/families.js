@@ -6,9 +6,27 @@ const getFamilyByIdCurated = async ({ id, accessToken }) => {
     return utils.nullToEmpty(data);
 }
 
+const getAllFamilies = async format => {
+    const data = await familiesService.getAllFamilies();
+
+    if (!format) {
+        return data;
+    }
+    return data.map(format);
+}
+
 const getFamilyApgByIdCurated = async ({ id, accessToken }) => {
     const data = await familiesService.getFamilyApgById({ id });
     return utils.nullToEmpty(data);
+}
+
+const getAllFamiliesApg = async format => {
+    const data = await familiesService.getAllFamiliesApg();
+
+    if (!format) {
+        return data;
+    }
+    return data.map(format);
 }
 
 const saveFamily = async ({ data }) => {
@@ -21,7 +39,9 @@ const saveFamilyApg = async ({ data }) => {
 
 export default {
     getFamilyByIdCurated,
+    getAllFamilies,
     getFamilyApgByIdCurated,
+    getAllFamiliesApg,
     saveFamily,
     saveFamilyApg
 }

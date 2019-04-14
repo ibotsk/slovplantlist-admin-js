@@ -116,7 +116,7 @@ class SpeciesRecord extends Component {
     handleChangeGenusTypeahead = async (selected, prop) => {
         const id = selected[0] ? selected[0].id : undefined;
         if (id) {
-            const { family, familyApg } = await genusFacade.getGenusByIdWithFamilies(id);
+            const { family, familyApg } = await genusFacade.getGenusByIdWithFamilies({ id });
             this.setState({
                 family: family.name,
                 familyApg: familyApg.name
