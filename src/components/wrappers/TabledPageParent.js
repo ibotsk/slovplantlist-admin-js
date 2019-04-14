@@ -66,7 +66,8 @@ const TabledPage = injectedProps => WrappedComponent => {
             return countResponse.count;
         }
 
-        componentDidMount() {
+        // must be will mount because this must be the first thing to be called, before handleTableChange in case of remote tables
+        componentWillMount() {
             this.handleChange(this.state.page, paginationOptions.sizePerPageList[0].value, this.state.where, this.state.order);
         }
 
