@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 
 import {
-    Button, Modal,
-    Form, FormGroup, FormControl
+    Button, Modal, Col,
+    Form, FormGroup, FormControl, ControlLabel
 } from 'react-bootstrap';
 
 import familiesFacade from '../../facades/families';
 
 const VALIDATION_STATE_SUCCESS = 'success';
 const VALIDATION_STATE_ERROR = 'error';
+
+const titleColWidth = 2;
+const mainColWidth = 10;
 
 const initialValues = {
     id: undefined,
@@ -42,8 +45,8 @@ class FamiliesApgModal extends Component {
     }
 
     handleChange = e => {
-        this.setState({ 
-            [e.target.id]: e.target.value 
+        this.setState({
+            [e.target.id]: e.target.value
         });
     }
 
@@ -72,31 +75,41 @@ class FamiliesApgModal extends Component {
                     <Modal.Title>{this.props.id ? 'Edit family APG' : 'Create new family APG'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
+                    <Form horizontal>
                         <FormGroup
                             controlId="name"
                             bsSize='sm'
                             validationState={this.getValidationState()}
                         >
-                            <FormControl
-                                type="text"
-                                value={this.state.name}
-                                placeholder="Family name"
-                                onChange={this.handleChange}
-                            />
-                            <FormControl.Feedback />
+                            <Col componentClass={ControlLabel} sm={titleColWidth}>
+                                Name
+                            </Col>
+                            <Col sm={mainColWidth}>
+                                <FormControl
+                                    type="text"
+                                    value={this.state.name}
+                                    placeholder="Family name"
+                                    onChange={this.handleChange}
+                                />
+                                <FormControl.Feedback />
+                            </Col>
                         </FormGroup>
                         <FormGroup
                             controlId="vernacular"
                             bsSize='sm'
                         >
-                            <FormControl
-                                type="text"
-                                value={this.state.vernacular}
-                                placeholder="Vernacular name"
-                                onChange={this.handleChange}
-                            />
-                            <FormControl.Feedback />
+                            <Col componentClass={ControlLabel} sm={titleColWidth}>
+                                Vernacular
+                            </Col>
+                            <Col sm={mainColWidth}>
+                                <FormControl
+                                    type="text"
+                                    value={this.state.vernacular}
+                                    placeholder="Vernacular"
+                                    onChange={this.handleChange}
+                                />
+                                <FormControl.Feedback />
+                            </Col>
                         </FormGroup>
                     </Form>
                 </Modal.Body>
