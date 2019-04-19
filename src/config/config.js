@@ -71,6 +71,20 @@ export default {
                 colour: "#bb9d00"
             }
         },
+        synonym: {
+            nomenclatoric: {
+                numType: 3,
+                prefix: '≡'
+            },
+            taxonomic: {
+                numType: 2,
+                prefix: '='
+            },
+            invalid: {
+                numType: 1,
+                prefix: '–'
+            }
+        }
     },
     pagination: {
         paginationSize: 7,
@@ -103,21 +117,92 @@ export default {
     },
     uris: {
         nomenclaturesUri: {
-            getAllWFilter: `${backendBase}/api/nomenclatures?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":{order}%7D`,
+            baseUri: `${backendBase}/api/nomenclatures`,
+            getAllWFilterUri: `${backendBase}/api/nomenclatures?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":{order}%7D`,
+            getAllWOrderUri: `${backendBase}/api/nomenclatures?filter=%7B"order":["genus","species","subsp","var","subvar","forma","authors","id"]%7D`,
+            getAllBySearchTermUri: `${backendBase}/api/nomenclatures?filter=%7B"where":%7B"or":[
+                %7B"genus":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"species":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"subsp":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"var":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"subvar":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"forma":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"authors":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"genus_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"species_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"subsp_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"var_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"subvar_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"forma_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D,
+                %7B"authors_h":%7B
+                    "like": "%25{term}%25"
+                %7D%7D
+            ]%7D%7D`,
+            getByIdUri: `${backendBase}/api/nomenclatures/{id}`,
+            getByIdWFilterUri: `${backendBase}/api/nomenclatures/{id}?filter=%7B"include":["accepted","basionym","replaced","nomenNovum",%7B"genusRel":["family","familyApg"]%7D]%7D`,
+            getNomenclatoricSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsNomenclatoric?filter=%7B"include":"synonymsNomenclatoric"%7D`,
+            getTaxonomicSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsTaxonomic?filter=%7B"include":"synonymsNomenclatoric"%7D`,
+            getInvalidSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsInvalid`,
+            getSynonymsOfParent: `${backendBase}/api/nomenclatures/{id}/parentOfSynonyms`,
+            getBasionymForUri: `${backendBase}/api/nomenclatures/{id}/basionymFor`,
+            getReplacedForUri: `${backendBase}/api/nomenclatures/{id}/replacedFor`,
+            getNomenNovumForUri: `${backendBase}/api/nomenclatures/{id}/nomenNovumFor`,
             countUri: `${backendBase}/api/nomenclatures/count?where={whereString}`
         },
         generaUri: {
+            baseUri: `${backendBase}/api/genera`,
             getAllWFilterUri: `${backendBase}/api/genera?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["familyApg","family"],"order":{order}%7D`,
+            getAllBySearchTermUri: `${backendBase}/api/genera?filter=%7B"where":
+                %7B"name":%7B
+                    "like": "%25{term}%25"
+                %7D%7D
+            %7D`,
+            getAllWithFamiliesUri: `${backendBase}/api/genera?filter=%7B"include":["familyApg","family"]%7D`, 
+            getByIdWithFamilies: `${backendBase}/api/genera/{id}?filter=%7B"include":["familyApg","family"]%7D`,
             countUri: `${backendBase}/api/genera/count?where={whereString}`
         },
         familiesApgUri: {
+            baseUri: `${backendBase}/api/family_apgs`,
+            getByIdUri: `${backendBase}/api/family_apgs/{id}`,
             getAllWOrderUri: `${backendBase}/api/family_apgs?filter=%7B"order":["name","id"]%7D`,
             countUri: `${backendBase}/api/family_apgs/count?where={whereString}`
         },
         familiesUri: {
+            baseUri: `${backendBase}/api/families`,
+            getByIdUri: `${backendBase}/api/families/{id}`,
             getAllWOrderUri: `${backendBase}/api/families?filter=%7B"order":["name","id"]%7D`,
             countUri: `${backendBase}/api/families/count?where={whereString}`
-        }
+        },
+        synonymsUri: {
+            baseUri: `${backendBase}/api/synonyms`,
+            synonymsByIdUri: `${backendBase}/api/synonyms/{id}`
+        },
     },
 
     logging: {

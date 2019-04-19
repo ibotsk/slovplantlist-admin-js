@@ -27,20 +27,19 @@ const TabledPage = injectedProps => WrappedComponent => {
                 totalSize: 0,
                 page: 1,
                 sizePerPage: paginationOptions.sizePerPageList[0].value,
-                where: {},
-                order: ['id']
+                filters: {},
+                sortField: 'id',
+                sortOrder: 'asc'
             }
         }
 
         handleTableChange = async (type, { page, sizePerPage, filters, sortField, sortOrder }) => {
             const curatedFilters = helper.curateSearchFilters(filters);
-            const curatedSortField = helper.curateSortFields(sortField);
             const where = helper.makeWhere(curatedFilters); //TODO make function to take into account existing where
-            const order = helper.makeOrder(curatedSortField, sortOrder);
-            await this.handleChange(page, sizePerPage, where, order);
-        }
 
-        handleChange = async (page, sizePerPage, where, order) => {
+            const curatedSortField = helper.curateSortFields(sortField);
+            const order = helper.makeOrder(curatedSortField, sortOrder);
+
             const totalSize = await this.fetchCount(where);
             const offset = (page - 1) * sizePerPage;
             const records = await this.fetchRecords(where, order, offset, sizePerPage);
@@ -49,8 +48,10 @@ const TabledPage = injectedProps => WrappedComponent => {
                 sizePerPage,
                 page,
                 where,
-                order,
-                totalSize
+                totalSize,
+                filters,
+                sortField,
+                sortOrder
             });
         }
 
@@ -66,18 +67,28 @@ const TabledPage = injectedProps => WrappedComponent => {
             return countResponse.count;
         }
 
-        componentDidMount() {
-            this.handleChange(this.state.page, paginationOptions.sizePerPageList[0].value, this.state.where, this.state.order);
+        // must be will mount because this must be the first thing to be called, before handleTableChange in case of remote tables
+        componentWillMount() {
+            this.handleTableChange(undefined, {
+                page: this.state.page,
+                sizePerPage: paginationOptions.sizePerPageList[0].value,
+                filters: this.state.filters,
+                sortField: this.state.sortField,
+                sortOrder: this.state.sortOrder
+            });
         }
 
         render() {
-            const { page, sizePerPage, totalSize } = this.state;
+            const { page, sizePerPage, totalSize, filters, sortField, sortOrder } = this.state;
             const allPaginationOptions = { ...paginationOptions, page, sizePerPage, totalSize };
+            const sorting = { sortField, sortOrder };
             return (
                 <WrappedComponent
                     {...this.props}
                     onTableChange={this.handleTableChange}
                     paginationOptions={allPaginationOptions}
+                    filters={filters}
+                    sorting={sorting}
                     data={this.state.records}
                 />
             );

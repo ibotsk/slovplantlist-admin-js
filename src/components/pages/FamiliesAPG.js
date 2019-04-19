@@ -1,19 +1,28 @@
 import React from 'react';
 
-import { Grid } from 'react-bootstrap';
+import { 
+    Grid, Button, Glyphicon
+} from 'react-bootstrap';
 
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import TabledPage from '../wrappers/TabledPageParent';
+import FamiliesApgModal from '../segments/FamiliesApgModal';
 
 import config from '../../config/config';
+
+const MODAL_FAMILY_APG = 'showModalFamilyApg';
 
 const columns = [
     {
         dataField: 'id',
         text: 'ID',
         sort: true
+    },
+    {
+        dataField: 'action',
+        text: 'Actions'
     },
     {
         dataField: 'name',
@@ -29,33 +38,67 @@ const columns = [
     }
 ];
 
-const formatResult = data => {
-    return data.map(d => ({
-        id: d.id,
-        name: d.name,
-        vernacular: d.vernacular
-    }));
-}
+const defaultSorted = [{
+    dataField: 'name',
+    order: 'asc'
+}];
 
-const FamiliesAPG = ({ data, onTableChange }) => {
+class FamiliesAPG extends React.Component {
 
-    return (
-        <div id='families-apg'>
-            <Grid id='functions-panel'>
-                <h2>Families APG</h2>
-                <p>All filters are case sensitive</p>
-            </Grid>
-            <Grid fluid={true}>
-                <BootstrapTable hover striped condensed
-                    keyField='id'
-                    data={formatResult(data)}
-                    columns={columns}
-                    filter={filterFactory()}
-                    onTableChange={onTableChange}
-                />
-            </Grid>
-        </div>
-    );
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            [MODAL_FAMILY_APG]: false,
+            editId: 0
+        }
+    }
+
+    showModal = id => {
+        this.setState({
+            [MODAL_FAMILY_APG]: true,
+            editId: id
+        });
+    }
+
+    hideModal = () => {
+        this.props.onTableChange(undefined, { page: this.props.paginationOptions.page, sizePerPage: this.props.paginationOptions.sizePerPage, filters: {} });
+        this.setState({ [MODAL_FAMILY_APG]: false });
+    }
+
+    formatResult = data => {
+        return data.map(d => ({
+            id: d.id,
+            action: <Button bsSize='xsmall' bsStyle="warning" onClick={() => this.showModal(d.id)}>Edit</Button>,
+            name: d.name,
+            vernacular: d.vernacular
+        }));
+    }
+
+    render() {
+        return (
+            <div id='families-apg'>
+                <Grid id='functions-panel'>
+                    <div id="functions">
+                        <Button bsStyle="success" onClick={() => this.showModal('')}><Glyphicon glyph="plus"></Glyphicon> Add new</Button>
+                    </div>
+                    <h2>Families APG</h2>
+                    <p>All filters are case sensitive</p>
+                </Grid>
+                <Grid fluid={true}>
+                    <BootstrapTable hover striped condensed
+                        keyField='id'
+                        data={this.formatResult(this.props.data)}
+                        columns={columns}
+                        defaultSorted={defaultSorted}
+                        filter={filterFactory()}
+                        onTableChange={this.props.onTableChange}
+                    />
+                </Grid>
+                <FamiliesApgModal id={this.state.editId} show={this.state[MODAL_FAMILY_APG]} onHide={this.hideModal} />
+            </div>
+        );
+    }
 }
 
 export default TabledPage({

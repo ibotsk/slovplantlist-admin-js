@@ -1,3 +1,4 @@
+import formatter from './formatter';
 import config from '../config/config';
 
 const config_name = config.nomenclature.name;
@@ -76,7 +77,7 @@ const invalidDesignation = (name, syntype) => {
     return name;
 }
 
-const listOfSpieces = (nomenclature, options = {}) => {
+const listOfSpeciesFormat = (nomenclature, options = {}) => {
 
     let opts = Object.assign({}, {
         isPublication: false,
@@ -121,7 +122,7 @@ const listOfSpieces = (nomenclature, options = {}) => {
             authors: nomenclature.authors_h,
         }
         name.push(Plain(config_name.hybrid));
-        name = name.concat(listOfSpieces(h));
+        name = name.concat(listOfSpeciesFormat(h));
     }
 
     name = invalidDesignation(name, options.syntype);
@@ -135,6 +136,25 @@ const listOfSpieces = (nomenclature, options = {}) => {
 
     return name;
 
+}
+
+const listOfSpeciesForComponent = (name, formatString) => {
+
+    const nameArr = listOfSpeciesFormat(name);
+
+    const formattedNameArr = nameArr.map(t => {
+        if (t.format === ff) {
+            return formatter.format(t.string, formatString);
+        } else {
+            return t.string;
+        }
+    });
+
+    return formattedNameArr.reduce((acc, el) => acc.concat(el, ' '), []).slice(0, -1);
+}
+
+const listOfSpeciesString = (name) => {
+    return listOfSpeciesForComponent(name, 'plain').join('');
 }
 
 const makeWhere = filters => {
@@ -179,16 +199,18 @@ const buildOptionsFromKeys = keys => {
  * @param {*} filters 
  */
 const curateSearchFilters = filters => {
-    let curatedFilters = {...filters};
+    let curatedFilters = { ...filters };
     const keys = Object.keys(filters);
     for (const key of keys) { //listofspecies
         const fields = config.nomenclature.filter[key]; // genus, species, ...
         if (fields) {
-            const filterContent = filters[key];
+            const filterContent = filters[key]; // filterType, filterVal, caseSensitive, comparator
             const filterVal = filterContent.filterVal;
-            const newFilterValue = fields.map(f => ({ field: f, value: filterVal }));
-            filterContent.filterVal = newFilterValue;
-            filters[key] = filterContent;
+            if (typeof filterVal === "string") { // avoid redoing mapping on values that are already in { field, value }
+                const newFilterValue = fields.map(f => ({ field: f, value: filterVal }));
+                filterContent.filterVal = newFilterValue;
+                filters[key] = filterContent;
+            }
         }
     }
     return curatedFilters;
@@ -200,6 +222,82 @@ const curateSortFields = sortField => {
         return fields;
     }
     return sortField;
+}
+
+const listOfSpeciesSorterLex = (losA, losB) => {
+    // a > b = 1
+    if (losA.genus > losB.genus) {
+        return 1;
+    } else if (losA.genus < losB.genus) {
+        return -1;
+    }
+    if (losA.species > losB.species) {
+        return 1;
+    } else if (losA.species < losB.species) {
+        return -1;
+    }
+    if (losA.subsp > losB.subsp) {
+        return 1;
+    } else if (losA.subsp < losB.subsp) {
+        return -1;
+    }
+    if (losA.var > losB.var) {
+        return 1;
+    } else if (losA.var < losB.var) {
+        return -1;
+    }
+    if (losA.forma > losB.forma) {
+        return 1;
+    } else if (losA.forma < losB.forma) {
+        return -1;
+    }
+    if (losA.subvar > losB.subvar) {
+        return 1;
+    } else if (losA.subvar < losB.subvar) {
+        return -1;
+    }
+    if (losA.authors > losB.authors) {
+        return 1;
+    } else if (losA.authors < losB.authors) {
+        return -1;
+    }
+    // hybrid fields next
+    if (losA.genusH > losB.genusH) {
+        return 1;
+    } else if (losA.genusH < losB.genusH) {
+        return -1;
+    }
+    if (losA.speciesH > losB.speciesH) {
+        return 1;
+    } else if (losA.speciesH < losB.speciesH) {
+        return -1;
+    }
+    if (losA.subspH > losB.subspH) {
+        return 1;
+    } else if (losA.subspH < losB.subspH) {
+        return -1;
+    }
+    if (losA.varH > losB.varH) {
+        return 1;
+    } else if (losA.varH < losB.varH) {
+        return -1;
+    }
+    if (losA.formaH > losB.formaH) {
+        return 1;
+    } else if (losA.formaH < losB.formaH) {
+        return -1;
+    }
+    if (losA.subvarH > losB.subvarH) {
+        return 1;
+    } else if (losA.subvarH < losB.subvarH) {
+        return -1;
+    }
+    if (losA.authorsH > losB.authorsH) {
+        return 1;
+    } else if (losA.authorsH < losB.authorsH) {
+        return -1;
+    }
+    return 0;
 }
 
 function filterToWhereItem(filter, key) {
@@ -242,4 +340,13 @@ function resolveByComparator(comparator, key, value) {
     }
 }
 
-export default { listOfSpieces, makeWhere, makeOrder, buildOptionsFromKeys, curateSearchFilters, curateSortFields };
+export default {
+    listOfSpeciesForComponent,
+    listOfSpeciesString,
+    makeWhere,
+    makeOrder,
+    buildOptionsFromKeys,
+    curateSearchFilters,
+    curateSortFields,
+    listOfSpeciesSorterLex
+};

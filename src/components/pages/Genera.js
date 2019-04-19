@@ -1,20 +1,29 @@
 import React from 'react';
 
-import { Grid } from 'react-bootstrap';
+import {
+    Grid, Button, Glyphicon
+} from 'react-bootstrap';
 
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import TabledPage from '../wrappers/TabledPageParent';
+import GeneraModal from '../segments/GeneraModal';
 
 import config from '../../config/config';
+
+const MODAL_GENUS = 'showModalGenera';
 
 const columns = [
     {
         dataField: 'id',
         text: 'ID',
         sort: true
+    },
+    {
+        dataField: 'action',
+        text: 'Actions'
     },
     {
         dataField: 'name',
@@ -49,40 +58,73 @@ const defaultSorted = [{
     order: 'asc'
 }];
 
-const formatResult = data => {
-    return data.map(d => ({
-        id: d.id,
-        name: d.name,
-        authors: d.authors,
-        vernacular: d.vernacular,
-        familyAPG: d.familyApg ? d.familyApg.name : "",
-        family: d.family ? d.family.name : ""
-    }));
-}
+class Genera extends React.Component {
 
-const Genera = ({ data, paginationOptions, onTableChange }) => {
+    constructor(props) {
+        super(props);
 
-    return (
-        <div id='genera'>
-            <Grid id='functions-panel'>
-                <h2>Genera</h2>
-                <p>All filters are case sensitive</p>
-            </Grid>
-            <Grid fluid={true}>
-                <BootstrapTable hover striped condensed
-                    remote={{ filter: true, pagination: true }}
-                    keyField='id'
-                    data={formatResult(data)}
-                    columns={columns}
-                    defaultSorted={defaultSorted}
-                    filter={filterFactory()}
-                    onTableChange={onTableChange}
-                    pagination={paginationFactory(paginationOptions)}
-                />
-            </Grid>
-        </div>
-    );
+        this.state = {
+            [MODAL_GENUS]: false,
+            editId: 0
+        }
+    }
 
+    showModal = id => {
+        this.setState({
+            [MODAL_GENUS]: true,
+            editId: id
+        });
+    }
+
+    hideModal = () => {
+        this.props.onTableChange(undefined, { 
+            page: this.props.paginationOptions.page, 
+            sizePerPage: this.props.paginationOptions.sizePerPage, 
+            filters: {} ,
+            sortField: 'name',
+            sortOrder: 'asc'
+        });
+        this.setState({ [MODAL_GENUS]: false });
+    }
+
+    formatResult = data => {
+        return data.map(g => ({
+            id: g.id,
+            action: <Button bsSize='xsmall' bsStyle="warning" onClick={() => this.showModal(g.id)}>Edit</Button>,
+            name: g.name,
+            authors: g.authors,
+            vernacular: g.vernacular,
+            familyAPG: g.familyApg ? g.familyApg.name : "",
+            family: g.family ? g.family.name : ""
+        }));
+    }
+
+    render() {
+        return (
+            <div id='genera'>
+                <Grid id='functions-panel'>
+                    <div id="functions">
+                        <Button bsStyle="success" onClick={() => this.showModal('')}><Glyphicon glyph="plus"></Glyphicon> Add new</Button>
+                    </div>
+                    <h2>Genera</h2>
+                    <p>All filters are case sensitive</p>
+                </Grid>
+                <Grid fluid={true}>
+                    <BootstrapTable hover striped condensed
+                        remote={{ filter: true, pagination: true }}
+                        keyField='id'
+                        data={this.formatResult(this.props.data)}
+                        columns={columns}
+                        defaultSorted={defaultSorted}
+                        filter={filterFactory()}
+                        onTableChange={this.props.onTableChange}
+                        pagination={paginationFactory(this.props.paginationOptions)}
+                    />
+                </Grid>
+                <GeneraModal id={this.state.editId} show={this.state[MODAL_GENUS]} onHide={this.hideModal} />
+            </div>
+        );
+    }
 }
 
 export default TabledPage({
