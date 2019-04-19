@@ -127,6 +127,8 @@ class Checklist extends React.Component {
     }
 
     render() {
+        console.log(this.props);
+        
         return (
             <div id='checklist'>
                 <Grid id='functions-panel'>

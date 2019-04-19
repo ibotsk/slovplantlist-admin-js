@@ -111,15 +111,15 @@ const listOfSpeciesFormat = (nomenclature, options = {}) => {
 
     if (nomenclature.hybrid) {
         let h = {
-            genus: nomenclature.genusH,
-            species: nomenclature.speciesH,
-            subsp: nomenclature.subspH,
-            var: nomenclature.varH,
-            subvar: nomenclature.subvarH,
-            forma: nomenclature.formaH,
-            nothosubsp: nomenclature.nothosubspH,
-            nothoforma: nomenclature.nothoformaH,
-            authors: nomenclature.authorsH,
+            genus: nomenclature.genus_h,
+            species: nomenclature.species_h,
+            subsp: nomenclature.subsp_h,
+            var: nomenclature.var_h,
+            subvar: nomenclature.subvar_h,
+            forma: nomenclature.forma_h,
+            nothosubsp: nomenclature.nothosubsp_h,
+            nothoforma: nomenclature.nothoforma_h,
+            authors: nomenclature.authors_h,
         }
         name.push(Plain(config_name.hybrid));
         name = name.concat(listOfSpeciesFormat(h));
