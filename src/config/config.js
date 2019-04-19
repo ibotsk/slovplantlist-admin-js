@@ -164,6 +164,7 @@ export default {
                     "like": "%25{term}%25"
                 %7D%7D
             ]%7D%7D`,
+            getByIdUri: `${backendBase}/api/nomenclatures/{id}`,
             getByIdWFilterUri: `${backendBase}/api/nomenclatures/{id}?filter=%7B"include":["accepted","basionym","replaced","nomenNovum",%7B"genusRel":["family","familyApg"]%7D]%7D`,
             getNomenclatoricSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsNomenclatoric?filter=%7B"include":"synonymsNomenclatoric"%7D`,
             getTaxonomicSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsTaxonomic?filter=%7B"include":"synonymsNomenclatoric"%7D`,
@@ -182,6 +183,7 @@ export default {
                     "like": "%25{term}%25"
                 %7D%7D
             %7D`,
+            getAllWithFamiliesUri: `${backendBase}/api/genera?filter=%7B"include":["familyApg","family"]%7D`, 
             getByIdWithFamilies: `${backendBase}/api/genera/{id}?filter=%7B"include":["familyApg","family"]%7D`,
             countUri: `${backendBase}/api/genera/count?where={whereString}`
         },

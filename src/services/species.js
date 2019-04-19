@@ -9,6 +9,12 @@ const getSpeciesRecordByIdWithFilter = async id => {
     return response.data;
 }
 
+const getSpeciesById = async ({ id }) => {
+    const getByIdUri = template.parse(config.uris.nomenclaturesUri.getByIdUri).expand({ id });
+    const response = await axios.get(getByIdUri);
+    return response.data;
+}
+
 const getAllSpecies = async () => {
     const getAllListOfSpeciesUri = template.parse(config.uris.nomenclaturesUri.getAllWOrderUri).expand();
     const response = await axios.get(getAllListOfSpeciesUri);
@@ -87,6 +93,7 @@ const deleteSynonym = async ({ id, accessToken }) => {
 
 export default {
     getSpeciesRecordByIdWithFilter,
+    getSpeciesById,
     getAllSpecies,
     getAllSpeciesBySearchTerm,
     getSynonymsNomenclatoricOf,

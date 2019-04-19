@@ -9,6 +9,15 @@ const getAllGeneraBySearchTerm = async (term, format) => {
     return genera.map(format);
 }
 
+const getAllGeneraWithFamilies = async (format) => {
+    const genera = await genusService.getAllGeneraWithFamilies();
+
+    if (!format) {
+        return genera;
+    }
+    return genera.map(format);
+}
+
 const getGenusByIdWithFamilies = async ({ id }, format) => {
     const genus = await genusService.getGenusByIdWithFamilies({ id });
 
@@ -32,6 +41,7 @@ const saveGenus = async ({ data }) => {
 
 export default {
     getAllGeneraBySearchTerm,
+    getAllGeneraWithFamilies,
     getGenusByIdWithFamilies,
     saveGenus
 }

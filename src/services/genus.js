@@ -9,6 +9,12 @@ const getAllGeneraBySearchTerm = async (term) => {
     return response.data;
 }
 
+const getAllGeneraWithFamilies = async () => {
+    const getAllWithFamilies = template.parse(config.uris.generaUri.getAllWithFamiliesUri).expand();
+    const response = await axios.get(getAllWithFamilies);
+    return response.data;
+}
+
 const getGenusByIdWithFamilies = async ({ id }) => {
     const getByIdWithFamiliesUri = template.parse(config.uris.generaUri.getByIdWithFamilies).expand({ id });
     const response = await axios.get(getByIdWithFamiliesUri);
@@ -22,6 +28,7 @@ const putGenus = async ({ data }) => {
 
 export default {
     getAllGeneraBySearchTerm,
+    getAllGeneraWithFamilies,
     getGenusByIdWithFamilies,
     putGenus
 }

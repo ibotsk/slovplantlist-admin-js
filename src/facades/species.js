@@ -36,6 +36,10 @@ const getRecordById = async id => {
     };
 }
 
+const getSpeciesById = async ({ id }) => {
+    return await speciesService.getSpeciesById({ id });
+}
+
 const getAllSpecies = async format => {
     const listOfSpeciess = await speciesService.getAllSpecies(format);
 
@@ -101,6 +105,10 @@ const saveSpeciesAndSynonyms = async ({
     });
 }
 
+const saveSpecies = async ({ data }) => {
+    await speciesService.putNomenclature({ data });
+}
+
 async function submitSynonyms({
     id,
     nomenclatoricSynonyms,
@@ -162,9 +170,11 @@ async function saveSynonyms({ id, list, syntype }) {
 
 export default {
     getRecordById,
+    getSpeciesById,
     getAllSpecies,
     getAllSpeciesBySearchTerm,
     getSynonyms,
     getBasionymsFor,
-    saveSpeciesAndSynonyms
+    saveSpeciesAndSynonyms,
+    saveSpecies
 };

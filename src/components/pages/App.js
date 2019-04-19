@@ -17,6 +17,7 @@ const Routing = () => {
       <Route exact path="/checklist" component={Checklist} />
       <Route path="/checklist/detail/:id" component={SpeciesRecord} />
       <Route path="/checklist/edit/:id" component={SpeciesRecord} />
+      <Route path="/checklist/new" component={SpeciesRecord} />
       <Route exact path="/genera" component={Genera} />
       <Route exact path="/families-apg" component={FamiliesAPG} />
       <Route exact path="/families" component={Families} />
