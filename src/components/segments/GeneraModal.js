@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import {
     Col,
@@ -10,8 +11,8 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 
 import notifications from '../../utils/notifications';
 
-import generaFacade from '../../facades/genus';
-import familiesFacade from '../../facades/families';
+import generaFacadeModule from '../../facades/genus';
+import familiesFacadeModule from '../../facades/families';
 
 const VALIDATION_STATE_SUCCESS = 'success';
 const VALIDATION_STATE_ERROR = 'error';
@@ -33,6 +34,9 @@ class GeneraModal extends Component {
     constructor(props) {
         super(props);
 
+        this.generaFacade = generaFacadeModule(this.props.accessToken);
+        this.familiesFacade = familiesFacadeModule(this.props.accessToken);
+
         this.state = {
             genus: {
                 ...initialValues
@@ -44,8 +48,7 @@ class GeneraModal extends Component {
 
     onEnter = async () => {
         if (this.props.id) {
-            const accessToken = this.props.accessToken;
-            const { genus } = await generaFacade.getGenusByIdWithFamilies({ id: this.props.id, accessToken });
+            const { genus } = await this.generaFacade.getGenusByIdWithFamilies({ id: this.props.id });
             this.setState({
                 genus
             });
@@ -76,10 +79,9 @@ class GeneraModal extends Component {
 
     handleSave = async () => {
         if (this.getValidationState() === VALIDATION_STATE_SUCCESS) {
-            const accessToken = this.props.accessToken;
             const data = { ...this.state.genus };
             try {
-                await generaFacade.saveGenus({ data, accessToken });
+                await this.generaFacade.saveGenus({ data });
                 notifications.success('Saved');
                 this.handleHide();
             } catch (error) {
@@ -102,8 +104,8 @@ class GeneraModal extends Component {
 
     async componentDidMount() {
         const typeaheadFormat = f => ({ id: f.id, label: f.name });
-        const families = await familiesFacade.getAllFamilies(typeaheadFormat);
-        const familiesApg = await familiesFacade.getAllFamiliesApg(typeaheadFormat);
+        const families = await this.familiesFacade.getAllFamilies(typeaheadFormat);
+        const familiesApg = await this.familiesFacade.getAllFamiliesApg(typeaheadFormat);
         this.setState({
             families,
             familiesApg
@@ -214,4 +216,8 @@ class GeneraModal extends Component {
     }
 }
 
-export default GeneraModal;
+const mapStateToProps = state => ({
+    accessToken: state.authentication.accessToken
+});
+
+export default connect(mapStateToProps)(GeneraModal);

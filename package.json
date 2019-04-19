@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "prop-types": "^15.6.2",
+    "query-string": "^6.4.2",
     "react": "^16.6.3",
     "react-bootstrap": "^0.32.4",
     "react-bootstrap-table-next": "^3.0.3",

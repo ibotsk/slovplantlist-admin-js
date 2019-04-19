@@ -3,14 +3,19 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
 import { unsetAuthenticated } from '../../actions/index';
-import userService from '../../services/user-service';
 import { removeState } from '../../services/local-storage';
+import userServiceModule from '../../services/user-service';
 
 class Logout extends React.Component {
 
+    constructor(props) {
+        super(props);
+
+        this.userService = userServiceModule(this.props.accessToken);
+    }
+
     async componentWillMount() {
-        const accessToken = this.props.accessToken;
-        await userService.logout(accessToken);
+        await this.userService.logout();
         this.props.unsetAuthenticated();
         removeState();
     }

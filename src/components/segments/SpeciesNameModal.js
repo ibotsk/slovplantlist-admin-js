@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import {
     Col,
@@ -11,8 +12,8 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 
 import notifications from '../../utils/notifications';
 
-import speciesFacade from '../../facades/species';
-import generaFacade from '../../facades/genus';
+import speciesFacadeModule from '../../facades/species';
+import generaFacadeModule from '../../facades/genus';
 
 import config from '../../config/config';
 
@@ -54,6 +55,9 @@ class SpeciesNameModal extends Component {
     constructor(props) {
         super(props);
 
+        this.generaFacade = generaFacadeModule(this.props.accessToken);
+        this.speciesFacade = speciesFacadeModule(this.props.accessToken);
+
         this.state = {
             record: {
                 ...initialValues
@@ -67,8 +71,7 @@ class SpeciesNameModal extends Component {
 
     onEnter = async () => {
         if (this.props.id) {
-            const accessToken = this.props.accessToken;
-            const data = await speciesFacade.getSpeciesById({ id: this.props.id, accessToken });
+            const data = await this.speciesFacade.getSpeciesById({ id: this.props.id });
             const genus_selected = this.state.genera.filter(g => g.id === data.id_genus).map(g => ({ id: g.id, label: g.name }));
             const { family_selected, familyApg_selected } = this.filterFamilies(data.id_genus);
             this.setState({
@@ -132,10 +135,9 @@ class SpeciesNameModal extends Component {
 
     handleSave = async () => {
         if (this.getValidationState()) {
-            const accessToken = this.props.accessToken;
             const data = { ...this.state.record };
             try {
-                await speciesFacade.saveSpecies({ data, accessToken });
+                await this.speciesFacade.saveSpecies({ data });
                 notifications.success('Saved');
                 this.handleHide();
             } catch (error) {
@@ -157,7 +159,7 @@ class SpeciesNameModal extends Component {
     }
 
     async componentDidMount() {
-        const genera = await generaFacade.getAllGeneraWithFamilies();
+        const genera = await this.generaFacade.getAllGeneraWithFamilies();
         this.setState({
             genera
         });
@@ -514,4 +516,8 @@ class SpeciesNameModal extends Component {
 
 }
 
-export default SpeciesNameModal;
+const mapStateToProps = state => ({
+    accessToken: state.authentication.accessToken
+});
+
+export default connect(mapStateToProps)(SpeciesNameModal);

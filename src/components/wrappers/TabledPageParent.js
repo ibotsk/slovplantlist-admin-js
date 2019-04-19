@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 
-import tablesService from '../../services/tables';
+import tablesServiceModule from '../../services/tables';
 
 import helper from '../../utils/helper';
 import config from '../../config/config';
@@ -21,6 +21,8 @@ const TabledPage = injectedProps => WrappedComponent => {
 
         constructor(props) {
             super(props);
+
+            this.tablesService = tablesServiceModule(this.props.accessToken);
 
             this.state = {
                 records: [],
@@ -56,14 +58,12 @@ const TabledPage = injectedProps => WrappedComponent => {
         }
 
         fetchRecords = async (where, order, offset, limit) => {
-            const accessToken = this.props.accessToken;
-            return await tablesService.getAll(injectedProps.getAll, offset, where, order, limit, accessToken);
+            return await this.tablesService.getAll(injectedProps.getAll, offset, where, order, limit);
         }
 
         fetchCount = async where => {
-            const accessToken = this.props.accessToken;
             const whereString = JSON.stringify(where);
-            const countResponse = await tablesService.getCount(injectedProps.getCount, whereString, accessToken);
+            const countResponse = await this.tablesService.getCount(injectedProps.getCount, whereString);
             return countResponse.count;
         }
 

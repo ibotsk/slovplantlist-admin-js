@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import {
     Grid, Col, Row, Well, Panel,
@@ -16,8 +17,8 @@ import AddableList from '../segments/AddableList';
 import LosName from '../segments/LosName';
 import SynonymListItem from '../segments/SynonymListItem';
 
-import speciesFacade from '../../facades/species';
-import genusFacade from '../../facades/genus';
+import speciesFacadeModule from '../../facades/species';
+import genusFacadeModule from '../../facades/genus';
 
 import helper from '../../utils/helper';
 import config from '../../config/config';
@@ -44,21 +45,6 @@ const synonymFormatter = (synonym, prefix) => (
         value: synonym
     }
 );
-
-const addSynonymToList = async (selected, synonyms, accessToken) => {
-    if (!selected) {
-        return null;
-    }
-    if (synonyms.find(s => s.id === selected.id)) {
-        notifications.warning('The item is already in the list');
-        return null;
-    }
-    const { speciesRecord } = await speciesFacade.getRecordById(selected.id);
-
-    synonyms.push(speciesRecord);
-    synonyms.sort(helper.listOfSpeciesSorterLex);
-    return synonyms;
-}
 
 const recordInitialValues = {
     authors: "",
@@ -101,6 +87,9 @@ class SpeciesRecord extends Component {
 
     constructor(props) {
         super(props);
+
+        this.speciesFacade = speciesFacadeModule(this.props.accessToken);
+        this.genusFacade = genusFacadeModule(this.props.accessToken);
 
         this.state = {
             record: {
@@ -155,7 +144,7 @@ class SpeciesRecord extends Component {
     handleChangeGenusTypeahead = async (selected, prop) => {
         const id = selected[0] ? selected[0].id : undefined;
         if (id) {
-            const { family, familyApg } = await genusFacade.getGenusByIdWithFamilies({ id });
+            const { family, familyApg } = await this.genusFacade.getGenusByIdWithFamilies({ id });
             this.setState({
                 family: family.name,
                 familyApg: familyApg.name
@@ -185,7 +174,7 @@ class SpeciesRecord extends Component {
 
     handleSearchGeneraAsyncTypeahead = async query => {
         this.setState({ isLoading: true });
-        const genera = await genusFacade.getAllGeneraBySearchTerm(query, g => ({
+        const genera = await this.genusFacade.getAllGeneraBySearchTerm(query, g => ({
             id: g.id,
             label: g.name
         }));
@@ -197,15 +186,14 @@ class SpeciesRecord extends Component {
     }
 
     handleSearchSpeciesAsync = async query => {
-        return await speciesFacade.getAllSpeciesBySearchTerm(query, l => ({
+        return await this.speciesFacade.getAllSpeciesBySearchTerm(query, l => ({
             id: l.id,
             label: helper.listOfSpeciesString(l)
         }));
     }
 
     handleAddNomenclatoricSynonym = async selected => {
-        const accessToken = this.props.accessToken;
-        const nomenclatoricSynonyms = await addSynonymToList(selected, [...this.state.nomenclatoricSynonyms], accessToken);
+        const nomenclatoricSynonyms = await this.addSynonymToList(selected, [...this.state.nomenclatoricSynonyms]);
         this.setState({
             nomenclatoricSynonyms,
             isNomenclatoricSynonymsChanged: true
@@ -213,8 +201,7 @@ class SpeciesRecord extends Component {
     }
 
     handleAddTaxonomicSynonym = async selected => {
-        const accessToken = this.props.accessToken;
-        const taxonomicSynonyms = await addSynonymToList(selected, [...this.state.taxonomicSynonyms], accessToken);
+        const taxonomicSynonyms = await this.addSynonymToList(selected, [...this.state.taxonomicSynonyms]);
         this.setState({
             taxonomicSynonyms,
             isTaxonomicSynonymsChanged: true
@@ -222,8 +209,7 @@ class SpeciesRecord extends Component {
     }
 
     handleAddInvalidDesignation = async selected => {
-        const accessToken = this.props.accessToken;
-        const invalidDesignations = await addSynonymToList(selected, [...this.state.invalidDesignations], accessToken);
+        const invalidDesignations = await this.addSynonymToList(selected, [...this.state.invalidDesignations]);
         this.setState({
             invalidDesignations,
             isInvalidDesignationsChanged: true
@@ -293,6 +279,21 @@ class SpeciesRecord extends Component {
         )
     }
 
+    addSynonymToList = async (selected, synonyms) => {
+        if (!selected) {
+            return null;
+        }
+        if (synonyms.find(s => s.id === selected.id)) {
+            notifications.warning('The item is already in the list');
+            return null;
+        }
+        const { speciesRecord } = await this.speciesFacade.getRecordById(selected.id);
+    
+        synonyms.push(speciesRecord);
+        synonyms.sort(helper.listOfSpeciesSorterLex);
+        return synonyms;
+    }
+
     NomenclatoricSynonymListItem = ({ rowId, ...props }) => {
         const fromList = this.state.nomenclatoricSynonyms;
         const Additions = () => (
@@ -338,7 +339,7 @@ class SpeciesRecord extends Component {
     submitForm = async e => {
         e.preventDefault();
         try {
-            await speciesFacade.saveSpeciesAndSynonyms({
+            await this.speciesFacade.saveSpeciesAndSynonyms({
                 species: this.state.record,
                 nomenclatoricSynonyms: this.state.nomenclatoricSynonyms,
                 taxonomicSynonyms: this.state.taxonomicSynonyms,
@@ -363,10 +364,10 @@ class SpeciesRecord extends Component {
     async componentDidMount() {
         const recordId = this.props.match.params.id;
         if (recordId) {
-            const { speciesRecord, accepted, basionym, replaced, nomenNovum, genus, familyApg, family } = await speciesFacade.getRecordById(recordId);
+            const { speciesRecord, accepted, basionym, replaced, nomenNovum, genus, familyApg, family } = await this.speciesFacade.getRecordById(recordId);
 
-            const { nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations } = await speciesFacade.getSynonyms(recordId);
-            const { basionymFor, replacedFor, nomenNovumFor } = await speciesFacade.getBasionymsFor(recordId);
+            const { nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations } = await this.speciesFacade.getSynonyms(recordId);
+            const { basionymFor, replacedFor, nomenNovumFor } = await this.speciesFacade.getBasionymsFor(recordId);
 
             this.setState({
                 record: speciesRecord,
@@ -920,4 +921,8 @@ class SpeciesRecord extends Component {
 
 }
 
-export default SpeciesRecord;
+const mapStateToProps = state => ({
+    accessToken: state.authentication.accessToken
+});
+
+export default connect(mapStateToProps)(SpeciesRecord);

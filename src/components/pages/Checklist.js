@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import {
     Grid, Row, Col,
@@ -11,11 +12,11 @@ import filterFactory, { textFilter, multiSelectFilter, Comparator } from 'react-
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import LosName from '../segments/LosName';
+import SpeciesNameModal from '../segments/SpeciesNameModal';
 import TabledPage from '../wrappers/TabledPageParent';
 
 import config from '../../config/config';
 import helper from '../../utils/helper';
-import SpeciesNameModal from '../segments/SpeciesNameModal';
 
 const PAGE_DETAIL = "/checklist/detail/";
 const EDIT_RECORD = "/checklist/edit/";
@@ -164,7 +165,13 @@ class Checklist extends React.Component {
     }
 }
 
-export default TabledPage({
-    getAll: config.uris.nomenclaturesUri.getAllWFilterUri,
-    getCount: config.uris.nomenclaturesUri.countUri
-})(Checklist);
+const mapStateToProps = state => ({
+    accessToken: state.authentication.accessToken
+});
+
+export default connect(mapStateToProps)(
+    TabledPage({
+        getAll: config.uris.nomenclaturesUri.getAllWFilterUri,
+        getCount: config.uris.nomenclaturesUri.countUri
+    })(Checklist)
+);
