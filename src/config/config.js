@@ -203,6 +203,10 @@ export default {
             baseUri: `${backendBase}/api/synonyms`,
             synonymsByIdUri: `${backendBase}/api/synonyms/{id}`
         },
+        usersUri: {
+            loginUri: `${backendBase}/api/user_lbs/login`,
+            logoutUri: `${backendBase}/api/user_lbs/logout?access_token={accessToken}`
+        },
     },
 
     logging: {
