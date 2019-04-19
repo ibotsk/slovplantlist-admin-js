@@ -9,6 +9,8 @@ import {
 
 import { Typeahead } from 'react-bootstrap-typeahead';
 
+import notifications from '../../utils/notifications';
+
 import speciesFacade from '../../facades/species';
 import generaFacade from '../../facades/genus';
 
@@ -132,10 +134,16 @@ class SpeciesNameModal extends Component {
         if (this.getValidationState()) {
             const accessToken = this.props.accessToken;
             const data = { ...this.state.record };
-            await speciesFacade.saveSpecies({ data, accessToken });
-            this.handleHide();
+            try {
+                await speciesFacade.saveSpecies({ data, accessToken });
+                notifications.success('Saved');
+                this.handleHide();
+            } catch (error) {
+                notifications.error('Error saving');
+                throw error;
+            }
         } else {
-            alert('At least one field must not be empty!');
+            notifications.error('At least one field must not be empty!');
         }
     }
 

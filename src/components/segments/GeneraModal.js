@@ -8,6 +8,8 @@ import {
 
 import { Typeahead } from 'react-bootstrap-typeahead';
 
+import notifications from '../../utils/notifications';
+
 import generaFacade from '../../facades/genus';
 import familiesFacade from '../../facades/families';
 
@@ -76,10 +78,16 @@ class GeneraModal extends Component {
         if (this.getValidationState() === VALIDATION_STATE_SUCCESS) {
             const accessToken = this.props.accessToken;
             const data = { ...this.state.genus };
-            await generaFacade.saveGenus({ data, accessToken });
-            this.handleHide();
+            try {
+                await generaFacade.saveGenus({ data, accessToken });
+                notifications.success('Saved');
+                this.handleHide();
+            } catch (error) {
+                notifications.error('Error saving');
+                throw error;
+            }
         } else {
-            alert("Genus name and authors must not be empty!");
+            notifications.error("Genus name and authors must not be empty!");
         }
     }
 
@@ -188,7 +196,7 @@ class GeneraModal extends Component {
                             <Col sm={mainColWidth}>
                                 <FormControl
                                     type="text"
-                                    value={this.state.genus.vernacular}
+                                    value={this.state.genus.vernacular || ''}
                                     placeholder="Vernacular name"
                                     onChange={this.handleChangeInput}
                                 />

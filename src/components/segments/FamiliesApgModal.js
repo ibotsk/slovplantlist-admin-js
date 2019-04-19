@@ -5,6 +5,8 @@ import {
     Form, FormGroup, FormControl, ControlLabel
 } from 'react-bootstrap';
 
+import notifications from '../../utils/notifications';
+
 import familiesFacade from '../../facades/families';
 
 const VALIDATION_STATE_SUCCESS = 'success';
@@ -61,10 +63,16 @@ class FamiliesApgModal extends Component {
         if (this.getValidationState() === VALIDATION_STATE_SUCCESS) {
             const accessToken = this.props.accessToken;
             const data = { ...this.state };
-            await familiesFacade.saveFamilyApg({ data, accessToken });
-            this.handleHide();
+            try {
+                await familiesFacade.saveFamilyApg({ data, accessToken });
+                notifications.success('Saved');
+                this.handleHide();
+            } catch (error) {
+                notifications.error('Error saving');
+                throw error;
+            }
         } else {
-            alert("Family name must not be empty!");
+            notifications.error("Family name must not be empty!");
         }
     }
 

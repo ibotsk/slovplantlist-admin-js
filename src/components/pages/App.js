@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import { NotificationContainer } from 'react-notifications';
+
 import Footer from '../segments/Footer';
 import CNavbar from '../segments/Navbar';
 
@@ -32,6 +34,7 @@ class App extends Component {
         <CNavbar />
         <Routing />
         <Footer />
+        <NotificationContainer />
       </React.Fragment>
     );
   }
