@@ -204,11 +204,13 @@ const curateSearchFilters = filters => {
     for (const key of keys) { //listofspecies
         const fields = config.nomenclature.filter[key]; // genus, species, ...
         if (fields) {
-            const filterContent = filters[key];
+            const filterContent = filters[key]; // filterType, filterVal, caseSensitive, comparator
             const filterVal = filterContent.filterVal;
-            const newFilterValue = fields.map(f => ({ field: f, value: filterVal }));
-            filterContent.filterVal = newFilterValue;
-            filters[key] = filterContent;
+            if (typeof filterVal === "string") { // avoid redoing mapping on values that are already in { field, value }
+                const newFilterValue = fields.map(f => ({ field: f, value: filterVal }));
+                filterContent.filterVal = newFilterValue;
+                filters[key] = filterContent;
+            }
         }
     }
     return curatedFilters;
@@ -338,13 +340,13 @@ function resolveByComparator(comparator, key, value) {
     }
 }
 
-export default { 
-    listOfSpeciesForComponent, 
-    listOfSpeciesString, 
-    makeWhere, 
-    makeOrder, 
-    buildOptionsFromKeys, 
-    curateSearchFilters, 
+export default {
+    listOfSpeciesForComponent,
+    listOfSpeciesString,
+    makeWhere,
+    makeOrder,
+    buildOptionsFromKeys,
+    curateSearchFilters,
     curateSortFields,
     listOfSpeciesSorterLex
 };

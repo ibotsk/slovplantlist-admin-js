@@ -97,9 +97,9 @@ class Checklist extends React.Component {
         this.props.onTableChange(undefined, {
             page: this.props.paginationOptions.page,
             sizePerPage: this.props.paginationOptions.sizePerPage,
-            filters: {},
-            sortField: 'id',
-            sortOrder: 'asc'
+            filters: this.props.filters,
+            sortField: this.props.sorting.sortField,
+            sortOrder: this.props.sorting.sortOrder
         });
         this.setState({ [MODAL_SPECIES]: false });
     }
@@ -127,8 +127,6 @@ class Checklist extends React.Component {
     }
 
     render() {
-        console.log(this.props);
-        
         return (
             <div id='checklist'>
                 <Grid id='functions-panel'>
