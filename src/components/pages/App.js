@@ -1,34 +1,21 @@
 import React, { Component } from 'react';
-import CNavbar from '../segments/Navbar';
-import Checklist from './Checklist';
-import LosDetail from './LosDetail';
-import Genera from './Genera';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-import { Route, Switch } from 'react-router-dom';
-import FamiliesAPG from './FamiliesAPG';
-import Families from './Families';
-
-const Routing = () => {
-  return (
-    <Switch>
-      <Route exact path="/checklist" component={Checklist} />
-      <Route path="/checklist/detail/:id" component={LosDetail} />
-      <Route exact path="/genera" component={Genera} />
-      <Route exact path="/families-apg" component={FamiliesAPG} />
-      <Route exact path="/families" component={Families} />
-    </Switch>
-  );
-}
+import Login from './Login';
+import HomePage from './HomePage';
+import PrivateRoute from '../wrappers/PrivateRoute';
 
 class App extends Component {
-  render() {
-    return (
-      <React.Fragment>
-        <CNavbar />
-        <Routing />
-      </React.Fragment>
-    );
-  }
+    render() {
+        return (
+            <BrowserRouter>
+                <Switch>
+                    <Route exact path="/login" component={Login} />
+                    <PrivateRoute component={HomePage} />
+                </Switch>
+            </BrowserRouter>
+        );
+    }
 }
 
 export default App;

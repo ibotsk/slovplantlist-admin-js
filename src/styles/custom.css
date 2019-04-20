@@ -1,0 +1,52 @@
+
+.scrollable {
+    overflow-y: scroll;
+    height: 600px;
+    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+}
+
+.as-pointer {
+    cursor: pointer;
+}
+
+.addable-list .form-group{
+    margin-bottom: 0px;
+}
+
+.compact-list .list-group-item {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.synonyms-sublist {
+    color: #666;
+    margin-top: 5px;
+    margin-bottom: 0px;
+}
+
+.synonyms-sublist .list-group-item {
+    background-color: #f9f9f9;
+}
+
+.remove-list-item {
+    border-left: 1px solid #e3e3e3;
+    margin-left: 7px;
+    padding-left: 7px;
+}
+
+/* Fix for typeahead menu in horizontal form */
+.form-horizontal .input-group .rbt-input-hint-container {
+    display: flex;
+}
+
+.gray-text {
+    color: #bdbdbd;
+}
+
+.unselectable {
+    -webkit-user-select: none; /* Safari 3.1+ */
+    -moz-user-select: none; /* Firefox 2+ */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Standard syntax */
+}
