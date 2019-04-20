@@ -1,7 +1,7 @@
 import genusService from '../services/genus';
 
-const getAllGeneraBySearchTerm = async (term, format) => {
-    const genera = await genusService.getAllGeneraBySearchTerm(term);
+const getAllGeneraBySearchTerm = async ({ term, format, accessToken }) => {
+    const genera = await genusService.getAllGeneraBySearchTerm({ term, accessToken });
 
     if (!format) {
         return genera;
@@ -9,8 +9,8 @@ const getAllGeneraBySearchTerm = async (term, format) => {
     return genera.map(format);
 }
 
-const getAllGeneraWithFamilies = async (format) => {
-    const genera = await genusService.getAllGeneraWithFamilies();
+const getAllGeneraWithFamilies = async ({ format, accessToken }) => {
+    const genera = await genusService.getAllGeneraWithFamilies({ accessToken });
 
     if (!format) {
         return genera;
@@ -18,8 +18,8 @@ const getAllGeneraWithFamilies = async (format) => {
     return genera.map(format);
 }
 
-const getGenusByIdWithFamilies = async ({ id }, format) => {
-    const genus = await genusService.getGenusByIdWithFamilies({ id });
+const getGenusByIdWithFamilies = async ({ id, format, accessToken }) => {
+    const genus = await genusService.getGenusByIdWithFamilies({ id, accessToken });
 
     const family = genus.family;
     const familyApg = genus.familyApg;
@@ -35,8 +35,8 @@ const getGenusByIdWithFamilies = async ({ id }, format) => {
     return { genus: toReturn, family, familyApg };
 }
 
-const saveGenus = async ({ data }) => {
-    await genusService.putGenus({ data });
+const saveGenus = async ({ data, accessToken }) => {
+    await genusService.putGenus({ data, accessToken });
 }
 
 export default {

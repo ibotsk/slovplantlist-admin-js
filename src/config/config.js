@@ -117,10 +117,10 @@ export default {
     },
     uris: {
         nomenclaturesUri: {
-            baseUri: `${backendBase}/api/nomenclatures`,
-            getAllWFilterUri: `${backendBase}/api/nomenclatures?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":{order}%7D`,
-            getAllWOrderUri: `${backendBase}/api/nomenclatures?filter=%7B"order":["genus","species","subsp","var","subvar","forma","authors","id"]%7D`,
-            getAllBySearchTermUri: `${backendBase}/api/nomenclatures?filter=%7B"where":%7B"or":[
+            baseUri: `${backendBase}/api/nomenclatures?access_token={accessToken}`,
+            getAllWFilterUri: `${backendBase}/api/nomenclatures?access_token={accessToken}&filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":{order}%7D`,
+            getAllWOrderUri: `${backendBase}/api/nomenclatures?access_token={accessToken}&filter=%7B"order":["genus","species","subsp","var","subvar","forma","authors","id"]%7D`,
+            getAllBySearchTermUri: `${backendBase}/api/nomenclatures?access_token={accessToken}&filter=%7B"where":%7B"or":[
                 %7B"genus":%7B
                     "like": "%25{term}%25"
                 %7D%7D,
@@ -164,44 +164,48 @@ export default {
                     "like": "%25{term}%25"
                 %7D%7D
             ]%7D%7D`,
-            getByIdUri: `${backendBase}/api/nomenclatures/{id}`,
-            getByIdWFilterUri: `${backendBase}/api/nomenclatures/{id}?filter=%7B"include":["accepted","basionym","replaced","nomenNovum",%7B"genusRel":["family","familyApg"]%7D]%7D`,
-            getNomenclatoricSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsNomenclatoric?filter=%7B"include":"synonymsNomenclatoric"%7D`,
-            getTaxonomicSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsTaxonomic?filter=%7B"include":"synonymsNomenclatoric"%7D`,
-            getInvalidSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsInvalid`,
-            getSynonymsOfParent: `${backendBase}/api/nomenclatures/{id}/parentOfSynonyms`,
-            getBasionymForUri: `${backendBase}/api/nomenclatures/{id}/basionymFor`,
-            getReplacedForUri: `${backendBase}/api/nomenclatures/{id}/replacedFor`,
-            getNomenNovumForUri: `${backendBase}/api/nomenclatures/{id}/nomenNovumFor`,
-            countUri: `${backendBase}/api/nomenclatures/count?where={whereString}`
+            getByIdUri: `${backendBase}/api/nomenclatures/{id}?access_token={accessToken}`,
+            getByIdWFilterUri: `${backendBase}/api/nomenclatures/{id}?access_token={accessToken}&filter=%7B"include":["accepted","basionym","replaced","nomenNovum",%7B"genusRel":["family","familyApg"]%7D]%7D`,
+            getNomenclatoricSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsNomenclatoric?access_token={accessToken}&filter=%7B"include":"synonymsNomenclatoric"%7D`,
+            getTaxonomicSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsTaxonomic?access_token={accessToken}&filter=%7B"include":"synonymsNomenclatoric"%7D`,
+            getInvalidSynonymsUri: `${backendBase}/api/nomenclatures/{id}/synonymsInvalid?access_token={accessToken}`,
+            getSynonymsOfParent: `${backendBase}/api/nomenclatures/{id}/parentOfSynonyms?access_token={accessToken}`,
+            getBasionymForUri: `${backendBase}/api/nomenclatures/{id}/basionymFor?access_token={accessToken}`,
+            getReplacedForUri: `${backendBase}/api/nomenclatures/{id}/replacedFor?access_token={accessToken}`,
+            getNomenNovumForUri: `${backendBase}/api/nomenclatures/{id}/nomenNovumFor?access_token={accessToken}`,
+            countUri: `${backendBase}/api/nomenclatures/count?access_token={accessToken}&where={whereString}`
         },
         generaUri: {
-            baseUri: `${backendBase}/api/genera`,
-            getAllWFilterUri: `${backendBase}/api/genera?filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["familyApg","family"],"order":{order}%7D`,
-            getAllBySearchTermUri: `${backendBase}/api/genera?filter=%7B"where":
+            baseUri: `${backendBase}/api/genera?access_token={accessToken}`,
+            getAllWFilterUri: `${backendBase}/api/genera?access_token={accessToken}&filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["familyApg","family"],"order":{order}%7D`,
+            getAllBySearchTermUri: `${backendBase}/api/genera?access_token={accessToken}&filter=%7B"where":
                 %7B"name":%7B
                     "like": "%25{term}%25"
                 %7D%7D
             %7D`,
-            getAllWithFamiliesUri: `${backendBase}/api/genera?filter=%7B"include":["familyApg","family"]%7D`, 
-            getByIdWithFamilies: `${backendBase}/api/genera/{id}?filter=%7B"include":["familyApg","family"]%7D`,
-            countUri: `${backendBase}/api/genera/count?where={whereString}`
+            getAllWithFamiliesUri: `${backendBase}/api/genera?access_token={accessToken}&filter=%7B"include":["familyApg","family"]%7D`, 
+            getByIdWithFamilies: `${backendBase}/api/genera/{id}?access_token={accessToken}&filter=%7B"include":["familyApg","family"]%7D`,
+            countUri: `${backendBase}/api/genera/count?access_token={accessToken}&where={whereString}`
         },
         familiesApgUri: {
-            baseUri: `${backendBase}/api/family_apgs`,
-            getByIdUri: `${backendBase}/api/family_apgs/{id}`,
-            getAllWOrderUri: `${backendBase}/api/family_apgs?filter=%7B"order":["name","id"]%7D`,
-            countUri: `${backendBase}/api/family_apgs/count?where={whereString}`
+            baseUri: `${backendBase}/api/family_apgs?access_token={accessToken}`,
+            getByIdUri: `${backendBase}/api/family_apgs/{id}?access_token={accessToken}`,
+            getAllWOrderUri: `${backendBase}/api/family_apgs?access_token={accessToken}&filter=%7B"order":["name","id"]%7D`,
+            countUri: `${backendBase}/api/family_apgs/count?access_token={accessToken}&where={whereString}`
         },
         familiesUri: {
-            baseUri: `${backendBase}/api/families`,
-            getByIdUri: `${backendBase}/api/families/{id}`,
-            getAllWOrderUri: `${backendBase}/api/families?filter=%7B"order":["name","id"]%7D`,
-            countUri: `${backendBase}/api/families/count?where={whereString}`
+            baseUri: `${backendBase}/api/families?access_token={accessToken}`,
+            getByIdUri: `${backendBase}/api/families/{id}?access_token={accessToken}`,
+            getAllWOrderUri: `${backendBase}/api/families?access_token={accessToken}&filter=%7B"order":["name","id"]%7D`,
+            countUri: `${backendBase}/api/families/count?access_token={accessToken}&where={whereString}`
         },
         synonymsUri: {
-            baseUri: `${backendBase}/api/synonyms`,
-            synonymsByIdUri: `${backendBase}/api/synonyms/{id}`
+            baseUri: `${backendBase}/api/synonyms?access_token={accessToken}`,
+            synonymsByIdUri: `${backendBase}/api/synonyms/{id}?access_token={accessToken}`
+        },
+        usersUri: {
+            loginUri: `${backendBase}/api/user_lbs/login`,
+            logoutUri: `${backendBase}/api/user_lbs/logout?access_token={accessToken}`
         },
     },
 

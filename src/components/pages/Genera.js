@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import {
     Grid, Button, Glyphicon
@@ -77,10 +78,10 @@ class Genera extends React.Component {
     }
 
     hideModal = () => {
-        this.props.onTableChange(undefined, { 
-            page: this.props.paginationOptions.page, 
-            sizePerPage: this.props.paginationOptions.sizePerPage, 
-            filters: {} ,
+        this.props.onTableChange(undefined, {
+            page: this.props.paginationOptions.page,
+            sizePerPage: this.props.paginationOptions.sizePerPage,
+            filters: {},
             sortField: 'name',
             sortOrder: 'asc'
         });
@@ -127,7 +128,13 @@ class Genera extends React.Component {
     }
 }
 
-export default TabledPage({
-    getAll: config.uris.generaUri.getAllWFilterUri,
-    getCount: config.uris.generaUri.countUri,
-})(Genera);
+const mapStateToProps = state => ({
+    accessToken: state.authentication.accessToken
+});
+
+export default connect(mapStateToProps)(
+    TabledPage({
+        getAll: config.uris.generaUri.getAllWFilterUri,
+        getCount: config.uris.generaUri.countUri,
+    })(Genera)
+);

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import {
     Col,
@@ -54,6 +55,8 @@ class SpeciesNameModal extends Component {
     constructor(props) {
         super(props);
 
+        this.accessToken = this.props.accessToken;
+
         this.state = {
             record: {
                 ...initialValues
@@ -67,8 +70,7 @@ class SpeciesNameModal extends Component {
 
     onEnter = async () => {
         if (this.props.id) {
-            const accessToken = this.props.accessToken;
-            const data = await speciesFacade.getSpeciesById({ id: this.props.id, accessToken });
+            const data = await speciesFacade.getSpeciesById({ id: this.props.id, accessToken: this.accessToken });
             const genus_selected = this.state.genera.filter(g => g.id === data.id_genus).map(g => ({ id: g.id, label: g.name }));
             const { family_selected, familyApg_selected } = this.filterFamilies(data.id_genus);
             this.setState({
@@ -132,10 +134,9 @@ class SpeciesNameModal extends Component {
 
     handleSave = async () => {
         if (this.getValidationState()) {
-            const accessToken = this.props.accessToken;
             const data = { ...this.state.record };
             try {
-                await speciesFacade.saveSpecies({ data, accessToken });
+                await speciesFacade.saveSpecies({ data, accessToken: this.accessToken });
                 notifications.success('Saved');
                 this.handleHide();
             } catch (error) {
@@ -157,7 +158,7 @@ class SpeciesNameModal extends Component {
     }
 
     async componentDidMount() {
-        const genera = await generaFacade.getAllGeneraWithFamilies();
+        const genera = await generaFacade.getAllGeneraWithFamilies({ accessToken: this.accessToken });
         this.setState({
             genera
         });
@@ -514,4 +515,8 @@ class SpeciesNameModal extends Component {
 
 }
 
-export default SpeciesNameModal;
+const mapStateToProps = state => ({
+    accessToken: state.authentication.accessToken
+});
+
+export default connect(mapStateToProps)(SpeciesNameModal);

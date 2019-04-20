@@ -2,12 +2,12 @@ import familiesService from '../services/families';
 import utils from '../utils/utils';
 
 const getFamilyByIdCurated = async ({ id, accessToken }) => {
-    const data = await familiesService.getFamilyById({ id });
+    const data = await familiesService.getFamilyById({ id, accessToken });
     return utils.nullToEmpty(data);
 }
 
-const getAllFamilies = async format => {
-    const data = await familiesService.getAllFamilies();
+const getAllFamilies = async ({ format, accessToken }) => {
+    const data = await familiesService.getAllFamilies({ accessToken });
 
     if (!format) {
         return data;
@@ -16,12 +16,12 @@ const getAllFamilies = async format => {
 }
 
 const getFamilyApgByIdCurated = async ({ id, accessToken }) => {
-    const data = await familiesService.getFamilyApgById({ id });
+    const data = await familiesService.getFamilyApgById({ id, accessToken });
     return utils.nullToEmpty(data);
 }
 
-const getAllFamiliesApg = async format => {
-    const data = await familiesService.getAllFamiliesApg();
+const getAllFamiliesApg = async ({ format, accessToken }) => {
+    const data = await familiesService.getAllFamiliesApg({ accessToken });
 
     if (!format) {
         return data;
@@ -29,12 +29,12 @@ const getAllFamiliesApg = async format => {
     return data.map(format);
 }
 
-const saveFamily = async ({ data }) => {
-    await familiesService.putFamily({ data });
+const saveFamily = async ({ data, accessToken }) => {
+    await familiesService.putFamily({ data, accessToken });
 }
 
-const saveFamilyApg = async ({ data }) => {
-    await familiesService.putFamilyApg({ data });
+const saveFamilyApg = async ({ data, accessToken }) => {
+    await familiesService.putFamilyApg({ data, accessToken });
 }
 
 export default {
@@ -44,4 +44,5 @@ export default {
     getAllFamiliesApg,
     saveFamily,
     saveFamilyApg
-}
+};
+

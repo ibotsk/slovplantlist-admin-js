@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import {
     Button, Modal, Col,
@@ -26,6 +27,8 @@ class FamiliesApgModal extends Component {
     constructor(props) {
         super(props);
 
+        this.accessToken = this.props.accessToken;
+
         this.state = {
             ...initialValues
         }
@@ -33,8 +36,7 @@ class FamiliesApgModal extends Component {
 
     onEnter = async () => {
         if (this.props.id) {
-            const accessToken = this.props.accessToken;
-            const data = await familiesFacade.getFamilyApgByIdCurated({ id: this.props.id, accessToken });
+            const data = await familiesFacade.getFamilyApgByIdCurated({ id: this.props.id, accessToken: this.accessToken });
             this.setState({ ...data });
         }
     }
@@ -61,10 +63,9 @@ class FamiliesApgModal extends Component {
 
     handleSave = async () => {
         if (this.getValidationState() === VALIDATION_STATE_SUCCESS) {
-            const accessToken = this.props.accessToken;
             const data = { ...this.state };
             try {
-                await familiesFacade.saveFamilyApg({ data, accessToken });
+                await familiesFacade.saveFamilyApg({ data, accessToken: this.accessToken });
                 notifications.success('Saved');
                 this.handleHide();
             } catch (error) {
@@ -130,4 +131,8 @@ class FamiliesApgModal extends Component {
     }
 }
 
-export default FamiliesApgModal;
+const mapStateToProps = state => ({
+    accessToken: state.authentication.accessToken
+});
+
+export default connect(mapStateToProps)(FamiliesApgModal);

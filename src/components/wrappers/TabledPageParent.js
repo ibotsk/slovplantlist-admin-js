@@ -22,6 +22,8 @@ const TabledPage = injectedProps => WrappedComponent => {
         constructor(props) {
             super(props);
 
+            this.accessToken = this.props.accessToken;
+
             this.state = {
                 records: [],
                 totalSize: 0,
@@ -56,14 +58,12 @@ const TabledPage = injectedProps => WrappedComponent => {
         }
 
         fetchRecords = async (where, order, offset, limit) => {
-            const accessToken = this.props.accessToken;
-            return await tablesService.getAll(injectedProps.getAll, offset, where, order, limit, accessToken);
+            return await tablesService.getAll(injectedProps.getAll, offset, where, order, limit, this.accessToken);
         }
 
         fetchCount = async where => {
-            const accessToken = this.props.accessToken;
             const whereString = JSON.stringify(where);
-            const countResponse = await tablesService.getCount(injectedProps.getCount, whereString, accessToken);
+            const countResponse = await tablesService.getCount(injectedProps.getCount, whereString, this.accessToken);
             return countResponse.count;
         }
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import {
     Col,
@@ -33,6 +34,8 @@ class GeneraModal extends Component {
     constructor(props) {
         super(props);
 
+        this.accessToken = this.props.accessToken;
+
         this.state = {
             genus: {
                 ...initialValues
@@ -44,8 +47,7 @@ class GeneraModal extends Component {
 
     onEnter = async () => {
         if (this.props.id) {
-            const accessToken = this.props.accessToken;
-            const { genus } = await generaFacade.getGenusByIdWithFamilies({ id: this.props.id, accessToken });
+            const { genus } = await generaFacade.getGenusByIdWithFamilies({ id: this.props.id, accessToken: this.accessToken });
             this.setState({
                 genus
             });
@@ -76,10 +78,9 @@ class GeneraModal extends Component {
 
     handleSave = async () => {
         if (this.getValidationState() === VALIDATION_STATE_SUCCESS) {
-            const accessToken = this.props.accessToken;
             const data = { ...this.state.genus };
             try {
-                await generaFacade.saveGenus({ data, accessToken });
+                await generaFacade.saveGenus({ data, accessToken: this.accessToken });
                 notifications.success('Saved');
                 this.handleHide();
             } catch (error) {
@@ -101,9 +102,9 @@ class GeneraModal extends Component {
     }
 
     async componentDidMount() {
-        const typeaheadFormat = f => ({ id: f.id, label: f.name });
-        const families = await familiesFacade.getAllFamilies(typeaheadFormat);
-        const familiesApg = await familiesFacade.getAllFamiliesApg(typeaheadFormat);
+        const format = f => ({ id: f.id, label: f.name });
+        const families = await familiesFacade.getAllFamilies({ format, accessToken: this.accessToken });
+        const familiesApg = await familiesFacade.getAllFamiliesApg({ format, accessToken: this.accessToken });
         this.setState({
             families,
             familiesApg
@@ -214,4 +215,8 @@ class GeneraModal extends Component {
     }
 }
 
-export default GeneraModal;
+const mapStateToProps = state => ({
+    accessToken: state.authentication.accessToken
+});
+
+export default connect(mapStateToProps)(GeneraModal);

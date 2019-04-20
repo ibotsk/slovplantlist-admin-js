@@ -1,6 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
-import { 
+import {
     Grid, Button, Glyphicon
 } from 'react-bootstrap';
 
@@ -101,7 +102,13 @@ class FamiliesAPG extends React.Component {
     }
 }
 
-export default TabledPage({
-    getAll: config.uris.familiesApgUri.getAllWOrderUri,
-    getCount: config.uris.familiesApgUri.countUri,
-})(FamiliesAPG);
+const mapStateToProps = state => ({
+    accessToken: state.authentication.accessToken
+});
+
+export default connect(mapStateToProps)(
+    TabledPage({
+        getAll: config.uris.familiesApgUri.getAllWOrderUri,
+        getCount: config.uris.familiesApgUri.countUri,
+    })(FamiliesAPG)
+);

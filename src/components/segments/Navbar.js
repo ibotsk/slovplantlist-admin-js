@@ -1,6 +1,8 @@
 import React from "react";
 import { Nav, Navbar, NavItem, Glyphicon } from 'react-bootstrap';
 
+import { LinkContainer } from 'react-router-bootstrap';
+
 const CNavbar = (props) => {
 
     return (
@@ -20,7 +22,7 @@ const CNavbar = (props) => {
                         <NavItem eventKey={2} href="/genera">
                             Genera
                         </NavItem>
-                        <NavItem eventKey={3} href="families-apg">
+                        <NavItem eventKey={3} href="/families-apg">
                             Families APG4
                         </NavItem>
                         <NavItem eventKey={4} href="/families">
@@ -31,9 +33,11 @@ const CNavbar = (props) => {
                         <NavItem eventKey={1} href="#">
                             Users
                         </NavItem>
-                        <NavItem eventKey={2} href="#">
-                            <Glyphicon glyph="log-out" /> Logout
-                        </NavItem>
+                        <LinkContainer to="/logout">
+                            <NavItem eventKey={2}>
+                                <Glyphicon glyph="log-out" /> Logout
+                                </NavItem>
+                        </LinkContainer>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
