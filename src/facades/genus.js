@@ -1,52 +1,47 @@
-import genusServiceModule from '../services/genus';
+import genusService from '../services/genus';
 
-export default (accessToken) => {
+const getAllGeneraBySearchTerm = async ({ term, format, accessToken }) => {
+    const genera = await genusService.getAllGeneraBySearchTerm({ term, accessToken });
 
-    const genusService = genusServiceModule(accessToken);
+    if (!format) {
+        return genera;
+    }
+    return genera.map(format);
+}
 
-    const getAllGeneraBySearchTerm = async (term, format) => {
-        const genera = await genusService.getAllGeneraBySearchTerm(term);
+const getAllGeneraWithFamilies = async ({ format, accessToken }) => {
+    const genera = await genusService.getAllGeneraWithFamilies({ accessToken });
 
-        if (!format) {
-            return genera;
-        }
-        return genera.map(format);
+    if (!format) {
+        return genera;
+    }
+    return genera.map(format);
+}
+
+const getGenusByIdWithFamilies = async ({ id, format, accessToken }) => {
+    const genus = await genusService.getGenusByIdWithFamilies({ id, accessToken });
+
+    const family = genus.family;
+    const familyApg = genus.familyApg;
+
+    delete genus.family;
+    delete genus.familyApg;
+
+    let toReturn = genus;
+    if (format) {
+        toReturn = format(genus);
     }
 
-    const getAllGeneraWithFamilies = async (format) => {
-        const genera = await genusService.getAllGeneraWithFamilies();
+    return { genus: toReturn, family, familyApg };
+}
 
-        if (!format) {
-            return genera;
-        }
-        return genera.map(format);
-    }
+const saveGenus = async ({ data, accessToken }) => {
+    await genusService.putGenus({ data, accessToken });
+}
 
-    const getGenusByIdWithFamilies = async ({ id }, format) => {
-        const genus = await genusService.getGenusByIdWithFamilies({ id });
-
-        const family = genus.family;
-        const familyApg = genus.familyApg;
-
-        delete genus.family;
-        delete genus.familyApg;
-
-        let toReturn = genus;
-        if (format) {
-            toReturn = format(genus);
-        }
-
-        return { genus: toReturn, family, familyApg };
-    }
-
-    const saveGenus = async ({ data }) => {
-        await genusService.putGenus({ data });
-    }
-
-    return {
-        getAllGeneraBySearchTerm,
-        getAllGeneraWithFamilies,
-        getGenusByIdWithFamilies,
-        saveGenus
-    }
+export default {
+    getAllGeneraBySearchTerm,
+    getAllGeneraWithFamilies,
+    getGenusByIdWithFamilies,
+    saveGenus
 }

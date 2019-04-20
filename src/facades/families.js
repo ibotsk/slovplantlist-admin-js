@@ -1,61 +1,48 @@
-import familiesServiceModule from '../services/families';
+import familiesService from '../services/families';
 import utils from '../utils/utils';
 
-export default (accessToken) => {
-
-    const familiesService = familiesServiceModule(accessToken);
-
-    const getFamilyByIdCurated = async ({ id }) => {
-        const data = await familiesService.getFamilyById({ id });
-        return utils.nullToEmpty(data);
-    }
-
-    const getAllFamilies = async format => {
-        const data = await familiesService.getAllFamilies();
-
-        if (!format) {
-            return data;
-        }
-        return data.map(format);
-    }
-
-    const getFamilyApgByIdCurated = async ({ id }) => {
-        const data = await familiesService.getFamilyApgById({ id });
-        return utils.nullToEmpty(data);
-    }
-
-    const getAllFamiliesApg = async format => {
-        const data = await familiesService.getAllFamiliesApg();
-
-        if (!format) {
-            return data;
-        }
-        return data.map(format);
-    }
-
-    const saveFamily = async ({ data }) => {
-        await familiesService.putFamily({ data });
-    }
-
-    const saveFamilyApg = async ({ data }) => {
-        await familiesService.putFamilyApg({ data });
-    }
-
-    return {
-        getFamilyByIdCurated,
-        getAllFamilies,
-        getFamilyApgByIdCurated,
-        getAllFamiliesApg,
-        saveFamily,
-        saveFamilyApg
-    };
+const getFamilyByIdCurated = async ({ id, accessToken }) => {
+    const data = await familiesService.getFamilyById({ id, accessToken });
+    return utils.nullToEmpty(data);
 }
 
-// export default {
-//     getFamilyByIdCurated,
-//     getAllFamilies,
-//     getFamilyApgByIdCurated,
-//     getAllFamiliesApg,
-//     saveFamily,
-//     saveFamilyApg
-// }
+const getAllFamilies = async ({ format, accessToken }) => {
+    const data = await familiesService.getAllFamilies({ accessToken });
+
+    if (!format) {
+        return data;
+    }
+    return data.map(format);
+}
+
+const getFamilyApgByIdCurated = async ({ id, accessToken }) => {
+    const data = await familiesService.getFamilyApgById({ id, accessToken });
+    return utils.nullToEmpty(data);
+}
+
+const getAllFamiliesApg = async ({ format, accessToken }) => {
+    const data = await familiesService.getAllFamiliesApg({ accessToken });
+
+    if (!format) {
+        return data;
+    }
+    return data.map(format);
+}
+
+const saveFamily = async ({ data, accessToken }) => {
+    await familiesService.putFamily({ data, accessToken });
+}
+
+const saveFamilyApg = async ({ data, accessToken }) => {
+    await familiesService.putFamilyApg({ data, accessToken });
+}
+
+export default {
+    getFamilyByIdCurated,
+    getAllFamilies,
+    getFamilyApgByIdCurated,
+    getAllFamiliesApg,
+    saveFamily,
+    saveFamilyApg
+};
+

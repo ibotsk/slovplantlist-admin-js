@@ -11,8 +11,8 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 
 import notifications from '../../utils/notifications';
 
-import generaFacadeModule from '../../facades/genus';
-import familiesFacadeModule from '../../facades/families';
+import generaFacade from '../../facades/genus';
+import familiesFacade from '../../facades/families';
 
 const VALIDATION_STATE_SUCCESS = 'success';
 const VALIDATION_STATE_ERROR = 'error';
@@ -34,8 +34,7 @@ class GeneraModal extends Component {
     constructor(props) {
         super(props);
 
-        this.generaFacade = generaFacadeModule(this.props.accessToken);
-        this.familiesFacade = familiesFacadeModule(this.props.accessToken);
+        this.accessToken = this.props.accessToken;
 
         this.state = {
             genus: {
@@ -48,7 +47,7 @@ class GeneraModal extends Component {
 
     onEnter = async () => {
         if (this.props.id) {
-            const { genus } = await this.generaFacade.getGenusByIdWithFamilies({ id: this.props.id });
+            const { genus } = await generaFacade.getGenusByIdWithFamilies({ id: this.props.id, accessToken: this.accessToken });
             this.setState({
                 genus
             });
@@ -81,7 +80,7 @@ class GeneraModal extends Component {
         if (this.getValidationState() === VALIDATION_STATE_SUCCESS) {
             const data = { ...this.state.genus };
             try {
-                await this.generaFacade.saveGenus({ data });
+                await generaFacade.saveGenus({ data, accessToken: this.accessToken });
                 notifications.success('Saved');
                 this.handleHide();
             } catch (error) {
@@ -103,9 +102,9 @@ class GeneraModal extends Component {
     }
 
     async componentDidMount() {
-        const typeaheadFormat = f => ({ id: f.id, label: f.name });
-        const families = await this.familiesFacade.getAllFamilies(typeaheadFormat);
-        const familiesApg = await this.familiesFacade.getAllFamiliesApg(typeaheadFormat);
+        const format = f => ({ id: f.id, label: f.name });
+        const families = await familiesFacade.getAllFamilies({ format, accessToken: this.accessToken });
+        const familiesApg = await familiesFacade.getAllFamiliesApg({ format, accessToken: this.accessToken });
         this.setState({
             families,
             familiesApg

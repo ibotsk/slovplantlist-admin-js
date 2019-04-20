@@ -12,8 +12,8 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 
 import notifications from '../../utils/notifications';
 
-import speciesFacadeModule from '../../facades/species';
-import generaFacadeModule from '../../facades/genus';
+import speciesFacade from '../../facades/species';
+import generaFacade from '../../facades/genus';
 
 import config from '../../config/config';
 
@@ -55,8 +55,7 @@ class SpeciesNameModal extends Component {
     constructor(props) {
         super(props);
 
-        this.generaFacade = generaFacadeModule(this.props.accessToken);
-        this.speciesFacade = speciesFacadeModule(this.props.accessToken);
+        this.accessToken = this.props.accessToken;
 
         this.state = {
             record: {
@@ -71,7 +70,7 @@ class SpeciesNameModal extends Component {
 
     onEnter = async () => {
         if (this.props.id) {
-            const data = await this.speciesFacade.getSpeciesById({ id: this.props.id });
+            const data = await speciesFacade.getSpeciesById({ id: this.props.id, accessToken: this.accessToken });
             const genus_selected = this.state.genera.filter(g => g.id === data.id_genus).map(g => ({ id: g.id, label: g.name }));
             const { family_selected, familyApg_selected } = this.filterFamilies(data.id_genus);
             this.setState({
@@ -137,7 +136,7 @@ class SpeciesNameModal extends Component {
         if (this.getValidationState()) {
             const data = { ...this.state.record };
             try {
-                await this.speciesFacade.saveSpecies({ data });
+                await speciesFacade.saveSpecies({ data, accessToken: this.accessToken });
                 notifications.success('Saved');
                 this.handleHide();
             } catch (error) {
@@ -159,7 +158,7 @@ class SpeciesNameModal extends Component {
     }
 
     async componentDidMount() {
-        const genera = await this.generaFacade.getAllGeneraWithFamilies();
+        const genera = await generaFacade.getAllGeneraWithFamilies({ accessToken: this.accessToken });
         this.setState({
             genera
         });

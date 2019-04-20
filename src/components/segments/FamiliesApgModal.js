@@ -8,7 +8,7 @@ import {
 
 import notifications from '../../utils/notifications';
 
-import familiesFacadeModule from '../../facades/families';
+import familiesFacade from '../../facades/families';
 
 const VALIDATION_STATE_SUCCESS = 'success';
 const VALIDATION_STATE_ERROR = 'error';
@@ -27,7 +27,7 @@ class FamiliesApgModal extends Component {
     constructor(props) {
         super(props);
 
-        this.familiesFacade = familiesFacadeModule(this.props.accessToken);
+        this.accessToken = this.props.accessToken;
 
         this.state = {
             ...initialValues
@@ -36,7 +36,7 @@ class FamiliesApgModal extends Component {
 
     onEnter = async () => {
         if (this.props.id) {
-            const data = await this.familiesFacade.getFamilyApgByIdCurated({ id: this.props.id });
+            const data = await familiesFacade.getFamilyApgByIdCurated({ id: this.props.id, accessToken: this.accessToken });
             this.setState({ ...data });
         }
     }
@@ -65,7 +65,7 @@ class FamiliesApgModal extends Component {
         if (this.getValidationState() === VALIDATION_STATE_SUCCESS) {
             const data = { ...this.state };
             try {
-                await this.familiesFacade.saveFamilyApg({ data });
+                await familiesFacade.saveFamilyApg({ data, accessToken: this.accessToken });
                 notifications.success('Saved');
                 this.handleHide();
             } catch (error) {

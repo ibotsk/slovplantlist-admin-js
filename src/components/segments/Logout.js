@@ -4,18 +4,12 @@ import { Redirect } from 'react-router';
 
 import { unsetAuthenticated } from '../../actions/index';
 import { removeState } from '../../services/local-storage';
-import userServiceModule from '../../services/user-service';
+import userService from '../../services/user-service';
 
 class Logout extends React.Component {
 
-    constructor(props) {
-        super(props);
-
-        this.userService = userServiceModule(this.props.accessToken);
-    }
-
     async componentWillMount() {
-        await this.userService.logout();
+        await userService.logout(this.props.accessToken);
         this.props.unsetAuthenticated();
         removeState();
     }
