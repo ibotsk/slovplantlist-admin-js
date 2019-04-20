@@ -400,7 +400,7 @@ class SpeciesRecord extends Component {
         return (
             <div id='species-detail'>
                 <Grid>
-                    <h2>Checklist record <small>({this.state.record ? <LosName data={this.state.record} /> : 'new'})</small></h2>
+                    <h2>Checklist record <small>({this.state.record.id ? <LosName data={this.state.record} /> : 'new'})</small></h2>
 
                     <Form horizontal onSubmit={this.submitForm}>
                         <div id="name">
