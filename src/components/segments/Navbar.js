@@ -22,7 +22,7 @@ const CNavbar = (props) => {
                         <NavItem eventKey={2} href="/genera">
                             Genera
                         </NavItem>
-                        <NavItem eventKey={3} href="families-apg">
+                        <NavItem eventKey={3} href="/families-apg">
                             Families APG4
                         </NavItem>
                         <NavItem eventKey={4} href="/families">
