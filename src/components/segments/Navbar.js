@@ -30,7 +30,7 @@ const CNavbar = (props) => {
                         </NavItem>
                     </Nav>
                     <Nav pullRight>
-                        <NavItem eventKey={1} href="#">
+                        <NavItem eventKey={1} href="/users">
                             Users
                         </NavItem>
                         <LinkContainer to="/logout">
