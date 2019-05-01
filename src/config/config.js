@@ -83,6 +83,20 @@ export default {
                 numType: 1,
                 prefix: '–'
             }
+        },
+        userRole: {
+            admin: {
+                text: 'ADMIN',
+                colour: '#C9302C'
+            },
+            editor: {
+                text: 'EDITOR',
+                colour: '#bb9d00'
+            },
+            author: {
+                text: 'AUTHOR',
+                colour: '#57ab27'
+            }
         }
     },
     pagination: {
@@ -206,7 +220,7 @@ export default {
             loginUri: `${backendBase}/api/user_lbs/login`,
             logoutUri: `${backendBase}/api/user_lbs/logout?access_token={accessToken}`,
             baseUri: `${backendBase}/api/user_lbs`,
-            getAllWOrderUri: `${backendBase}/api/user_lbs?access_token={accessToken}&filter=%7B"order":["username"]%7D`,
+            getAllWOrderUri: `${backendBase}/api/user_lbs?access_token={accessToken}&filter=%7B"include":"roles","order":["username"]%7D`,
             countUri: `${backendBase}/api/user_lbs/count?access_token={accessToken}&where={whereString}`
         },
     },

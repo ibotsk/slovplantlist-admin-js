@@ -5,6 +5,7 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import TabledPage from '../wrappers/TabledPageParent';
 
+import formatter from '../../utils/formatter';
 import config from '../../config/config';
 
 const columns = [
@@ -23,6 +24,11 @@ const columns = [
         dataField: 'email',
         text: 'Email',
         sort: true
+    },
+    {
+        dataField: 'roles',
+        text: 'Role',
+        formatter: formatter.userRole
     }
 ];
 
@@ -40,19 +46,11 @@ class AllUsers extends React.Component {
         };
     }
 
-    formatResult = data => {
-        return data.map(d => ({
-            id: d.id,
-            username: d.username,
-            email: d.email
-        }));
-    }
-
     render() {
         return (
             <BootstrapTable hover striped condensed
                 keyField='id'
-                data={this.formatResult(this.props.data)}
+                data={this.props.data}
                 columns={columns}
                 filter={filterFactory()}
                 defaultSorted={defaultSorted}
