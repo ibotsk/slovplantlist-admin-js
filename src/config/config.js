@@ -3,7 +3,8 @@ const backendBase = `${process.env.REACT_APP_BACKEND_BASE}:${process.env.REACT_A
 export default {
 
     constants: {
-        listOfSpeciesColumn: 'listOfSpecies'
+        listOfSpeciesColumn: 'listOfSpecies',
+        userRealm: 'slovplantlist'
     },
     nomenclature: {
         name: {
@@ -219,8 +220,9 @@ export default {
         usersUri: {
             loginUri: `${backendBase}/api/user_lbs/login`,
             logoutUri: `${backendBase}/api/user_lbs/logout?access_token={accessToken}`,
-            baseUri: `${backendBase}/api/user_lbs`,
+            baseUri: `${backendBase}/api/user_lbs?access_token={accessToken}`,
             getAllWOrderUri: `${backendBase}/api/user_lbs?access_token={accessToken}&filter=%7B"include":"roles","order":["username"]%7D`,
+            getByIdWithRolesUri: `${backendBase}/api/user_lbs/{id}?access_token={accessToken}&filter=%7B"include":"roles"%7D`,
             countUri: `${backendBase}/api/user_lbs/count?access_token={accessToken}&where={whereString}`
         },
     },

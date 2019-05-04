@@ -1,18 +1,23 @@
 import React from 'react';
 
+import {
+    Button
+} from 'react-bootstrap';
+
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
-import TabledPage from '../wrappers/TabledPageParent';
-
 import formatter from '../../utils/formatter';
-import config from '../../config/config';
 
 const columns = [
     {
         dataField: 'id',
         text: 'ID',
         sort: true
+    },
+    {
+        dataField: 'action',
+        text: 'Action'
     },
     {
         dataField: 'username',
@@ -27,8 +32,7 @@ const columns = [
     },
     {
         dataField: 'roles',
-        text: 'Role',
-        formatter: formatter.userRole
+        text: 'Role'
     }
 ];
 
@@ -37,30 +41,27 @@ const defaultSorted = [{
     order: 'asc'
 }];
 
-class AllUsers extends React.Component {
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-        };
-    }
-
-    render() {
-        return (
-            <BootstrapTable hover striped condensed
-                keyField='id'
-                data={this.props.data}
-                columns={columns}
-                filter={filterFactory()}
-                defaultSorted={defaultSorted}
-                onTableChange={this.props.onTableChange}
-            />
-        );
-    }
+const formatResult = (props) => {
+    return props.data.map(u => ({
+        id: u.id,
+        action: <Button bsSize='xsmall' bsStyle="warning" onClick={() => props.onEditAction(u.id)}>Edit</Button>,
+        username: u.username,
+        email: u.email,
+        roles: formatter.userRole(u.roles)
+    }));
 }
 
-export default TabledPage({
-    getAll: config.uris.usersUri.getAllWOrderUri,
-    getCount: config.uris.usersUri.countUri,
-})(AllUsers);
+const AllUsers = (props) => {
+    return (
+        <BootstrapTable hover striped condensed
+            keyField='id'
+            data={formatResult(props)}
+            columns={columns}
+            filter={filterFactory()}
+            defaultSorted={defaultSorted}
+            onTableChange={props.onTableChange}
+        />
+    );
+}
+
+export default AllUsers;
