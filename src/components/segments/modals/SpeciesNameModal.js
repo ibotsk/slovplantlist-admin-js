@@ -10,12 +10,12 @@ import {
 
 import { Typeahead } from 'react-bootstrap-typeahead';
 
-import notifications from '../../utils/notifications';
+import notifications from '../../../utils/notifications';
 
-import speciesFacade from '../../facades/species';
-import generaFacade from '../../facades/genus';
+import speciesFacade from '../../../facades/species';
+import generaFacade from '../../../facades/genus';
 
-import config from '../../config/config';
+import config from '../../../config/config';
 
 const titleColWidth = 2;
 const mainColWidth = 10;

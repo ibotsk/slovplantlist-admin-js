@@ -10,7 +10,7 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import TabledPage from '../wrappers/TabledPageParent';
-import GeneraModal from '../segments/GeneraModal';
+import GeneraModal from '../segments/modals/GeneraModal';
 
 import config from '../../config/config';
 

@@ -12,7 +12,7 @@ import filterFactory, { textFilter, multiSelectFilter, Comparator } from 'react-
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import LosName from '../segments/LosName';
-import SpeciesNameModal from '../segments/SpeciesNameModal';
+import SpeciesNameModal from '../segments/modals/SpeciesNameModal';
 import TabledPage from '../wrappers/TabledPageParent';
 
 import config from '../../config/config';

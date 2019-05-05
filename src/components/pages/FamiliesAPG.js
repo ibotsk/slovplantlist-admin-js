@@ -9,7 +9,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import TabledPage from '../wrappers/TabledPageParent';
-import FamiliesApgModal from '../segments/FamiliesApgModal';
+import FamiliesApgModal from '../segments/modals/FamiliesApgModal';
 
 import config from '../../config/config';
 
