@@ -9,6 +9,7 @@ import {
 import notifications from '../../../utils/notifications';
 
 import usersFacade from '../../../facades/users';
+import rolesFacade from '../../../facades/roles';
 
 const VALIDATION_STATE_SUCCESS = 'success';
 const VALIDATION_STATE_ERROR = 'error';
@@ -18,15 +19,19 @@ const PREFIX = 'search-'; // to prevent LastPass to autofill username and passwo
 const titleColWidth = 2;
 const mainColWidth = 10;
 
-const initialValues = {
+const userInitialValues = {
     id: undefined,
     username: '',
     email: '',
     password: '',
     realm: '',
     emailVerified: false,
-    verificationToken: null,
-    roles: []
+    verificationToken: null
+};
+
+const userRoleInitialValues = {
+    id: 3,
+    name: 'author'
 };
 
 class UsersModal extends Component {
@@ -37,45 +42,73 @@ class UsersModal extends Component {
         this.accessToken = this.props.accessToken;
 
         this.state = {
-            ...initialValues
+            user: {
+                ...userInitialValues,
+            },
+            userRole: {
+                ...userRoleInitialValues
+            },
+            rolesOptions: []
         }
     }
 
     onEnter = async () => {
         if (this.props.id) {
-            const data = await usersFacade.getUserById({ id: this.props.id, accessToken: this.accessToken });
-            this.setState({ ...data });
+            const { user, roles } = await usersFacade.getUserById({ id: this.props.id, accessToken: this.accessToken });
+            const userRole = roles[0] || { ...userRoleInitialValues };
+            this.setState({
+                user,
+                userRole
+            });
         }
     }
 
     getValidationState = () => {
-        if (this.state.username.length > 0 
-            && this.state.email.length > 0
-            && ((!this.props.id && this.state.password.length > 0) || this.props.id)) {
+        if (this.state.user.username.length > 0
+            && this.state.user.email.length > 0
+            && ((!this.props.id && this.state.user.password.length > 0) || this.props.id)) {
             return VALIDATION_STATE_SUCCESS;
         }
         return VALIDATION_STATE_ERROR;
     }
 
     handleChange = e => {
+        const user = { ...this.state.user };
         const id = e.target.id.replace(PREFIX, '');
+        user[id] = e.target.value;
         this.setState({
-            [id]: e.target.value
+            user
+        });
+    }
+
+    handleChangeRole = e => {
+        const user = { ...this.state.user };
+        const userRole = this.state.rolesOptions.find(r => r.id === parseInt(e.target.value));
+        this.setState({
+            user,
+            userRole
         });
     }
 
     handleHide = () => {
         this.setState({
-            ...initialValues
+            user: {
+                ...userInitialValues
+            },
+            userRole: {
+                ...userRoleInitialValues
+            }
         });
         this.props.onHide();
     }
 
     handleSave = async () => {
         if (this.getValidationState() === VALIDATION_STATE_SUCCESS) {
-            const data = { ...this.state };
+            const data = { ...this.state.user };
+            const roleId = this.state.userRole.id;
             try {
-                await usersFacade.saveUser({ data, accessToken: this.accessToken });
+                const userId = await usersFacade.saveUser({ data, accessToken: this.accessToken });
+                await rolesFacade.saveRoleForUser({ userId, roleId, accessToken: this.accessToken });
                 notifications.success('Saved');
                 this.handleHide();
             } catch (error) {
@@ -85,6 +118,14 @@ class UsersModal extends Component {
         } else {
             notifications.error("All mandatory fields must be filled!");
         }
+    }
+
+    async componentDidMount() {
+        const format = r => ({ id: r.id, name: r.name });
+        const rolesOptions = await rolesFacade.getAllRoles({ accessToken: this.accessToken, format });
+        this.setState({
+            rolesOptions
+        });
     }
 
     render() {
@@ -106,7 +147,7 @@ class UsersModal extends Component {
                             <Col sm={mainColWidth}>
                                 <FormControl
                                     type="text"
-                                    value={this.state.username}
+                                    value={this.state.user.username}
                                     placeholder="Enter Username"
                                     onChange={this.handleChange}
                                     data-lpignore={true}
@@ -125,7 +166,7 @@ class UsersModal extends Component {
                             <Col sm={mainColWidth}>
                                 <FormControl
                                     type="email"
-                                    value={this.state.email}
+                                    value={this.state.user.email}
                                     placeholder="Enter Email"
                                     onChange={this.handleChange}
                                     data-lpignore={true}
@@ -133,22 +174,44 @@ class UsersModal extends Component {
                                 <FormControl.Feedback />
                             </Col>
                         </FormGroup>
+                        {
+                            !this.props.id &&  // render password field only when creating new user
+                            <FormGroup
+                                controlId="search-password"
+                                bsSize='sm'
+                                validationState={this.props.id ? null : this.getValidationState()}
+                            >
+                                <Col componentClass={ControlLabel} sm={titleColWidth}>
+                                    {this.props.id ? 'Set new password' : 'Password'}
+                                </Col>
+                                <Col sm={mainColWidth}>
+                                    <FormControl
+                                        type="password"
+                                        value={this.state.user.password}
+                                        onChange={this.handleChange}
+                                        data-lpignore={true}
+                                    />
+                                    <FormControl.Feedback />
+                                </Col>
+                            </FormGroup>
+                        }
                         <FormGroup
-                            controlId="search-password"
+                            controlId="roles"
                             bsSize='sm'
-                            validationState={this.props.id ? null: this.getValidationState()}
                         >
                             <Col componentClass={ControlLabel} sm={titleColWidth}>
-                                {this.props.id ? 'Set new password' : 'Password'}
+                                Role
                             </Col>
                             <Col sm={mainColWidth}>
                                 <FormControl
-                                    type="password"
-                                    value={this.state.password}
-                                    onChange={this.handleChange}
-                                    data-lpignore={true}
-                                />
-                                <FormControl.Feedback />
+                                    componentClass="select"
+                                    placeholder="select"
+                                    value={this.state.userRole.id}
+                                    onChange={this.handleChangeRole} >
+                                    {
+                                        this.state.rolesOptions.map(r => <option value={r.id} key={r.id}>{r.name.toUpperCase()}</option>)
+                                    }
+                                </FormControl>
                             </Col>
                         </FormGroup>
                     </Form>

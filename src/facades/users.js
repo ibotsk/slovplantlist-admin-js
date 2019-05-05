@@ -9,7 +9,14 @@ const getAllUsers = async ({ accessToken }) => {
 const getUserById = async ({ id, accessToken }) => {
     const user = await usersService.getByIdWithRoles({ id, accessToken });
     user.password = '';
-    return user;
+    const roles = user.roles;
+
+    delete user.roles;
+
+    return { 
+        user, 
+        roles 
+    };
 };
 
 const saveUser = async ({ data, accessToken }) => {
@@ -17,7 +24,22 @@ const saveUser = async ({ data, accessToken }) => {
         ...data,
         realm: config.constants.userRealm
     };
-    await usersService.putUser({ data: user, accessToken });
+    if (data.id) {
+        if (!user.password) { // when editing, password is set to empty, unless set new
+            delete user.password;
+        }
+        await usersService.updateUser({ 
+            id: user.id, 
+            data: user, 
+            accessToken 
+        });
+        return user.id;
+    } else {
+        return await usersService.createUser({ 
+            data: user,
+            accessToken
+        });
+    }
 }
 
 export default {

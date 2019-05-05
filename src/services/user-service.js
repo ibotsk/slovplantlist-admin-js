@@ -30,9 +30,15 @@ const getByIdWithRoles = async ({ id, accessToken }) => {
     return response.data;
 }
 
-const putUser = async ({ data, accessToken }) => {
+const createUser = async ({ data, accessToken }) => {
     const usersUri = template.parse(config.uris.usersUri.baseUri).expand({ accessToken });
-    await axios.put(usersUri, data);
+    const response = await axios.post(usersUri, data);
+    return response.data.id;
+}
+
+const updateUser = async ({ id, data, accessToken }) => {
+    const usersUri = template.parse(config.uris.usersUri.updateByIdUri).expand({ id, accessToken });
+    await axios.post(usersUri, data);
 }
 
 export default {
@@ -40,6 +46,7 @@ export default {
     logout,
     getAll,
     getByIdWithRoles,
-    putUser
+    createUser,
+    updateUser
 }
 
