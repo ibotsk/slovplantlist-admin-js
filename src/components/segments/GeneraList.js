@@ -14,7 +14,9 @@ const tooltip = (info) => (
 const tooltipInfo = (genus) => {
     return (
         <div>
-            {genus.name} {genus.authors}
+            <p><strong>{genus.name} {genus.authors}</strong></p>
+            <p>Family: <strong>{genus.family ? genus.family.name : '-'}</strong></p>
+            <p>Family APG: <strong>{genus.familyApg ? genus.familyApg.name : '-'}</strong></p>
         </div>
     );
 };
@@ -37,11 +39,11 @@ const listGroupItem = (genus) => {
 const GeneraList = (props) => {
 
     return (
-        <div>
+        <React.Fragment>
             {
                 props.data.map(listGroupItem)
             }
-        </div>
+        </React.Fragment>
     );
 
 }
