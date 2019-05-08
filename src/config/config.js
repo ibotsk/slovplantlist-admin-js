@@ -223,10 +223,14 @@ export default {
             logoutUri: `${backendBase}/api/user_lbs/logout?access_token={accessToken}`,
             baseUri: `${backendBase}/api/user_lbs?access_token={accessToken}`,
             getByIdWithRolesUri: `${backendBase}/api/user_lbs/{id}?access_token={accessToken}&filter=%7B"include":"roles"%7D`,
+            getGeneraByUserId: `${backendBase}/api/user_lbs/{id}/genera?access_token={accessToken}`,
             getAllWOrderUri: `${backendBase}/api/user_lbs?access_token={accessToken}&filter=%7B"include":"roles","order":["username"]%7D`,
-            getAllWGeneraUri: `${backendBase}/api/user_lbs?access_token={accessToken}&filter=%7B"include":"genera","order":["username"]%7D`,
+            getAllWGeneraUri: `${backendBase}/api/user_lbs?access_token={accessToken}&filter=%7B"include":%7B"genera":["family","familyApg"]%7D,"order":["username"]%7D`,
             updateByIdUri: `${backendBase}/api//user_lbs/update?access_token={accessToken}&where=%7B"id":"{id}"%7D`,
             countUri: `${backendBase}/api/user_lbs/count?access_token={accessToken}&where={whereString}`
+        },
+        userGeneraUri: {
+            baseUri: `${backendBase}/api/users_generas?access_token={accessToken}`
         },
         rolesUri: {
             getAllWOrderUri: `${backendBase}/api/roles?access_token={accessToken}&filter=%7B"order":["id"]%7D`

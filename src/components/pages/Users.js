@@ -35,7 +35,7 @@ class Users extends React.Component {
                         <Tab eventKey={1} title="All users">
                             <AllUsers />
                         </Tab>
-                        <Tab eventKey={2} title="Genera and users">
+                        <Tab eventKey={2} title="Users and genera">
                             <GeneraUsers />
                         </Tab>
                     </Tabs>

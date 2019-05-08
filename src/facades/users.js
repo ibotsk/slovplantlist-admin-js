@@ -19,6 +19,15 @@ const getUserById = async ({ id, accessToken }) => {
     };
 };
 
+const getGeneraOfUser = async ({ userId, accessToken, format }) => {
+    const genera = await usersService.getGeneraByUserId({ id: userId, accessToken });
+
+    if (!format) {
+        return genera;
+    }
+    return genera.map(format);
+}
+
 const saveUser = async ({ data, accessToken }) => {
     const user = {
         ...data,
@@ -45,5 +54,6 @@ const saveUser = async ({ data, accessToken }) => {
 export default {
     getAllUsers,
     getUserById,
+    getGeneraOfUser,
     saveUser
 }

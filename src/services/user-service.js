@@ -30,6 +30,12 @@ const getByIdWithRoles = async ({ id, accessToken }) => {
     return response.data;
 }
 
+const getGeneraByUserId = async ({ id, accessToken }) => {
+    const getByIdUri = template.parse(config.uris.usersUri.getGeneraByUserId).expand({ id, accessToken });
+    const response = await axios.get(getByIdUri);
+    return response.data;
+}
+
 const createUser = async ({ data, accessToken }) => {
     const usersUri = template.parse(config.uris.usersUri.baseUri).expand({ accessToken });
     const response = await axios.post(usersUri, data);
@@ -46,6 +52,7 @@ export default {
     logout,
     getAll,
     getByIdWithRoles,
+    getGeneraByUserId,
     createUser,
     updateUser
 }
