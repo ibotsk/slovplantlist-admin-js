@@ -6,6 +6,7 @@ import {
 } from 'react-bootstrap';
 
 import AllUsers from './AllUsers';
+import GeneraUsers from './GeneraUsers';
 
 class Users extends React.Component {
 
@@ -34,8 +35,8 @@ class Users extends React.Component {
                         <Tab eventKey={1} title="All users">
                             <AllUsers />
                         </Tab>
-                        <Tab eventKey={2} title="Genera to users">
-                            Tab 2 content
+                        <Tab eventKey={2} title="Genera and users">
+                            <GeneraUsers />
                         </Tab>
                     </Tabs>
                 </Grid>

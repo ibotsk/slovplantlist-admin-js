@@ -44,6 +44,12 @@
     color: #bdbdbd;
 }
 
+.white-badge {
+    background-color: #fff;
+    border: 1px solid #aaa;
+    margin: auto 1px;
+}
+
 .unselectable {
     -webkit-user-select: none; /* Safari 3.1+ */
     -moz-user-select: none; /* Firefox 2+ */

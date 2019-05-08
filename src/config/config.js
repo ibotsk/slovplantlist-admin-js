@@ -222,9 +222,10 @@ export default {
             loginUri: `${backendBase}/api/user_lbs/login`,
             logoutUri: `${backendBase}/api/user_lbs/logout?access_token={accessToken}`,
             baseUri: `${backendBase}/api/user_lbs?access_token={accessToken}`,
-            updateByIdUri: `${backendBase}/api//user_lbs/update?access_token={accessToken}&where=%7B"id":"{id}"%7D`,
-            getAllWOrderUri: `${backendBase}/api/user_lbs?access_token={accessToken}&filter=%7B"include":"roles","order":["username"]%7D`,
             getByIdWithRolesUri: `${backendBase}/api/user_lbs/{id}?access_token={accessToken}&filter=%7B"include":"roles"%7D`,
+            getAllWOrderUri: `${backendBase}/api/user_lbs?access_token={accessToken}&filter=%7B"include":"roles","order":["username"]%7D`,
+            getAllWGeneraUri: `${backendBase}/api/user_lbs?access_token={accessToken}&filter=%7B"include":"genera","order":["username"]%7D`,
+            updateByIdUri: `${backendBase}/api//user_lbs/update?access_token={accessToken}&where=%7B"id":"{id}"%7D`,
             countUri: `${backendBase}/api/user_lbs/count?access_token={accessToken}&where={whereString}`
         },
         rolesUri: {
