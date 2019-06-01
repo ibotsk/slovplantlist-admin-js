@@ -11,7 +11,13 @@ import {
 } from 'react-bootstrap';
 
 import userService from '../../services/user-service';
-import { setAuthenticated, unsetAuthenticated } from '../../actions';
+import { 
+    setAuthenticated, 
+    unsetAuthenticated,
+    setUser,
+    unsetUser
+} from '../../actions';
+import config from '../../config/config';
 
 class Login extends Component {
 
@@ -19,6 +25,7 @@ class Login extends Component {
         super(props);
 
         this.props.unsetAuthenticated();
+        this.props.unsetUser();
         this.state = {
             username: "",
             password: "",
@@ -49,7 +56,12 @@ class Login extends Component {
         if (!responseData.id) {
             return;
         }
-        this.props.setAuthenticated(responseData.id);
+        const accessToken = responseData.id;
+        const userData = await userService.getByIdWithRoles({ id: responseData.userId, accessToken });
+        const userRole = userData.roles[0] ? userData.roles[0].name : config.mappings.userRole.author.name;
+
+        this.props.setAuthenticated(accessToken);
+        this.props.setUser(userRole);
         this.setState({ redirectToReferrer: true });
     }
 
@@ -97,6 +109,8 @@ export default connect(
     null,
     {
         setAuthenticated,
-        unsetAuthenticated
+        unsetAuthenticated,
+        setUser,
+        unsetUser
     }
 )(Login);

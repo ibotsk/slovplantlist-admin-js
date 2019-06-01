@@ -88,14 +88,17 @@ export default {
         },
         userRole: {
             admin: {
+                name: 'admin',
                 text: 'ADMIN',
                 colour: '#C9302C'
             },
             editor: {
+                name: 'editor',
                 text: 'EDITOR',
                 colour: '#bb9d00'
             },
             author: {
+                name: 'author',
                 text: 'AUTHOR',
                 colour: '#57ab27'
             }

@@ -1,3 +1,5 @@
 
 export const SET_AUTHENTICATED = 'SET_AUTHENTICATED';
 export const UNSET_AUTHENTICATED = 'UNSET_AUTHENTICATED';
+export const SET_USER = 'SET_USER';
+export const UNSET_USER = 'UNSET_USER';
