@@ -6,7 +6,9 @@ import {
 
 import { LinkContainer } from 'react-router-bootstrap';
 
-const CNavbar = (props) => {
+import Can from '../segments/auth/Can';
+
+const CNavbar = ({ user }) => {
 
     return (
         <div id="navigation">
@@ -33,17 +35,23 @@ const CNavbar = (props) => {
                         </NavItem>
                     </Nav>
                     <Nav pullRight>
-                        <NavItem eventKey={1} href="/users">
-                            Users
-                        </NavItem>
+                        <Can
+                            role={user.role}
+                            perform="users"
+                            yes={() => (
+                                <NavItem eventKey={1} href="/users">
+                                    Users
+                                </NavItem>
+                            )}
+                        />
                         <LinkContainer to="/logout">
                             <NavItem eventKey={2}>
                                 <Glyphicon glyph="log-out" /> Logout
                             </NavItem>
                         </LinkContainer>
                     </Nav>
-                    <Navbar.Text pullRight style={{"margin-right": "15px"}}>
-                        Logged as: <strong>{props.user.role.toUpperCase()}</strong>
+                    <Navbar.Text pullRight style={{ marginRight: "15px" }}>
+                        Logged as: <strong>{user.role.toUpperCase()}</strong>
                     </Navbar.Text>
                 </Navbar.Collapse>
             </Navbar>

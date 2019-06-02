@@ -14,6 +14,7 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import LosName from '../segments/LosName';
 import SpeciesNameModal from '../segments/modals/SpeciesNameModal';
 import TabledPage from '../wrappers/TabledPageParent';
+import Can from '../segments/auth/Can';
 
 import config from '../../config/config';
 import helper from '../../utils/helper';
@@ -80,11 +81,13 @@ class Checklist extends React.Component {
         }
     }
 
-
     rowEvents = {
-        onDoubleClick: (e, row, rowIndex) => {
-            this.showModal(row.id);
-        }
+        onDoubleClick: (e, row, rowIndex) =>
+            <Can
+                role={this.props.user.role}
+                perform="checklist:edit"
+                yes={this.showModal(row.id)}
+            />
     };
 
     showModal = id => {
@@ -109,9 +112,19 @@ class Checklist extends React.Component {
         return data.map(d => ({
             id: d.id,
             action: (
-                <LinkContainer to={`${EDIT_RECORD}${d.id}`}>
-                    <Button bsStyle="warning" bsSize="xsmall">Edit</Button>
-                </LinkContainer>
+                <Can
+                    role={this.props.user.role}
+                    perform="species:edit"
+                    data={{
+                        speciesGenusId: d.id_genus,
+                        userGeneraIds: this.props.user.userGenera
+                    }}
+                    yes={() => (
+                        <LinkContainer to={`${EDIT_RECORD}${d.id}`}>
+                            <Button bsStyle="warning" bsSize="xsmall">Edit</Button>
+                        </LinkContainer>
+                    )}
+                />
             ),
             ntype: d.ntype,
             [listOfSpeciesColumn]: (
@@ -119,7 +132,13 @@ class Checklist extends React.Component {
                     <a href={`${PAGE_DETAIL}${d.id}`} >
                         <LosName key={d.id} data={d} />
                     </a>
-                    <small className="pull-right gray-text unselectable">Double click to quick edit</small>
+                    <Can
+                        role={this.props.user.role}
+                        perform="checklist:edit"
+                        yes={() => (
+                            <small className="pull-right gray-text unselectable">Double click to quick edit</small>
+                        )}
+                    />
                 </span>
             ),
             publication: d.publication,
@@ -132,16 +151,22 @@ class Checklist extends React.Component {
             <div id='checklist'>
                 <Grid id='functions-panel'>
                     <div id="functions">
-                        <Row>
-                            <Col md={2}>
-                                <Button bsStyle="success" onClick={() => this.showModal('')}><Glyphicon glyph="plus"></Glyphicon> Add new quick</Button>
-                            </Col>
-                            <Col md={2}>
-                                <LinkContainer to={NEW_RECORD}>
-                                    <Button bsStyle="success"><Glyphicon glyph="plus"></Glyphicon> Add new full</Button>
-                                </LinkContainer>
-                            </Col>
-                        </Row>
+                        <Can
+                            role={this.props.user.role}
+                            perform="checklist:add"
+                            yes={() => (
+                                <Row>
+                                    <Col md={2}>
+                                        <Button bsStyle="success" onClick={() => this.showModal('')}><Glyphicon glyph="plus"></Glyphicon> Add new quick</Button>
+                                    </Col>
+                                    <Col md={2}>
+                                        <LinkContainer to={NEW_RECORD}>
+                                            <Button bsStyle="success"><Glyphicon glyph="plus"></Glyphicon> Add new full</Button>
+                                        </LinkContainer>
+                                    </Col>
+                                </Row>
+                            )}
+                        />
                     </div>
                     <h2>Checklist</h2>
                     <p>All filters are case sensitive</p>
@@ -166,7 +191,8 @@ class Checklist extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    accessToken: state.authentication.accessToken
+    accessToken: state.authentication.accessToken,
+    user: state.user
 });
 
 export default connect(mapStateToProps)(

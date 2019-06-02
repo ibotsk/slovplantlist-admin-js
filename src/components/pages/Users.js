@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { Redirect } from "react-router-dom";
 
 import {
     Grid,
@@ -7,6 +9,7 @@ import {
 
 import AllUsers from './AllUsers';
 import GeneraUsers from './GeneraUsers';
+import Can from '../segments/auth/Can';
 
 class Users extends React.Component {
 
@@ -22,28 +25,39 @@ class Users extends React.Component {
 
     render() {
         return (
-            <div id='users'>
-                <Grid id='page-heading'>
-                    <h2>Manage users</h2>
-                </Grid>
-                <Grid>
-                    <Tabs
-                        activeKey={this.state.activeTabKey}
-                        onSelect={key => this.setState({ activeTabKey: key })}
-                        id="users-tabs"
-                    >
-                        <Tab eventKey={1} title="All users">
-                            <AllUsers />
-                        </Tab>
-                        <Tab eventKey={2} title="Users and genera">
-                            <GeneraUsers />
-                        </Tab>
-                    </Tabs>
-                </Grid>
-            </div>
+            <Can
+                role={this.props.user.role}
+                perform="users"
+                yes={() => (
+                    <div id='users'>
+                        <Grid id='page-heading'>
+                            <h2>Manage users</h2>
+                        </Grid>
+                        <Grid>
+                            <Tabs
+                                activeKey={this.state.activeTabKey}
+                                onSelect={key => this.setState({ activeTabKey: key })}
+                                id="users-tabs"
+                            >
+                                <Tab eventKey={1} title="All users">
+                                    <AllUsers />
+                                </Tab>
+                                <Tab eventKey={2} title="Users and genera">
+                                    <GeneraUsers />
+                                </Tab>
+                            </Tabs>
+                        </Grid>
+                    </div>
+                )}
+                no={() => <Redirect to="/" />}
+            />
         );
     }
 
 }
 
-export default Users;
+const mapStateToProps = state => ({
+    user: state.user
+});
+
+export default connect(mapStateToProps)(Users);
