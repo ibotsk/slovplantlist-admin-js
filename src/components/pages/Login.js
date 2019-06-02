@@ -10,7 +10,7 @@ import {
     Form, FormGroup, FormControl, ControlLabel
 } from 'react-bootstrap';
 
-import userService from '../../services/user-service';
+import userFacade from '../../facades/users';
 import { 
     setAuthenticated, 
     unsetAuthenticated,
@@ -52,16 +52,17 @@ class Login extends Component {
             return;
         }
         // call login endpoint
-        const responseData = await userService.login(username, password);
-        if (!responseData.id) {
+        const { id: accessToken, userId } = await userFacade.login(username, password);
+        if (!accessToken) {
             return;
         }
-        const accessToken = responseData.id;
-        const userData = await userService.getByIdWithRoles({ id: responseData.userId, accessToken });
-        const userRole = userData.roles[0] ? userData.roles[0].name : config.mappings.userRole.author.name;
+        const { roles } = await userFacade.getUserById({ id: userId, accessToken });
+        const userGeneraIds = await userFacade.getGeneraOfUser({ userId, accessToken, format: g => g.id });
+        
+        const userRole = roles[0] ? roles[0].name : config.mappings.userRole.author.name;
 
         this.props.setAuthenticated(accessToken);
-        this.props.setUser(userRole);
+        this.props.setUser(userRole, userGeneraIds);
         this.setState({ redirectToReferrer: true });
     }
 

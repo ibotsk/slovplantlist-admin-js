@@ -42,7 +42,7 @@ const columns = [
 ];
 
 const defaultSorted = [{
-    dataField: 'username',
+    dataField: 'id',
     order: 'asc'
 }];
 

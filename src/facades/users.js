@@ -51,9 +51,14 @@ const saveUser = async ({ data, accessToken }) => {
     }
 }
 
+const login = async (username, password) => {
+    return await usersService.login(username, password);
+}
+
 export default {
     getAllUsers,
     getUserById,
     getGeneraOfUser,
-    saveUser
+    saveUser,
+    login
 }
