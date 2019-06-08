@@ -24,7 +24,7 @@ const constructSubNomenlatoric = (subNomenclatoricList) => {
     );
 }
 
-const SynonymListItem = ({ rowId, data: { prefix, value: losObject }, additions: Additions, ...props }) => {
+const SynonymListItem = ({ rowId, data: { prefix, value: losObject }, additions: Additions, removable = false, ...props }) => {
     return (
         <ListGroupItem bsSize='sm'>
             <Row>
@@ -34,9 +34,11 @@ const SynonymListItem = ({ rowId, data: { prefix, value: losObject }, additions:
                         {Additions &&
                             <Additions rowId={rowId} {...props} />
                         }
-                        <span className="remove-list-item">
-                            <Button bsStyle="danger" bsSize="xsmall" onClick={() => props.onRowDelete(rowId)} title="Remove from this list"><Glyphicon glyph="remove" /></Button>
-                        </span>
+                        {removable &&
+                            <span className="remove-list-item">
+                                <Button bsStyle="danger" bsSize="xsmall" onClick={() => props.onRowDelete(rowId)} title="Remove from this list"><Glyphicon glyph="remove" /></Button>
+                            </span>
+                        }
                     </span>
                 </Col>
             </Row>

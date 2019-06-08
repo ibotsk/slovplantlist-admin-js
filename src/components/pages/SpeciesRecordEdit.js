@@ -311,7 +311,7 @@ class SpeciesRecord extends Component {
             </React.Fragment>
         );
         return (
-            <SynonymListItem {...props} additions={Additions} />
+            <SynonymListItem {...props} additions={Additions} removable={true} />
         );
     }
 
@@ -325,7 +325,7 @@ class SpeciesRecord extends Component {
             </React.Fragment>
         );
         return (
-            <SynonymListItem {...props} additions={Additions} />
+            <SynonymListItem {...props} additions={Additions} removable={true} />
         );
     }
 
@@ -339,7 +339,7 @@ class SpeciesRecord extends Component {
             </React.Fragment>
         );
         return (
-            <SynonymListItem {...props} additions={Additions} />
+            <SynonymListItem {...props} additions={Additions} removable={true} />
         );
     }
 
