@@ -29,6 +29,9 @@ class SpeciesRecord extends React.Component {
     }
 
     render() {
+        if (!this.state.recordId) {
+            return null;
+        }
         return (
             <Can
                 role={this.props.user.role}
