@@ -82,12 +82,13 @@ class Checklist extends React.Component {
     }
 
     rowEvents = {
-        onDoubleClick: (e, row, rowIndex) =>
-            <Can
-                role={this.props.user.role}
-                perform="checklist:edit"
-                yes={this.showModal(row.id)}
-            />
+        onDoubleClick: (e, row, rowIndex) => {
+            if (this.props.user.role === config.mappings.userRole.author.name
+                && !this.props.user.userGenera.includes(row.idGenus)) {
+                return null;
+            }
+            return this.showModal(row.id);
+        }
     };
 
     showModal = id => {
@@ -134,7 +135,11 @@ class Checklist extends React.Component {
                     </a>
                     <Can
                         role={this.props.user.role}
-                        perform="checklist:edit"
+                        perform="species:edit"
+                        data={{
+                            speciesGenusId: d.id_genus,
+                            userGeneraIds: this.props.user.userGenera
+                        }}
                         yes={() => (
                             <small className="pull-right gray-text unselectable">Double click to quick edit</small>
                         )}
@@ -142,7 +147,8 @@ class Checklist extends React.Component {
                 </span>
             ),
             publication: d.publication,
-            acceptedName: <a href={d.accepted ? `${PAGE_DETAIL}${d.accepted.id}` : ""}><LosName key={`acc${d.id}`} data={d.accepted} /></a>
+            acceptedName: <a href={d.accepted ? `${PAGE_DETAIL}${d.accepted.id}` : ""}><LosName key={`acc${d.id}`} data={d.accepted} /></a>,
+            idGenus: d.id_genus
         }));
     }
 
