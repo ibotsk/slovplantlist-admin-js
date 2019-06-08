@@ -399,6 +399,18 @@ class SpeciesRecord extends Component {
     render() {
         return (
             <div id='species-detail'>
+                <Grid id='functions-panel'>
+                    <div id="functions">
+                        <Row>
+                            <Col sm={5} smOffset={2}>
+                                <LinkContainer to={CHECKLIST_LIST_URI}>
+                                    <Button bsStyle="default" >Cancel</Button>
+                                </LinkContainer>
+                            </Col>
+                        </Row>
+                    </div>
+                </Grid>
+                <hr />
                 <Grid>
                     <h2>Checklist record <small>({this.state.record.id ? <LosName data={this.state.record} /> : 'new'})</small></h2>
 

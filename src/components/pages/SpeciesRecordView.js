@@ -84,17 +84,26 @@ class SpeciesRecordView extends React.Component {
     }
 
     render() {
-        console.log(this.props);
-
         if (!this.state.record) {
             return null;
         }
         const type = config.mappings.losType[this.state.record.ntype];
         return (
             <div id='species-detail'>
+                <Grid id='functions-panel'>
+                    <div id="functions">
+                        <Row>
+                            <Col sm={5} smOffset={2}>
+                                <LinkContainer to={CHECKLIST_LIST_URI}>
+                                    <Button bsStyle="default" >Back</Button>
+                                </LinkContainer>
+                            </Col>
+                        </Row>
+                    </div>
+                </Grid>
+                <hr />
                 <Grid>
                     <h2><LosName data={this.state.record} /></h2>
-
                     <div id="name">
                         <h3>Name</h3>
                         <Well>
