@@ -98,6 +98,9 @@ class Families extends React.Component {
                             )}
                         />
                     </div>
+                </Grid>
+                <hr />
+                <Grid>
                     <h2>Families</h2>
                     <p>All filters are case sensitive</p>
                 </Grid>

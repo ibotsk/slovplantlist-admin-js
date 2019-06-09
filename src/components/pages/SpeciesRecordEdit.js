@@ -402,7 +402,7 @@ class SpeciesRecord extends Component {
                 <Grid id='functions-panel'>
                     <div id="functions">
                         <Row>
-                            <Col sm={5} smOffset={2}>
+                            <Col md={2}>
                                 <LinkContainer to={CHECKLIST_LIST_URI}>
                                     <Button bsStyle="default" >Cancel</Button>
                                 </LinkContainer>

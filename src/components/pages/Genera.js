@@ -121,6 +121,9 @@ class Genera extends React.Component {
                             )}
                         />
                     </div>
+                </Grid>
+                <hr />
+                <Grid>
                     <h2>Genera</h2>
                     <p>All filters are case sensitive</p>
                 </Grid>

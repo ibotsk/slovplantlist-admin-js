@@ -98,6 +98,9 @@ class FamiliesAPG extends React.Component {
                             )}
                         />
                     </div>
+                </Grid>
+                <hr />
+                <Grid>
                     <h2>Families APG</h2>
                     <p>All filters are case sensitive</p>
                 </Grid>
