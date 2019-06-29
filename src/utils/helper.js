@@ -166,7 +166,7 @@ const makeWhere = filters => {
         whereItems.push(filterToWhereItem(filters[key], key));
     }
     if (whereItems.length > 1) {
-        return { 'and': whereItems };
+        return { and: whereItems };
     }
     if (whereItems.length === 1) {
         return whereItems[0];
@@ -185,10 +185,11 @@ const makeOrder = (sortFields, sortOrder = 'ASC') => {
     return [`${sortFields} ${soUpperCase}`];
 }
 
-const buildOptionsFromKeys = keys => {
+const buildOptionsFromKeys = keys => {    
     const obj = {};
     Object.keys(keys).forEach(t => {
-        obj[t] = t;
+        obj[t] = keys[t].text;
+        // obj[t] = t;
     });
     return obj;
 }
@@ -198,31 +199,31 @@ const buildOptionsFromKeys = keys => {
  * filterVal = [{ field, value }] where field is for every value from the config nad value is original filterVal.
  * @param {*} filters 
  */
-const curateSearchFilters = filters => {
-    let curatedFilters = { ...filters };
-    const keys = Object.keys(filters);
-    for (const key of keys) { //listofspecies
-        const fields = config.nomenclature.filter[key]; // genus, species, ...
-        if (fields) {
-            const filterContent = filters[key]; // filterType, filterVal, caseSensitive, comparator
-            const filterVal = filterContent.filterVal;
-            if (typeof filterVal === "string") { // avoid redoing mapping on values that are already in { field, value }
-                const newFilterValue = fields.map(f => ({ field: f, value: filterVal }));
-                filterContent.filterVal = newFilterValue;
-                filters[key] = filterContent;
-            }
-        }
-    }
-    return curatedFilters;
-}
+// const curateSearchFilters = filters => {
+//     let curatedFilters = { ...filters };
+//     const keys = Object.keys(filters);
+//     for (const key of keys) { //listofspecies
+//         const fields = config.nomenclature.filter[key]; // genus, species, ...
+//         if (fields) {
+//             const filterContent = curatedFilters[key]; // filterType, filterVal, caseSensitive, comparator
+//             const filterVal = filterContent.filterVal;
+//             if (typeof filterVal === "string") { // avoid redoing mapping on values that are already in { field, value }
+//                 const newFilterValue = fields.map(f => ({ field: f, value: filterVal }));
+//                 filterContent.filterVal = newFilterValue;
+//                 curatedFilters[key] = filterContent;
+//             }
+//         }
+//     }
+//     return curatedFilters;
+// }
 
-const curateSortFields = sortField => {
-    const fields = config.nomenclature.filter[sortField];
-    if (fields) {
-        return fields;
-    }
-    return sortField;
-}
+// const curateSortFields = sortField => {
+//     const fields = config.nomenclature.filter[sortField];
+//     if (fields) {
+//         return fields;
+//     }
+//     return sortField;
+// }
 
 const listOfSpeciesSorterLex = (losA, losB) => {
     // a > b = 1
@@ -301,18 +302,24 @@ const listOfSpeciesSorterLex = (losA, losB) => {
 }
 
 function filterToWhereItem(filter, key) {
-    const filterVal = filter.filterVal;
+    let conjug = "or";
+    let filterVal = filter.filterVal;
+    if (filterVal.and) {
+        conjug = "and";
+        filterVal = filterVal.and;
+    }
+
     if (Array.isArray(filterVal) && filterVal.length > 1) {
         const valsOr = [];
         for (const val of filterVal) {
             let itemKey = key, value = val;
-            if (typeof val !== 'string') {
+            if (val && typeof val !== 'string') {
                 itemKey = val.field;
                 value = val.value;
             }
             valsOr.push(resolveByComparator(filter.comparator, itemKey, value));
         }
-        return { 'or': valsOr };
+        return { [conjug]: valsOr };
     }
     return resolveByComparator(filter.comparator, key, filter.filterVal);
 }
@@ -326,10 +333,33 @@ function filterToWhereItem(filter, key) {
  */
 function resolveByComparator(comparator, key, value) {
     switch (comparator) {
+        case '':
+            return {};
         case 'LIKE':
             return {
                 [key]: {
                     like: `%${value}%`
+                }
+            };
+        case 'REGEXP':
+            return {
+                [key]: {
+                    regexp: value
+                }
+            };
+        case 'NEQ':
+            // if (Array.isArray(value)) {
+            //     return {
+            //         and: value.map(v => ({
+            //             [key]: {
+            //                 neq: v
+            //             }
+            //         }))
+            //     };
+            // }
+            return {
+                [key]: {
+                    neq: value
                 }
             };
         case 'EQ':
@@ -346,7 +376,7 @@ export default {
     makeWhere,
     makeOrder,
     buildOptionsFromKeys,
-    curateSearchFilters,
-    curateSortFields,
+    // curateSearchFilters,
+    // curateSortFields,
     listOfSpeciesSorterLex
 };

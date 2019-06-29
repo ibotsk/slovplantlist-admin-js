@@ -12,6 +12,7 @@ const user = (state = initialState, action) => {
             return {
                 ...state,
                 ...{
+                    id: action.id,
                     role: action.role,
                     userGenera: action.userGenera
                 }

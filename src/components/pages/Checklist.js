@@ -8,13 +8,14 @@ import {
 import { LinkContainer } from 'react-router-bootstrap';
 
 import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory, { textFilter, multiSelectFilter, Comparator } from 'react-bootstrap-table2-filter';
+import filterFactory, { textFilter, multiSelectFilter, selectFilter, Comparator } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import LosName from '../segments/LosName';
 import SpeciesNameModal from '../segments/modals/SpeciesNameModal';
 import TabledPage from '../wrappers/TabledPageParent';
 import Can from '../segments/auth/Can';
+import Ownership from '../segments/auth/Ownership';
 
 import config from '../../config/config';
 import helper from '../../utils/helper';
@@ -24,11 +25,14 @@ const EDIT_RECORD = "/checklist/edit/";
 const NEW_RECORD = "/checklist/new";
 
 const listOfSpeciesColumn = config.constants.listOfSpeciesColumn;
+const ownershipColumn = config.constants.ownership;
 const ntypesOptions = helper.buildOptionsFromKeys(config.mappings.losType);
+const ownershipOptionsAdmin = helper.buildOptionsFromKeys(config.mappings.ownership);
+const { unassigned, others, ...ownershipOptionsAuthor } = ownershipOptionsAdmin;
 
 const MODAL_SPECIES = 'showModalSpecies';
 
-const columns = [
+const columns = (isAuthor) => [
     {
         dataField: 'id',
         text: 'ID',
@@ -37,6 +41,15 @@ const columns = [
     {
         dataField: 'action',
         text: 'Action'
+    },
+    {
+        dataField: ownershipColumn,
+        text: 'Ownership',
+        filter: selectFilter({
+            options: isAuthor ? ownershipOptionsAuthor : ownershipOptionsAdmin,
+            defaultValue: ownershipOptionsAdmin.all,
+            withoutEmptyOption: true
+        })
     },
     {
         dataField: 'ntype',
@@ -127,6 +140,18 @@ class Checklist extends React.Component {
                     )}
                 />
             ),
+            [ownershipColumn]: (
+                <Can
+                    role={this.props.user.role}
+                    perform="species:edit"
+                    data={{
+                        speciesGenusId: d.id_genus,
+                        userGeneraIds: this.props.user.userGenera
+                    }}
+                    yes={() => <Ownership role={this.props.user.role} isOwner={true} owners={d.owner_names} />}
+                    no={() => <Ownership role={this.props.user.role} isOwner={false} owners={d.owner_names} />}
+                />
+            ),
             ntype: d.ntype,
             [listOfSpeciesColumn]: (
                 <span>
@@ -179,13 +204,16 @@ class Checklist extends React.Component {
                 <Grid>
                     <h2>Checklist</h2>
                     <p>All filters are case sensitive</p>
+                    <div>
+                        <small>* A = Accepted, PA = Provisionally accepted, S = Synonym, DS = Doubtful synonym, U = Unresolved</small>
+                    </div>
                 </Grid>
                 <Grid fluid={true}>
                     <BootstrapTable hover striped condensed
                         remote={{ filter: true, pagination: true }}
                         keyField='id'
                         data={this.formatResult(this.props.data)}
-                        columns={columns}
+                        columns={columns(this.props.user.role === config.mappings.userRole.author.name)}
                         defaultSorted={defaultSorted}
                         filter={filterFactory()}
                         onTableChange={this.props.onTableChange}
@@ -206,7 +234,7 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps)(
     TabledPage({
-        getAll: config.uris.nomenclaturesUri.getAllWFilterUri,
-        getCount: config.uris.nomenclaturesUri.countUri
+        getAll: config.uris.nomenclatureOwnersUri.getAllWFilterUri,
+        getCount: config.uris.nomenclatureOwnersUri.countUri
     })(Checklist)
 );

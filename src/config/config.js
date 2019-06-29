@@ -4,6 +4,11 @@ export default {
 
     constants: {
         listOfSpeciesColumn: 'listOfSpecies',
+        ownership: 'owner_ids',
+        ownershipRegexp: {
+            start: '(\\,|^)',
+            end: '(\\,|$)'
+        },
         userRealm: 'slovplantlist',
         userPrincipalType: 'user'
     },
@@ -52,22 +57,27 @@ export default {
     mappings: {
         losType: {
             A: {
+                key: "A",
                 text: "Accepted name",
                 colour: "#57ab27"
             },
             PA: {
+                key: "PA",
                 text: "Provisionally accepted",
                 colour: "#ee7f00"
             },
             S: {
+                key: "S",
                 text: "Synonym",
                 colour: "#008fc8"
             },
             DS: {
+                key: "DS",
                 text: "Doubtful synonym",
                 colour: "#0089a0"
             },
             U: {
+                key: "U",
                 text: "Unresolved",
                 colour: "#bb9d00"
             }
@@ -101,6 +111,28 @@ export default {
                 name: 'author',
                 text: 'AUTHOR',
                 colour: '#57ab27'
+            }
+        },
+        ownership: {
+            all: {
+                key: "all",
+                text: "ALL"
+            },
+            mine: {
+                key: "mine",
+                text: "MINE"
+            },
+            others: {
+                key: "others",
+                text: "OTHERS"
+            },
+            unassigned: {
+                key: "unassigned",
+                text: "UNASSIGNED"
+            },
+            notmine: {
+                key: "notmine",
+                text: "NOT MINE"
             }
         }
     },
@@ -136,7 +168,7 @@ export default {
     uris: {
         nomenclaturesUri: {
             baseUri: `${backendBase}/api/nomenclatures?access_token={accessToken}`,
-            getAllWFilterUri: `${backendBase}/api/nomenclatures?access_token={accessToken}&filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":{order}%7D`,
+            getAllWFilterUri: `${backendBase}/api/nomenclatures?access_token={accessToken}&filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["accepted",%7B"genusRel":"users"%7D],"order":{order}%7D`,
             getAllWOrderUri: `${backendBase}/api/nomenclatures?access_token={accessToken}&filter=%7B"order":["genus","species","subsp","var","subvar","forma","authors","id"]%7D`,
             getAllBySearchTermUri: `${backendBase}/api/nomenclatures?access_token={accessToken}&filter=%7B"where":%7B"or":[
                 %7B"genus":%7B
@@ -193,6 +225,10 @@ export default {
             getNomenNovumForUri: `${backendBase}/api/nomenclatures/{id}/nomenNovumFor?access_token={accessToken}`,
             countUri: `${backendBase}/api/nomenclatures/count?access_token={accessToken}&where={whereString}`
         },
+        nomenclatureOwnersUri: {
+            getAllWFilterUri: `${backendBase}/api/nomenclature-owners?access_token={accessToken}&filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":{order}%7D`,
+            countUri: `${backendBase}/api/nomenclature-owners/count?access_token={accessToken}&where={whereString}`
+        },
         generaUri: {
             baseUri: `${backendBase}/api/genera?access_token={accessToken}`,
             getAllWFilterUri: `${backendBase}/api/genera?access_token={accessToken}&filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["familyApg","family"],"order":{order}%7D`,
@@ -201,7 +237,7 @@ export default {
                     "like": "%25{term}%25"
                 %7D%7D
             %7D`,
-            getAllWithFamiliesUri: `${backendBase}/api/genera?access_token={accessToken}&filter=%7B"include":["familyApg","family"]%7D`, 
+            getAllWithFamiliesUri: `${backendBase}/api/genera?access_token={accessToken}&filter=%7B"include":["familyApg","family"]%7D`,
             getByIdWithFamilies: `${backendBase}/api/genera/{id}?access_token={accessToken}&filter=%7B"include":["familyApg","family"]%7D`,
             countUri: `${backendBase}/api/genera/count?access_token={accessToken}&where={whereString}`
         },

@@ -62,7 +62,7 @@ class Login extends Component {
         const userRole = roles[0] ? roles[0].name : config.mappings.userRole.author.name;
 
         this.props.setAuthenticated(accessToken);
-        this.props.setUser(userRole, userGeneraIds);
+        this.props.setUser(userId, userRole, userGeneraIds);
         this.setState({ redirectToReferrer: true });
     }
 
