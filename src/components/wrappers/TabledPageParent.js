@@ -40,8 +40,6 @@ const TabledPage = injectedProps => WrappedComponent => {
             const ownerId = this.props.user ? this.props.user.id : undefined;
 
             const curatedFilters = filtershelper.curateSearchFilters(filters, { ownerId });
-            console.log(curatedFilters);
-            
             const where = helper.makeWhere(curatedFilters); //TODO make function to take into account existing where
 
             const curatedSortField = filtershelper.curateSortFields(sortField);
