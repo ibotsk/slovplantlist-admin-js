@@ -168,7 +168,6 @@ export default {
     uris: {
         nomenclaturesUri: {
             baseUri: `${backendBase}/api/nomenclatures?access_token={accessToken}`,
-            getAllWFilterUri: `${backendBase}/api/nomenclatures?access_token={accessToken}&filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["accepted",%7B"genusRel":"users"%7D],"order":{order}%7D`,
             getAllWOrderUri: `${backendBase}/api/nomenclatures?access_token={accessToken}&filter=%7B"order":["genus","species","subsp","var","subvar","forma","authors","id"]%7D`,
             getAllBySearchTermUri: `${backendBase}/api/nomenclatures?access_token={accessToken}&filter=%7B"where":%7B"or":[
                 %7B"genus":%7B
@@ -265,7 +264,7 @@ export default {
             getGeneraByUserId: `${backendBase}/api/user_lbs/{id}/genera?access_token={accessToken}`,
             getAllWOrderUri: `${backendBase}/api/user_lbs?access_token={accessToken}&filter=%7B"include":"roles","order":["username"]%7D`,
             getAllWGeneraUri: `${backendBase}/api/user_lbs?access_token={accessToken}&filter=%7B"include":%7B"genera":["family","familyApg"]%7D,"order":["username"]%7D`,
-            updateByIdUri: `${backendBase}/api//user_lbs/update?access_token={accessToken}&where=%7B"id":"{id}"%7D`,
+            updateByIdUri: `${backendBase}/api/user_lbs/update?access_token={accessToken}&where=%7B"id":"{id}"%7D`,
             countUri: `${backendBase}/api/user_lbs/count?access_token={accessToken}&where={whereString}`
         },
         userGeneraUri: {
