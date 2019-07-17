@@ -38,6 +38,8 @@ class UsersGeneraModal extends Component {
 
         this.state = {
             userGenera: [],
+            userGeneraToAdd: [],
+            userGeneraToRemove: [],
             genera: [],
         }
     }
@@ -57,36 +59,53 @@ class UsersGeneraModal extends Component {
     }
 
     handleAddGenus = (selected) => {
+        const idToAdd = selected.id;
         const userGenera = [...this.state.userGenera];
-        if (!userGenera.find(g => g.id === selected.id)) {
+        const userGeneraToAdd = [...this.state.userGeneraToAdd];
+
+        if (!userGenera.find(g => g.id === idToAdd)) {
             userGenera.push(selected);
+            userGeneraToAdd.push(idToAdd);
         }
         userGenera.sort(genusCompare);
+
+
         this.setState({
-            userGenera
+            userGenera,
+            userGeneraToAdd
         });
     }
 
     handleRemoveGenus = (id) => {
         const userGenera = this.state.userGenera.filter(g => g.id !== id);
+        const userGeneraToRemove = [...this.state.userGeneraToRemove];
+
+        userGeneraToRemove.push(id);
+        
         this.setState({
-            userGenera
+            userGenera,
+            userGeneraToRemove
         });
     }
 
     handleHide = () => {
         this.props.onHide();
         this.setState({
-            userGenera: []
+            userGenera: [],
+            userGeneraToAdd: [],
+            userGeneraToRemove: []
         });
     }
 
     handleSave = async () => {
-        const userGenera = [ ...this.state.userGenera ];
+        const userGeneraToAdd = [ ...this.state.userGeneraToAdd ];
+        const userGeneraToRemove = [...this.state.userGeneraToRemove];
+        
         try {
             await usersGeneraFacade.saveUserGenera({ 
                 userId: this.props.user.id,
-                userGenera,
+                generaIdsAdded: userGeneraToAdd,
+                generaRemoved: userGeneraToRemove,
                 accessToken: this.props.accessToken
             });
             notifications.success('Saved');
