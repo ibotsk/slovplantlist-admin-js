@@ -6,9 +6,9 @@ import {
     Form, FormGroup, FormControl, ControlLabel
 } from 'react-bootstrap';
 
-import notifications from '../../utils/notifications';
+import notifications from '../../../utils/notifications';
 
-import familiesFacade from '../../facades/families';
+import familiesFacade from '../../../facades/families';
 
 const VALIDATION_STATE_SUCCESS = 'success';
 const VALIDATION_STATE_ERROR = 'error';
@@ -22,7 +22,7 @@ const initialValues = {
     vernacular: ''
 };
 
-class FamiliesApgModal extends Component {
+class FamiliesModal extends Component {
 
     constructor(props) {
         super(props);
@@ -36,7 +36,7 @@ class FamiliesApgModal extends Component {
 
     onEnter = async () => {
         if (this.props.id) {
-            const data = await familiesFacade.getFamilyApgByIdCurated({ id: this.props.id, accessToken: this.accessToken });
+            const data = await familiesFacade.getFamilyByIdCurated({ id: this.props.id, accessToken: this.accessToken });
             this.setState({ ...data });
         }
     }
@@ -65,7 +65,7 @@ class FamiliesApgModal extends Component {
         if (this.getValidationState() === VALIDATION_STATE_SUCCESS) {
             const data = { ...this.state };
             try {
-                await familiesFacade.saveFamilyApg({ data, accessToken: this.accessToken });
+                await familiesFacade.saveFamily({ data, accessToken: this.accessToken });
                 notifications.success('Saved');
                 this.handleHide();
             } catch (error) {
@@ -81,7 +81,7 @@ class FamiliesApgModal extends Component {
         return (
             <Modal show={this.props.show} onHide={this.handleHide} onEnter={this.onEnter}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{this.props.id ? 'Edit family APG' : 'Create new family APG'}</Modal.Title>
+                    <Modal.Title>{this.props.id ? 'Edit family' : 'Create new family'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form horizontal>
@@ -135,4 +135,4 @@ const mapStateToProps = state => ({
     accessToken: state.authentication.accessToken
 });
 
-export default connect(mapStateToProps)(FamiliesApgModal);
+export default connect(mapStateToProps)(FamiliesModal);

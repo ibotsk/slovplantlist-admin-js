@@ -3,7 +3,14 @@ const backendBase = `${process.env.REACT_APP_BACKEND_BASE}:${process.env.REACT_A
 export default {
 
     constants: {
-        listOfSpeciesColumn: 'listOfSpecies'
+        listOfSpeciesColumn: 'listOfSpecies',
+        ownership: 'owner_ids',
+        ownershipRegexp: {
+            start: '(\\,|^)',
+            end: '(\\,|$)'
+        },
+        userRealm: 'slovplantlist',
+        userPrincipalType: 'user'
     },
     nomenclature: {
         name: {
@@ -50,22 +57,27 @@ export default {
     mappings: {
         losType: {
             A: {
+                key: "A",
                 text: "Accepted name",
                 colour: "#57ab27"
             },
             PA: {
+                key: "PA",
                 text: "Provisionally accepted",
                 colour: "#ee7f00"
             },
             S: {
+                key: "S",
                 text: "Synonym",
                 colour: "#008fc8"
             },
             DS: {
+                key: "DS",
                 text: "Doubtful synonym",
                 colour: "#0089a0"
             },
             U: {
+                key: "U",
                 text: "Unresolved",
                 colour: "#bb9d00"
             }
@@ -82,6 +94,45 @@ export default {
             invalid: {
                 numType: 1,
                 prefix: '–'
+            }
+        },
+        userRole: {
+            admin: {
+                name: 'admin',
+                text: 'ADMIN',
+                colour: '#C9302C'
+            },
+            editor: {
+                name: 'editor',
+                text: 'EDITOR',
+                colour: '#bb9d00'
+            },
+            author: {
+                name: 'author',
+                text: 'AUTHOR',
+                colour: '#57ab27'
+            }
+        },
+        ownership: {
+            all: {
+                key: "all",
+                text: "ALL"
+            },
+            mine: {
+                key: "mine",
+                text: "MINE"
+            },
+            others: {
+                key: "others",
+                text: "OTHERS"
+            },
+            unassigned: {
+                key: "unassigned",
+                text: "UNASSIGNED"
+            },
+            notmine: {
+                key: "notmine",
+                text: "NOT MINE"
             }
         }
     },
@@ -117,7 +168,6 @@ export default {
     uris: {
         nomenclaturesUri: {
             baseUri: `${backendBase}/api/nomenclatures?access_token={accessToken}`,
-            getAllWFilterUri: `${backendBase}/api/nomenclatures?access_token={accessToken}&filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":{order}%7D`,
             getAllWOrderUri: `${backendBase}/api/nomenclatures?access_token={accessToken}&filter=%7B"order":["genus","species","subsp","var","subvar","forma","authors","id"]%7D`,
             getAllBySearchTermUri: `${backendBase}/api/nomenclatures?access_token={accessToken}&filter=%7B"where":%7B"or":[
                 %7B"genus":%7B
@@ -174,6 +224,10 @@ export default {
             getNomenNovumForUri: `${backendBase}/api/nomenclatures/{id}/nomenNovumFor?access_token={accessToken}`,
             countUri: `${backendBase}/api/nomenclatures/count?access_token={accessToken}&where={whereString}`
         },
+        nomenclatureOwnersUri: {
+            getAllWFilterUri: `${backendBase}/api/nomenclature-owners?access_token={accessToken}&filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":"accepted","order":{order}%7D`,
+            countUri: `${backendBase}/api/nomenclature-owners/count?access_token={accessToken}&where={whereString}`
+        },
         generaUri: {
             baseUri: `${backendBase}/api/genera?access_token={accessToken}`,
             getAllWFilterUri: `${backendBase}/api/genera?access_token={accessToken}&filter=%7B"offset":{offset},"where":{where},"limit":{limit},"include":["familyApg","family"],"order":{order}%7D`,
@@ -182,7 +236,7 @@ export default {
                     "like": "%25{term}%25"
                 %7D%7D
             %7D`,
-            getAllWithFamiliesUri: `${backendBase}/api/genera?access_token={accessToken}&filter=%7B"include":["familyApg","family"]%7D`, 
+            getAllWithFamiliesUri: `${backendBase}/api/genera?access_token={accessToken}&filter=%7B"include":["familyApg","family"]%7D`,
             getByIdWithFamilies: `${backendBase}/api/genera/{id}?access_token={accessToken}&filter=%7B"include":["familyApg","family"]%7D`,
             countUri: `${backendBase}/api/genera/count?access_token={accessToken}&where={whereString}`
         },
@@ -204,8 +258,27 @@ export default {
         },
         usersUri: {
             loginUri: `${backendBase}/api/user_lbs/login`,
-            logoutUri: `${backendBase}/api/user_lbs/logout?access_token={accessToken}`
+            logoutUri: `${backendBase}/api/user_lbs/logout?access_token={accessToken}`,
+            baseUri: `${backendBase}/api/user_lbs?access_token={accessToken}`,
+            getByIdWithRolesUri: `${backendBase}/api/user_lbs/{id}?access_token={accessToken}&filter=%7B"include":"roles"%7D`,
+            getGeneraByUserId: `${backendBase}/api/user_lbs/{id}/genera?access_token={accessToken}`,
+            getAllWOrderUri: `${backendBase}/api/user_lbs?access_token={accessToken}&filter=%7B"include":"roles","order":["username"]%7D`,
+            getAllWGeneraUri: `${backendBase}/api/user_lbs?access_token={accessToken}&filter=%7B"include":%7B"genera":["family","familyApg"]%7D,"order":["username"]%7D`,
+            updateByIdUri: `${backendBase}/api/user_lbs/update?access_token={accessToken}&where=%7B"id":"{id}"%7D`,
+            countUri: `${backendBase}/api/user_lbs/count?access_token={accessToken}&where={whereString}`
         },
+        userGeneraUri: {
+            baseUri: `${backendBase}/api/users_generas?access_token={accessToken}`,
+            getAllByUserAndGenusUri: `${backendBase}/api/users_generas?filter=%7B"where":%7B"and":[%7B"id_user":{userId}%7D,%7B"id_genus":{genusId}%7D]%7D%7D&access_token={accessToken}`,
+            deleteUri: `${backendBase}/api/users_generas/{id}?access_token={accessToken}`
+        },
+        rolesUri: {
+            getAllWOrderUri: `${backendBase}/api/roles?access_token={accessToken}&filter=%7B"order":["id"]%7D`
+        },
+        roleMappingsUri: {
+            baseUri: `${backendBase}/api/role_mappings?access_token={accessToken}`,
+            getByPrincipalIdUri: `${backendBase}/api/role_mappings?access_token={accessToken}&filter=%7B"where":%7B"principalId":"{principalId}"%7D%7D`
+        }
     },
 
     logging: {

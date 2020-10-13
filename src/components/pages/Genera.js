@@ -10,7 +10,8 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import TabledPage from '../wrappers/TabledPageParent';
-import GeneraModal from '../segments/GeneraModal';
+import GeneraModal from '../segments/modals/GeneraModal';
+import Can from '../segments/auth/Can';
 
 import config from '../../config/config';
 
@@ -91,7 +92,14 @@ class Genera extends React.Component {
     formatResult = data => {
         return data.map(g => ({
             id: g.id,
-            action: <Button bsSize='xsmall' bsStyle="warning" onClick={() => this.showModal(g.id)}>Edit</Button>,
+            action: (
+                <Can
+                    role={this.props.user.role}
+                    perform="genus:edit"
+                    yes={() => (
+                        <Button bsSize='xsmall' bsStyle="warning" onClick={() => this.showModal(g.id)}>Edit</Button>
+                    )}
+                />),
             name: g.name,
             authors: g.authors,
             vernacular: g.vernacular,
@@ -105,8 +113,17 @@ class Genera extends React.Component {
             <div id='genera'>
                 <Grid id='functions-panel'>
                     <div id="functions">
-                        <Button bsStyle="success" onClick={() => this.showModal('')}><Glyphicon glyph="plus"></Glyphicon> Add new</Button>
+                        <Can
+                            role={this.props.user.role}
+                            perform="genus:edit"
+                            yes={() => (
+                                <Button bsStyle="success" onClick={() => this.showModal('')}><Glyphicon glyph="plus"></Glyphicon> Add new</Button>
+                            )}
+                        />
                     </div>
+                </Grid>
+                <hr />
+                <Grid>
                     <h2>Genera</h2>
                     <p>All filters are case sensitive</p>
                 </Grid>
@@ -129,7 +146,8 @@ class Genera extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    accessToken: state.authentication.accessToken
+    accessToken: state.authentication.accessToken,
+    user: state.user
 });
 
 export default connect(mapStateToProps)(

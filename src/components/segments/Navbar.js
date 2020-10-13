@@ -1,9 +1,14 @@
 import React from "react";
-import { Nav, Navbar, NavItem, Glyphicon } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import {
+    Nav, Navbar, NavItem, Glyphicon
+} from 'react-bootstrap';
 
 import { LinkContainer } from 'react-router-bootstrap';
 
-const CNavbar = (props) => {
+import Can from '../segments/auth/Can';
+
+const CNavbar = ({ user }) => {
 
     return (
         <div id="navigation">
@@ -30,15 +35,24 @@ const CNavbar = (props) => {
                         </NavItem>
                     </Nav>
                     <Nav pullRight>
-                        <NavItem eventKey={1} href="#">
-                            Users
-                        </NavItem>
+                        <Can
+                            role={user.role}
+                            perform="users"
+                            yes={() => (
+                                <NavItem eventKey={1} href="/users">
+                                    Users
+                                </NavItem>
+                            )}
+                        />
                         <LinkContainer to="/logout">
                             <NavItem eventKey={2}>
                                 <Glyphicon glyph="log-out" /> Logout
-                                </NavItem>
+                            </NavItem>
                         </LinkContainer>
                     </Nav>
+                    <Navbar.Text pullRight style={{ marginRight: "15px" }}>
+                        Logged as: <strong>{user.role.toUpperCase()}</strong>
+                    </Navbar.Text>
                 </Navbar.Collapse>
             </Navbar>
         </div>
@@ -46,4 +60,8 @@ const CNavbar = (props) => {
 
 }
 
-export default CNavbar;
+const mapStateToProps = state => ({
+    user: state.user
+});
+
+export default connect(mapStateToProps)(CNavbar);

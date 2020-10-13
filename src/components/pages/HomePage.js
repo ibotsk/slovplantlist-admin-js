@@ -10,6 +10,7 @@ import SpeciesRecord from './SpeciesRecord';
 import Genera from './Genera';
 import FamiliesAPG from './FamiliesAPG';
 import Families from './Families';
+import Users from './Users';
 import Logout from '../segments/Logout';
 
 import PrivateRoute from '../wrappers/PrivateRoute';
@@ -23,6 +24,7 @@ const Routing = () => (
         <PrivateRoute exact path="/genera" component={Genera} />
         <PrivateRoute exact path="/families-apg" component={FamiliesAPG} />
         <PrivateRoute exact path="/families" component={Families} />
+        <PrivateRoute exact path="/users" component={Users} />
         <PrivateRoute exact path='/logout' component={Logout} />
     </Switch>
 );

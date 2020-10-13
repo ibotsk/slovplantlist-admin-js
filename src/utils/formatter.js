@@ -1,5 +1,6 @@
 import React from 'react';
 import helper from './helper';
+import config from '../config/config';
 
 const italic = (subject) => {
     return <i>{subject}</i>;
@@ -22,4 +23,21 @@ const losToTypeaheadSelected = data => {
     }];
 }
 
-export default { format, losToTypeaheadSelected };
+const userRole = (roles) => {
+    if (!roles || roles.length === 0) {
+        return undefined;
+    }
+    return roles.map((r, i) => {
+        const mappedRole = config.mappings.userRole[r.name];
+        return [
+            i > 0 && ", ",
+            <span key={r.name} style={{ color: mappedRole.colour }}>{mappedRole.text}</span>
+        ]
+    });
+}
+
+export default { 
+    format, 
+    losToTypeaheadSelected,
+    userRole
+};

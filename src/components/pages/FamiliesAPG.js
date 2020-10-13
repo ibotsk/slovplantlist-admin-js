@@ -9,7 +9,8 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import TabledPage from '../wrappers/TabledPageParent';
-import FamiliesApgModal from '../segments/FamiliesApgModal';
+import FamiliesApgModal from '../segments/modals/FamiliesApgModal';
+import Can from '../segments/auth/Can';
 
 import config from '../../config/config';
 
@@ -70,7 +71,15 @@ class FamiliesAPG extends React.Component {
     formatResult = data => {
         return data.map(d => ({
             id: d.id,
-            action: <Button bsSize='xsmall' bsStyle="warning" onClick={() => this.showModal(d.id)}>Edit</Button>,
+            action: (
+                <Can
+                    role={this.props.user.role}
+                    perform="familyAPG:edit"
+                    yes={() => (
+                        <Button bsSize='xsmall' bsStyle="warning" onClick={() => this.showModal(d.id)}>Edit</Button>
+                    )}
+                />
+            ),
             name: d.name,
             vernacular: d.vernacular
         }));
@@ -81,8 +90,17 @@ class FamiliesAPG extends React.Component {
             <div id='families-apg'>
                 <Grid id='functions-panel'>
                     <div id="functions">
-                        <Button bsStyle="success" onClick={() => this.showModal('')}><Glyphicon glyph="plus"></Glyphicon> Add new</Button>
+                        <Can
+                            role={this.props.user.role}
+                            perform="familyAPG:edit"
+                            yes={() => (
+                                <Button bsStyle="success" onClick={() => this.showModal('')}><Glyphicon glyph="plus"></Glyphicon> Add new</Button>
+                            )}
+                        />
                     </div>
+                </Grid>
+                <hr />
+                <Grid>
                     <h2>Families APG</h2>
                     <p>All filters are case sensitive</p>
                 </Grid>
@@ -103,7 +121,8 @@ class FamiliesAPG extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    accessToken: state.authentication.accessToken
+    accessToken: state.authentication.accessToken,
+    user: state.user
 });
 
 export default connect(mapStateToProps)(

@@ -5,6 +5,7 @@ import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.m
 import tablesService from '../../services/tables';
 
 import helper from '../../utils/helper';
+import filtershelper from '../../utils/filters';
 import config from '../../config/config';
 
 const customTotal = (from, to, size) => (
@@ -36,10 +37,12 @@ const TabledPage = injectedProps => WrappedComponent => {
         }
 
         handleTableChange = async (type, { page, sizePerPage, filters, sortField, sortOrder }) => {
-            const curatedFilters = helper.curateSearchFilters(filters);
+            const ownerId = this.props.user ? this.props.user.id : undefined;
+
+            const curatedFilters = filtershelper.curateSearchFilters(filters, { ownerId });
             const where = helper.makeWhere(curatedFilters); //TODO make function to take into account existing where
 
-            const curatedSortField = helper.curateSortFields(sortField);
+            const curatedSortField = filtershelper.curateSortFields(sortField);
             const order = helper.makeOrder(curatedSortField, sortOrder);
 
             const totalSize = await this.fetchCount(where);

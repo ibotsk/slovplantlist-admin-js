@@ -10,8 +10,14 @@ import {
     Form, FormGroup, FormControl, ControlLabel
 } from 'react-bootstrap';
 
-import userService from '../../services/user-service';
-import { setAuthenticated, unsetAuthenticated } from '../../actions';
+import userFacade from '../../facades/users';
+import { 
+    setAuthenticated, 
+    unsetAuthenticated,
+    setUser,
+    unsetUser
+} from '../../actions';
+import config from '../../config/config';
 
 class Login extends Component {
 
@@ -19,6 +25,7 @@ class Login extends Component {
         super(props);
 
         this.props.unsetAuthenticated();
+        this.props.unsetUser();
         this.state = {
             username: "",
             password: "",
@@ -45,11 +52,17 @@ class Login extends Component {
             return;
         }
         // call login endpoint
-        const responseData = await userService.login(username, password);
-        if (!responseData.id) {
+        const { id: accessToken, userId } = await userFacade.login(username, password);
+        if (!accessToken) {
             return;
         }
-        this.props.setAuthenticated(responseData.id);
+        const { roles } = await userFacade.getUserById({ id: userId, accessToken });
+        const userGeneraIds = await userFacade.getGeneraOfUser({ userId, accessToken, format: g => g.id });
+        
+        const userRole = roles[0] ? roles[0].name : config.mappings.userRole.author.name;
+
+        this.props.setAuthenticated(accessToken);
+        this.props.setUser(userId, userRole, userGeneraIds);
         this.setState({ redirectToReferrer: true });
     }
 
@@ -97,6 +110,8 @@ export default connect(
     null,
     {
         setAuthenticated,
-        unsetAuthenticated
+        unsetAuthenticated,
+        setUser,
+        unsetUser
     }
 )(Login);
