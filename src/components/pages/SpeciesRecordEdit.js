@@ -370,7 +370,7 @@ class SpeciesRecord extends Component {
     }
 
     async componentDidMount() {
-        const recordId = this.props.recordId;
+        const { recordId } = this.props;
         if (recordId) {
             const { speciesRecord, accepted, basionym, replaced, nomenNovum, genus, familyApg, family } = await speciesFacade.getRecordById({ id: recordId, accessToken: this.accessToken });
 

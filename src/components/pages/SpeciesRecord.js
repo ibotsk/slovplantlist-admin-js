@@ -13,32 +13,32 @@ class SpeciesRecord extends React.Component {
         super(props);
 
         this.state = {
-            recordId: undefined,
-            id_genus: undefined
+            idGenus: undefined
         }
     }
 
     async componentDidMount() {
-        const id = this.props.match.params.id;
+        const { params: { id } } = this.props.match;
         const accessToken = this.props.accessToken;
-        const { id_genus } = await speciesFacade.getSpeciesById({ id, accessToken });
+        const { id_genus: idGenus } = await speciesFacade.getSpeciesById({ id, accessToken });
         this.setState({
-            recordId: id,
-            id_genus
+            idGenus
         });
     }
 
     render() {
+        const { user: { role, userGenera }, match: { params } } = this.props;
+        const { idGenus } = this.state;
         return (
             <Can
-                role={this.props.user.role}
+                role={role}
                 perform="species:edit"
                 data={{
-                    speciesGenusId: this.state.id_genus,
-                    userGeneraIds: this.props.user.userGenera
+                    speciesGenusId: idGenus,
+                    userGeneraIds: userGenera
                 }}
-                yes={() => <SpeciesRecordEdit recordId={this.state.recordId} />}
-                no={() => <SpeciesRecordView recordId={this.state.recordId} />}
+                yes={() => <SpeciesRecordEdit recordId={params.id} />}
+                no={() => <SpeciesRecordView recordId={params.id} />}
             />
         );
     }
