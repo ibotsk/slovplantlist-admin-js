@@ -8,45 +8,45 @@ import SpeciesRecordView from './SpeciesRecordView';
 import speciesFacade from '../../facades/species';
 
 class SpeciesRecord extends React.Component {
+  constructor(props) {
+    super(props);
 
-    constructor(props) {
-        super(props);
+    this.state = {
+      idGenus: undefined,
+    };
+  }
 
-        this.state = {
-            idGenus: undefined
-        }
-    }
+  async componentDidMount() {
+    const { match: { params: { id } }, accessToken } = this.props;
+    const { id_genus: idGenus } = await speciesFacade.getSpeciesById({
+      id, accessToken,
+    });
+    this.setState({
+      idGenus,
+    });
+  }
 
-    async componentDidMount() {
-        const { params: { id } } = this.props.match;
-        const accessToken = this.props.accessToken;
-        const { id_genus: idGenus } = await speciesFacade.getSpeciesById({ id, accessToken });
-        this.setState({
-            idGenus
-        });
-    }
+  render() {
+    const { user: { role, userGenera }, match: { params } } = this.props;
+    const { idGenus } = this.state;
+    return (
+      <Can
+        role={role}
+        perform="species:edit"
+        data={{
+          speciesGenusId: idGenus,
+          userGeneraIds: userGenera,
+        }}
+        yes={() => <SpeciesRecordEdit recordId={params.id} />}
+        no={() => <SpeciesRecordView recordId={params.id} />}
+      />
+    );
+  }
+}
 
-    render() {
-        const { user: { role, userGenera }, match: { params } } = this.props;
-        const { idGenus } = this.state;
-        return (
-            <Can
-                role={role}
-                perform="species:edit"
-                data={{
-                    speciesGenusId: idGenus,
-                    userGeneraIds: userGenera
-                }}
-                yes={() => <SpeciesRecordEdit recordId={params.id} />}
-                no={() => <SpeciesRecordView recordId={params.id} />}
-            />
-        );
-    }
-};
-
-const mapStateToProps = state => ({
-    accessToken: state.authentication.accessToken,
-    user: state.user
+const mapStateToProps = (state) => ({
+  accessToken: state.authentication.accessToken,
+  user: state.user,
 });
 
 export default connect(mapStateToProps)(SpeciesRecord);

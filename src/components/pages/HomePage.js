@@ -16,26 +16,26 @@ import Logout from '../segments/Logout';
 import PrivateRoute from '../wrappers/PrivateRoute';
 
 const Routing = () => (
-    <Switch>
-        <PrivateRoute exact path="/checklist" component={Checklist} />
-        <PrivateRoute path="/checklist/detail/:id" component={SpeciesRecord} />
-        <PrivateRoute path="/checklist/edit/:id" component={SpeciesRecord} />
-        <PrivateRoute path="/checklist/new" component={SpeciesRecord} />
-        <PrivateRoute exact path="/genera" component={Genera} />
-        <PrivateRoute exact path="/families-apg" component={FamiliesAPG} />
-        <PrivateRoute exact path="/families" component={Families} />
-        <PrivateRoute exact path="/users" component={Users} />
-        <PrivateRoute exact path='/logout' component={Logout} />
-    </Switch>
+  <Switch>
+    <PrivateRoute exact path="/checklist" component={Checklist} />
+    <PrivateRoute path="/checklist/detail/:id" component={SpeciesRecord} />
+    <PrivateRoute path="/checklist/edit/:id" component={SpeciesRecord} />
+    <PrivateRoute path="/checklist/new" component={SpeciesRecord} />
+    <PrivateRoute exact path="/genera" component={Genera} />
+    <PrivateRoute exact path="/families-apg" component={FamiliesAPG} />
+    <PrivateRoute exact path="/families" component={Families} />
+    <PrivateRoute exact path="/users" component={Users} />
+    <PrivateRoute exact path="/logout" component={Logout} />
+  </Switch>
 );
 
 const HomePage = () => (
-    <React.Fragment>
-        <CNavbar />
-        <Routing />
-        <Footer />
-        <NotificationContainer />
-    </React.Fragment>
+  <>
+    <CNavbar />
+    <Routing />
+    <Footer />
+    <NotificationContainer />
+  </>
 );
 
 export default HomePage;

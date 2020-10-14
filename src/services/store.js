@@ -6,15 +6,15 @@ import rootReducer from '../reducers';
 const persistedState = loadState();
 
 const store = createStore(
-    rootReducer,
-    persistedState
+  rootReducer,
+  persistedState,
 );
 
 store.subscribe(() => {
-    saveState({
-        authentication: store.getState().authentication,
-        user: store.getState().user
-    });
+  saveState({
+    authentication: store.getState().authentication,
+    user: store.getState().user,
+  });
 });
 
 export default store;
