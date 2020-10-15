@@ -15,17 +15,17 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import PropTypes from 'prop-types';
 
-import LoggedUserType from '../propTypes/loggedUser';
-import SpeciesType from '../propTypes/species';
+import LoggedUserType from '../../propTypes/loggedUser';
+import SpeciesType from '../../propTypes/species';
 
-import LosName from '../segments/LosName';
-import SpeciesNameModal from '../segments/modals/SpeciesNameModal';
-import TabledPage from '../wrappers/TabledPageParent';
-import Can from '../segments/auth/Can';
-import Ownership from '../segments/auth/Ownership';
+import LosName from '../../segments/LosName';
+import SpeciesNameModal from './Modals/SpeciesNameModal';
+import TabledPage from '../../wrappers/TabledPageParent';
+import Can from '../../segments/auth/Can';
+import Ownership from '../../segments/auth/Ownership';
 
-import config from '../../config/config';
-import helper from '../../utils/helper';
+import config from '../../../config/config';
+import helper from '../../../utils/helper';
 
 const PAGE_DETAIL = '/checklist/detail/';
 const EDIT_RECORD = '/checklist/edit/';

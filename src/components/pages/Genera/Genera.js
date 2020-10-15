@@ -11,14 +11,14 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import PropTypes from 'prop-types';
 
-import LoggedUserType from '../propTypes/loggedUser';
-import GenusType from '../propTypes/genus';
+import LoggedUserType from '../../propTypes/loggedUser';
+import GenusType from '../../propTypes/genus';
 
-import TabledPage from '../wrappers/TabledPageParent';
-import GeneraModal from '../segments/modals/GeneraModal';
-import Can from '../segments/auth/Can';
+import TabledPage from '../../wrappers/TabledPageParent';
+import GeneraModal from './Modals/GeneraModal';
+import Can from '../../segments/auth/Can';
 
-import config from '../../config/config';
+import config from '../../../config/config';
 
 const columns = [
   {

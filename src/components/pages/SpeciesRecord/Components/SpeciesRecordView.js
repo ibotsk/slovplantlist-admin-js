@@ -9,12 +9,12 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 import PropTypes from 'prop-types';
 
-import LosName from '../segments/LosName';
-import SynonymListItem from '../segments/SynonymListItem';
+import LosName from '../../../segments/LosName';
+import SynonymListItem from '../../../segments/SynonymListItem';
 
-import speciesFacade from '../../facades/species';
+import speciesFacade from '../../../../facades/species';
 
-import config from '../../config/config';
+import config from '../../../../config/config';
 
 const CHECKLIST_LIST_URI = '/checklist';
 

@@ -10,13 +10,13 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import PropTypes from 'prop-types';
 
-import UserType from '../propTypes/user';
+import UserType from '../../../propTypes/user';
 
-import TabledPage from '../wrappers/TabledPageParent';
-import UsersModal from '../segments/modals/UsersModal';
+import TabledPage from '../../../wrappers/TabledPageParent';
+import UsersModal from './Modals/UsersModal';
 
-import formatter from '../../utils/formatter';
-import config from '../../config/config';
+import formatter from '../../../../utils/formatter';
+import config from '../../../../config/config';
 
 const columns = [
   {

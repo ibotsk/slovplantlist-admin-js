@@ -10,14 +10,14 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import PropTypes from 'prop-types';
 
-import LoggedUserType from '../propTypes/loggedUser';
-import FamilyType from '../propTypes/family';
+import LoggedUserType from '../../propTypes/loggedUser';
+import FamilyType from '../../propTypes/family';
 
-import TabledPage from '../wrappers/TabledPageParent';
-import FamiliesApgModal from '../segments/modals/FamiliesApgModal';
-import Can from '../segments/auth/Can';
+import TabledPage from '../../wrappers/TabledPageParent';
+import FamiliesModal from './Modals/FamiliesModal';
+import Can from '../../segments/auth/Can';
 
-import config from '../../config/config';
+import config from '../../../config/config';
 
 const columns = [
   {
@@ -48,22 +48,22 @@ const defaultSorted = [{
   order: 'asc',
 }];
 
-class FamiliesAPG extends React.Component {
+class Families extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      showModalFamilyApg: false,
+      showModalFamily: false,
       editId: 0,
     };
   }
 
   showModal = (id) => {
     this.setState({
-      showModalFamilyApg: true,
+      showModalFamily: true,
       editId: id,
     });
-  }
+  };
 
   hideModal = () => {
     const { onTableChange, paginationOptions } = this.props;
@@ -72,8 +72,8 @@ class FamiliesAPG extends React.Component {
       sizePerPage: paginationOptions.sizePerPage,
       filters: {},
     });
-    this.setState({ showModalFamilyApg: false });
-  }
+    this.setState({ showModalFamily: false });
+  };
 
   formatResult = (data) => data.map((d) => {
     const { user } = this.props;
@@ -82,7 +82,7 @@ class FamiliesAPG extends React.Component {
       action: (
         <Can
           role={user.role}
-          perform="familyAPG:edit"
+          perform="family:edit"
           yes={() => (
             <Button
               bsSize="xsmall"
@@ -97,18 +97,18 @@ class FamiliesAPG extends React.Component {
       name: d.name,
       vernacular: d.vernacular,
     };
-  })
+  });
 
   render() {
     const { user, data, onTableChange } = this.props;
-    const { editId, showModalFamilyApg } = this.state;
+    const { editId, showModalFamily } = this.state;
     return (
-      <div id="families-apg">
+      <div id="families">
         <Grid id="functions-panel">
           <div id="functions">
             <Can
               role={user.role}
-              perform="familyAPG:edit"
+              perform="family:edit"
               yes={() => (
                 <Button bsStyle="success" onClick={() => this.showModal('')}>
                   <Glyphicon glyph="plus" />
@@ -121,7 +121,7 @@ class FamiliesAPG extends React.Component {
         </Grid>
         <hr />
         <Grid>
-          <h2>Families APG</h2>
+          <h2>Families</h2>
           <p>All filters are case sensitive</p>
         </Grid>
         <Grid fluid>
@@ -137,9 +137,9 @@ class FamiliesAPG extends React.Component {
             onTableChange={onTableChange}
           />
         </Grid>
-        <FamiliesApgModal
+        <FamiliesModal
           id={editId}
-          show={showModalFamilyApg}
+          show={showModalFamily}
           onHide={this.hideModal}
         />
       </div>
@@ -154,12 +154,12 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps)(
   TabledPage({
-    getAll: config.uris.familiesApgUri.getAllWOrderUri,
-    getCount: config.uris.familiesApgUri.countUri,
-  })(FamiliesAPG),
+    getAll: config.uris.familiesUri.getAllWOrderUri,
+    getCount: config.uris.familiesUri.countUri,
+  })(Families),
 );
 
-FamiliesAPG.propTypes = {
+Families.propTypes = {
   user: LoggedUserType.type.isRequired,
   data: PropTypes.arrayOf(FamilyType.type).isRequired,
   onTableChange: PropTypes.func.isRequired,

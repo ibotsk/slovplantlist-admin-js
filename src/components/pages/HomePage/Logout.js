@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 
 import {
   unsetAuthenticated as unsetAuthenticatedAction,
-} from '../../actions/index';
-import { removeState } from '../../services/local-storage';
-import userService from '../../services/user-service';
+} from '../../../actions/index';
+import { removeState } from '../../../services/local-storage';
+import userService from '../../../services/user-service';
 
 class Logout extends React.Component {
   async componentWillMount() {

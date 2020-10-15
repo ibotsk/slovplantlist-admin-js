@@ -13,19 +13,19 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import PropTypes from 'prop-types';
 
 import { NotificationContainer } from 'react-notifications';
-import notifications from '../../utils/notifications';
+import notifications from '../../../../utils/notifications';
 
-import AddableList from '../segments/AddableList';
-import LosName from '../segments/LosName';
-import SynonymListItem from '../segments/SynonymListItem';
+import AddableList from '../../../segments/AddableList';
+import LosName from '../../../segments/LosName';
+import SynonymListItem from '../../../segments/SynonymListItem';
 
-import speciesFacade from '../../facades/species';
-import genusFacade from '../../facades/genus';
+import speciesFacade from '../../../../facades/species';
+import genusFacade from '../../../../facades/genus';
 
-import helper from '../../utils/helper';
-import config from '../../config/config';
+import helper from '../../../../utils/helper';
+import config from '../../../../config/config';
 
-import '../../styles/custom.css';
+import '../../../../styles/custom.css';
 
 const LABEL_COL_WIDTH = 2;
 const CONTENT_COL_WIDTH = 10;
@@ -668,7 +668,6 @@ class SpeciesRecord extends Component {
         hybrid, publication, vernacular, tribus,
       } = {},
     } = this.state;
-    console.log(this.state);
     return (
       <div id="species-detail">
         <Grid id="functions-panel">

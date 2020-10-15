@@ -6,9 +6,9 @@ import {
 
 import { LinkContainer } from 'react-router-bootstrap';
 
-import LoggedUser from '../propTypes/loggedUser';
+import LoggedUser from '../../../propTypes/loggedUser';
 
-import Can from './auth/Can';
+import Can from '../../../segments/auth/Can';
 
 const CNavbar = ({ user }) => (
   <div id="navigation">
