@@ -8,6 +8,11 @@ import {
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
+import PropTypes from 'prop-types';
+
+import LoggedUserType from '../propTypes/loggedUser';
+import FamilyType from '../propTypes/family';
+
 import TabledPage from '../wrappers/TabledPageParent';
 import FamiliesApgModal from '../segments/modals/FamiliesApgModal';
 import Can from '../segments/auth/Can';
@@ -153,3 +158,13 @@ export default connect(mapStateToProps)(
     getCount: config.uris.familiesApgUri.countUri,
   })(FamiliesAPG),
 );
+
+FamiliesAPG.propTypes = {
+  user: LoggedUserType.type.isRequired,
+  data: PropTypes.arrayOf(FamilyType.type).isRequired,
+  onTableChange: PropTypes.func.isRequired,
+  paginationOptions: PropTypes.shape({
+    page: PropTypes.number.isRequired,
+    sizePerPage: PropTypes.number.isRequired,
+  }).isRequired,
+};

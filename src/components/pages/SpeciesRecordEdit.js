@@ -10,6 +10,8 @@ import {
 import { LinkContainer } from 'react-router-bootstrap';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
+import PropTypes from 'prop-types';
+
 import { NotificationContainer } from 'react-notifications';
 import notifications from '../../utils/notifications';
 
@@ -96,11 +98,11 @@ class SpeciesRecord extends Component {
       familyApg: '',
       family: '',
       isLoading: false,
-      [`${ID_ACCEPTED_NAME_PROP}_selected`]: undefined,
-      [`${ID_BASIONYM_NAME_PROP}_selected`]: undefined,
-      [`${ID_REPLACED_NAME_PROP}_selected`]: undefined,
-      [`${ID_NOMEN_NOVUM_NAME_PROP}_selected`]: undefined,
-      [`${ID_GENUS_NAME_PROP}_selected`]: undefined,
+      [`${ID_ACCEPTED_NAME_PROP}Selected`]: undefined,
+      [`${ID_BASIONYM_NAME_PROP}Selected`]: undefined,
+      [`${ID_REPLACED_NAME_PROP}Selected`]: undefined,
+      [`${ID_NOMEN_NOVUM_NAME_PROP}Selected`]: undefined,
+      [`${ID_GENUS_NAME_PROP}Selected`]: undefined,
 
       nomenclatoricSynonyms: [], // contains objects of list-of-species
       taxonomicSynonyms: [], // contains objects of list-of-species
@@ -133,11 +135,11 @@ class SpeciesRecord extends Component {
 
       this.setState({
         record: speciesRecord,
-        [`${ID_ACCEPTED_NAME_PROP}_selected`]: accepted,
-        [`${ID_BASIONYM_NAME_PROP}_selected`]: basionym,
-        [`${ID_REPLACED_NAME_PROP}_selected`]: replaced,
-        [`${ID_NOMEN_NOVUM_NAME_PROP}_selected`]: nomenNovum,
-        [`${ID_GENUS_NAME_PROP}_selected`]: genus,
+        [`${ID_ACCEPTED_NAME_PROP}Selected`]: accepted,
+        [`${ID_BASIONYM_NAME_PROP}Selected`]: basionym,
+        [`${ID_REPLACED_NAME_PROP}Selected`]: replaced,
+        [`${ID_NOMEN_NOVUM_NAME_PROP}Selected`]: nomenNovum,
+        [`${ID_GENUS_NAME_PROP}Selected`]: genus,
         familyApg,
         family,
         nomenclatoricSynonyms,
@@ -164,7 +166,10 @@ class SpeciesRecord extends Component {
     return record;
   });
 
-  getSelectedTypeahead = (id) => this.state[`${id}_selected`];
+  getSelectedTypeahead = (id) => {
+    const { [`${id}Selected`]: selectedTypeahead } = this.state;
+    return selectedTypeahead;
+  }
 
   handleChangeGenusTypeahead = async (selected, prop) => {
     const { accessToken } = this.props;
@@ -184,7 +189,7 @@ class SpeciesRecord extends Component {
 
   handleChangeTypeaheadSingle = (selected, prop) => {
     const id = selected[0] ? selected[0].id : undefined;
-    const propSelected = `${prop}_selected`;
+    const propSelected = `${prop}Selected`;
     this.setState({
       [propSelected]: selected,
     });
@@ -1131,3 +1136,12 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps)(SpeciesRecord);
+
+SpeciesRecord.propTypes = {
+  accessToken: PropTypes.string.isRequired,
+  recordId: PropTypes.string,
+};
+
+SpeciesRecord.defaultProps = {
+  recordId: undefined,
+};

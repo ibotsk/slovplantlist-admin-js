@@ -8,6 +8,10 @@ import {
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
+import PropTypes from 'prop-types';
+
+import UserType from '../propTypes/user';
+
 import TabledPage from '../wrappers/TabledPageParent';
 
 import config from '../../config/config';
@@ -91,6 +95,7 @@ class GeneraUsers extends React.Component {
   render() {
     const { data, onTableChange } = this.props;
     const { editId, showModalUsersGenera } = this.state;
+
     return (
       <div>
         <BootstrapTable
@@ -124,3 +129,16 @@ export default connect(mapStateToProps)(
     getCount: config.uris.usersUri.countUri,
   })(GeneraUsers),
 );
+
+GenusButtonAddEdit.propTypes = {
+  onClick: PropTypes.func.isRequired,
+};
+
+GeneraUsers.propTypes = {
+  data: PropTypes.arrayOf(UserType.type).isRequired,
+  onTableChange: PropTypes.func.isRequired,
+  paginationOptions: PropTypes.shape({
+    page: PropTypes.number.isRequired,
+    sizePerPage: PropTypes.number.isRequired,
+  }).isRequired,
+};

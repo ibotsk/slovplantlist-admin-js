@@ -13,6 +13,11 @@ import filterFactory, {
 } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
+import PropTypes from 'prop-types';
+
+import LoggedUserType from '../propTypes/loggedUser';
+import SpeciesType from '../propTypes/species';
+
 import LosName from '../segments/LosName';
 import SpeciesNameModal from '../segments/modals/SpeciesNameModal';
 import TabledPage from '../wrappers/TabledPageParent';
@@ -119,6 +124,7 @@ class Checklist extends React.Component {
     const {
       onTableChange, paginationOptions, filters, sorting,
     } = this.props;
+
     onTableChange(undefined, {
       page: paginationOptions.page,
       sizePerPage: paginationOptions.sizePerPage,
@@ -290,3 +296,31 @@ export default connect(mapStateToProps)(
     getCount: config.uris.nomenclatureOwnersUri.countUri,
   })(Checklist),
 );
+
+Checklist.propTypes = {
+  user: LoggedUserType.type.isRequired,
+  data: PropTypes.arrayOf(SpeciesType.type).isRequired,
+  onTableChange: PropTypes.func.isRequired,
+  paginationOptions: PropTypes.shape({
+    page: PropTypes.number.isRequired,
+    sizePerPage: PropTypes.number.isRequired,
+  }).isRequired,
+  filters: PropTypes.objectOf(PropTypes.shape({
+    caseSensitive: PropTypes.bool.isRequired,
+    comparator: PropTypes.string.isRequired,
+    filterType: PropTypes.string.isRequired,
+    filterVal: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.string,
+    ]).isRequired,
+  })),
+  sorting: PropTypes.shape({
+    sortField: PropTypes.string,
+    sortOrder: PropTypes.string,
+  }),
+};
+
+Checklist.defaultProps = {
+  filters: undefined,
+  sorting: undefined,
+};

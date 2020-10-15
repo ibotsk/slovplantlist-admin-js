@@ -10,12 +10,14 @@ import {
   Form, FormGroup, FormControl, ControlLabel,
 } from 'react-bootstrap';
 
+import PropTypes from 'prop-types';
+
 import userFacade from '../../facades/users';
 import {
-  setAuthenticated,
-  unsetAuthenticated,
-  setUser,
-  unsetUser,
+  setAuthenticated as setAuthenticatedAction,
+  unsetAuthenticated as unsetAuthenticatedAction,
+  setUser as setUserAction,
+  unsetUser as unsetUserAction,
 } from '../../actions';
 import config from '../../config/config';
 
@@ -126,12 +128,23 @@ class Login extends Component {
   }
 }
 
-export default connect(
-  null,
-  {
-    setAuthenticated,
-    unsetAuthenticated,
-    setUser,
-    unsetUser,
-  },
-)(Login);
+export default connect(null, {
+  setAuthenticated: setAuthenticatedAction,
+  unsetAuthenticated: unsetAuthenticatedAction,
+  setUser: setUserAction,
+  unsetUser: unsetUserAction,
+})(Login);
+
+Login.propTypes = {
+  unsetAuthenticated: PropTypes.func.isRequired,
+  unsetUser: PropTypes.func.isRequired,
+  setAuthenticated: PropTypes.func.isRequired,
+  setUser: PropTypes.func.isRequired,
+  location: PropTypes.shape({
+    state: PropTypes.shape({
+      from: PropTypes.shape({
+        pathname: PropTypes.string,
+      }),
+    }),
+  }).isRequired,
+};

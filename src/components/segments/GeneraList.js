@@ -5,6 +5,10 @@ import {
   Tooltip, OverlayTrigger,
 } from 'react-bootstrap';
 
+import PropTypes from 'prop-types';
+
+import GenusType from '../propTypes/genus';
+
 const tooltip = (info) => (
   <Tooltip id="tooltip">
     {info}
@@ -55,3 +59,7 @@ const GeneraList = ({ data }) => (
 );
 
 export default GeneraList;
+
+GeneraList.propTypes = {
+  data: PropTypes.arrayOf(GenusType.type).isRequired,
+};

@@ -9,6 +9,8 @@ import {
 
 import { Typeahead } from 'react-bootstrap-typeahead';
 
+import PropTypes from 'prop-types';
+
 import notifications from '../../../utils/notifications';
 
 import generaFacade from '../../../facades/genus';
@@ -250,3 +252,10 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps)(GeneraModal);
+
+GeneraModal.propTypes = {
+  show: PropTypes.bool.isRequired,
+  id: PropTypes.number.isRequired,
+  accessToken: PropTypes.string.isRequired,
+  onHide: PropTypes.func.isRequired,
+};

@@ -10,6 +10,8 @@ import {
 
 import { Typeahead } from 'react-bootstrap-typeahead';
 
+import PropTypes from 'prop-types';
+
 import notifications from '../../../utils/notifications';
 
 import speciesFacade from '../../../facades/species';
@@ -566,3 +568,10 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps)(SpeciesNameModal);
+
+SpeciesNameModal.propTypes = {
+  show: PropTypes.bool.isRequired,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  accessToken: PropTypes.string.isRequired,
+  onHide: PropTypes.func.isRequired,
+};

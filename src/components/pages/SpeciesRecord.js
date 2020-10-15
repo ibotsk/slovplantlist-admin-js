@@ -1,6 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import PropTypes from 'prop-types';
+
+import LoggedUserType from '../propTypes/loggedUser';
+
 import Can from '../segments/auth/Can';
 import SpeciesRecordEdit from './SpeciesRecordEdit';
 import SpeciesRecordView from './SpeciesRecordView';
@@ -50,3 +54,13 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps)(SpeciesRecord);
+
+SpeciesRecord.propTypes = {
+  accessToken: PropTypes.string.isRequired,
+  user: LoggedUserType.type.isRequired,
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: PropTypes.string,
+    }),
+  }).isRequired,
+};

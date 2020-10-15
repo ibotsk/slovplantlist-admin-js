@@ -7,6 +7,10 @@ import {
   Form, FormGroup, ControlLabel,
 } from 'react-bootstrap';
 
+import PropTypes from 'prop-types';
+
+import UserType from '../../propTypes/user';
+
 import AddableList from '../AddableList';
 
 import notifications from '../../../utils/notifications';
@@ -20,9 +24,9 @@ const genusCompare = (g1, g2) => (
   g1.label < g2.label ? -1 : g1.label > g2.label
 );
 
-const UserGenusListItem = ({ rowId, data: genus, onRowDelete }) => (
+const UserGenusListItem = ({ rowId, data: { label }, onRowDelete }) => (
   <ListGroupItem>
-    {genus.label}
+    {label}
     <span className="pull-right">
       <Button
         bsStyle="danger"
@@ -188,3 +192,21 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps)(UsersGeneraModal);
+
+UsersGeneraModal.propTypes = {
+  show: PropTypes.bool.isRequired,
+  user: UserType.type,
+  accessToken: PropTypes.string.isRequired,
+  onHide: PropTypes.func.isRequired,
+};
+UsersGeneraModal.defaultProps = {
+  user: undefined,
+};
+
+UserGenusListItem.propTypes = {
+  rowId: PropTypes.number.isRequired,
+  onRowDelete: PropTypes.func.isRequired,
+  data: PropTypes.shape({
+    label: PropTypes.string,
+  }).isRequired,
+};

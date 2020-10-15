@@ -6,6 +6,8 @@ import {
   Form, FormGroup, FormControl, ControlLabel,
 } from 'react-bootstrap';
 
+import PropTypes from 'prop-types';
+
 import notifications from '../../../utils/notifications';
 
 import usersFacade from '../../../facades/users';
@@ -255,3 +257,14 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps)(UsersModal);
+
+UsersModal.propTypes = {
+  show: PropTypes.bool.isRequired,
+  id: PropTypes.string,
+  accessToken: PropTypes.string.isRequired,
+  onHide: PropTypes.func.isRequired,
+};
+
+UsersModal.defaultProps = {
+  id: undefined,
+};

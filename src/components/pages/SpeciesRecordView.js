@@ -7,6 +7,8 @@ import {
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
+import PropTypes from 'prop-types';
+
 import LosName from '../segments/LosName';
 import SynonymListItem from '../segments/SynonymListItem';
 
@@ -249,3 +251,12 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps)(SpeciesRecordView);
+
+SpeciesRecordView.propTypes = {
+  accessToken: PropTypes.string.isRequired,
+  recordId: PropTypes.string,
+};
+
+SpeciesRecordView.defaultProps = {
+  recordId: undefined,
+};

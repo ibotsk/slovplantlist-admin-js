@@ -6,6 +6,10 @@ import {
   ListGroup, ListGroupItem,
 } from 'react-bootstrap';
 
+import PropTypes from 'prop-types';
+
+import SpeciesType from '../propTypes/species';
+
 import LosName from './LosName';
 
 import config from '../../config/config';
@@ -63,3 +67,19 @@ const SynonymListItem = ({
 );
 
 export default SynonymListItem;
+
+SynonymListItem.propTypes = {
+  rowId: PropTypes.number.isRequired,
+  data: PropTypes.shape({
+    prefix: PropTypes.string.isRequired,
+    value: SpeciesType.type.isRequired,
+  }).isRequired,
+  additions: PropTypes.func,
+  removable: PropTypes.bool,
+  onRowDelete: PropTypes.func.isRequired,
+};
+
+SynonymListItem.defaultProps = {
+  additions: undefined,
+  removable: false,
+};

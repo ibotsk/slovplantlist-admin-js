@@ -8,6 +8,10 @@ import {
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
+import PropTypes from 'prop-types';
+
+import UserType from '../propTypes/user';
+
 import TabledPage from '../wrappers/TabledPageParent';
 import UsersModal from '../segments/modals/UsersModal';
 
@@ -133,3 +137,12 @@ export default connect(mapStateToProps)(
     getCount: config.uris.usersUri.countUri,
   })(AllUsers),
 );
+
+AllUsers.propTypes = {
+  data: PropTypes.arrayOf(UserType.type).isRequired,
+  onTableChange: PropTypes.func.isRequired,
+  paginationOptions: PropTypes.shape({
+    page: PropTypes.number.isRequired,
+    sizePerPage: PropTypes.number.isRequired,
+  }).isRequired,
+};

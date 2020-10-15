@@ -8,6 +8,8 @@ import {
 } from 'react-bootstrap';
 
 import { AsyncTypeahead, Typeahead } from 'react-bootstrap-typeahead';
+
+import PropTypes from 'prop-types';
 // import SynonymListItem from './SynonymListItem';
 
 class AddableList extends Component {
@@ -98,10 +100,10 @@ class AddableList extends Component {
           {
             // row must contain id, props is the rest
             // ListRow is an injected component that will be rendered as item
-            data.map(({ id, ...props }, index) => (
+            data.map(({ id, ...props }) => (
               <ListRow
                 rowId={id}
-                key={index}
+                key={id}
                 data={props}
                 onRowDelete={() => onRowDelete(id)}
               />
@@ -135,3 +137,22 @@ class AddableList extends Component {
 }
 
 export default AddableList;
+
+AddableList.propTypes = {
+  id: PropTypes.string,
+  data: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+  })),
+  itemComponent: PropTypes.func.isRequired,
+  onAddItemToList: PropTypes.func.isRequired,
+  onRowDelete: PropTypes.func.isRequired,
+  onSearch: PropTypes.func,
+  async: PropTypes.bool,
+};
+
+AddableList.defaultProps = {
+  id: undefined,
+  data: [],
+  async: false,
+  onSearch: undefined,
+};

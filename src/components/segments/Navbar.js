@@ -6,6 +6,8 @@ import {
 
 import { LinkContainer } from 'react-router-bootstrap';
 
+import LoggedUser from '../propTypes/loggedUser';
+
 import Can from './auth/Can';
 
 const CNavbar = ({ user }) => (
@@ -65,3 +67,7 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps)(CNavbar);
+
+CNavbar.propTypes = {
+  user: LoggedUser.type.isRequired,
+};

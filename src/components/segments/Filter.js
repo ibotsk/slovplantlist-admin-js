@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { Component } from 'react';
 import {
   Col, Checkbox,
@@ -8,6 +9,13 @@ import {
 } from 'react-bootstrap';
 
 import config from '../../config/config';
+
+/**
+ *
+ * Filter class is not used!
+ * - prop types eslint disabled for now
+ *
+ */
 
 const NTYPES_GROUP = config.nomenclature.filter.ntypesGroup;
 

@@ -6,6 +6,8 @@ import {
   Form, FormGroup, FormControl, ControlLabel,
 } from 'react-bootstrap';
 
+import PropTypes from 'prop-types';
+
 import notifications from '../../../utils/notifications';
 
 import familiesFacade from '../../../facades/families';
@@ -145,3 +147,10 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps)(FamiliesApgModal);
+
+FamiliesApgModal.propTypes = {
+  show: PropTypes.bool.isRequired,
+  id: PropTypes.number.isRequired,
+  accessToken: PropTypes.string.isRequired,
+  onHide: PropTypes.func.isRequired,
+};

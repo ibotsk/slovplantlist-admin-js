@@ -9,6 +9,11 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
+import PropTypes from 'prop-types';
+
+import LoggedUserType from '../propTypes/loggedUser';
+import GenusType from '../propTypes/genus';
+
 import TabledPage from '../wrappers/TabledPageParent';
 import GeneraModal from '../segments/modals/GeneraModal';
 import Can from '../segments/auth/Can';
@@ -156,7 +161,11 @@ class Genera extends React.Component {
             pagination={paginationFactory(paginationOptions)}
           />
         </Grid>
-        <GeneraModal id={editId} show={showModalGenera} onHide={this.hideModal} />
+        <GeneraModal
+          id={editId}
+          show={showModalGenera}
+          onHide={this.hideModal}
+        />
       </div>
     );
   }
@@ -173,3 +182,13 @@ export default connect(mapStateToProps)(
     getCount: config.uris.generaUri.countUri,
   })(Genera),
 );
+
+Genera.propTypes = {
+  user: LoggedUserType.type.isRequired,
+  data: PropTypes.arrayOf(GenusType.type).isRequired,
+  onTableChange: PropTypes.func.isRequired,
+  paginationOptions: PropTypes.shape({
+    page: PropTypes.number.isRequired,
+    sizePerPage: PropTypes.number.isRequired,
+  }).isRequired,
+};

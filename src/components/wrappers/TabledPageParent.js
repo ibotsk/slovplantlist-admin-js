@@ -4,6 +4,10 @@ import { connect } from 'react-redux';
 // eslint-disable-next-line max-len
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 
+import PropTypes from 'prop-types';
+
+import LoggedUserType from '../propTypes/loggedUser';
+
 import tablesService from '../../services/tables';
 
 import helper from '../../utils/helper';
@@ -83,7 +87,6 @@ const TabledPage = (injectedProps) =>
           records,
           sizePerPage,
           page,
-          where,
           totalSize,
           filters,
           sortField,
@@ -133,6 +136,15 @@ const TabledPage = (injectedProps) =>
           />
         );
       }
+    };
+
+    hoc.propTypes = {
+      user: LoggedUserType.type,
+      accessToken: PropTypes.string.isRequired,
+    };
+
+    hoc.defaultProps = {
+      user: undefined,
     };
 
     const mapStateToProps = (state) => ({

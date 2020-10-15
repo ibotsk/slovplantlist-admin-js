@@ -7,6 +7,8 @@ import {
   Tabs, Tab,
 } from 'react-bootstrap';
 
+import LoggedUserType from '../propTypes/loggedUser';
+
 import AllUsers from './AllUsers';
 import GeneraUsers from './GeneraUsers';
 import Can from '../segments/auth/Can';
@@ -61,3 +63,7 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps)(Users);
+
+Users.propTypes = {
+  user: LoggedUserType.type.isRequired,
+};

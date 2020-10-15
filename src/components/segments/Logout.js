@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
+import PropTypes from 'prop-types';
+
 import {
   unsetAuthenticated as unsetAuthenticatedAction,
 } from '../../actions/index';
@@ -28,3 +30,8 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
   unsetAuthenticated: unsetAuthenticatedAction,
 })(Logout);
+
+Logout.propTypes = {
+  accessToken: PropTypes.string.isRequired,
+  unsetAuthenticated: PropTypes.func.isRequired,
+};
