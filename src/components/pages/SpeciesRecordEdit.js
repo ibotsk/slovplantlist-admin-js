@@ -208,13 +208,14 @@ class SpeciesRecord extends Component {
 
   handleSearchGeneraAsyncTypeahead = async (query) => {
     this.setState({ isLoading: true });
+    const { accessToken } = this.props;
     const genera = await genusFacade.getAllGeneraBySearchTerm({
       term: query,
       format: (g) => ({
         id: g.id,
         label: g.name,
       }),
-      accessToken: this.accessToken,
+      accessToken,
     });
 
     this.setState({
@@ -223,16 +224,17 @@ class SpeciesRecord extends Component {
     });
   }
 
-  handleSearchSpeciesAsync = async (query) => (
-    speciesFacade.getAllSpeciesBySearchTerm({
+  handleSearchSpeciesAsync = async (query) => {
+    const { accessToken } = this.props;
+    return speciesFacade.getAllSpeciesBySearchTerm({
       term: query,
       format: (l) => ({
         id: l.id,
         label: helper.listOfSpeciesString(l),
       }),
-      accessToken: this.accessToken,
-    })
-  );
+      accessToken,
+    });
+  };
 
   handleAddNomenclatoricSynonym = async (selected) => (
     this.setState(async (state) => {
@@ -666,6 +668,7 @@ class SpeciesRecord extends Component {
         hybrid, publication, vernacular, tribus,
       } = {},
     } = this.state;
+    console.log(this.state);
     return (
       <div id="species-detail">
         <Grid id="functions-panel">

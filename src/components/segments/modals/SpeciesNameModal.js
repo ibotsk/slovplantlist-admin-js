@@ -157,10 +157,11 @@ class SpeciesNameModal extends Component {
 
   handleSave = async () => {
     if (this.getValidationState()) {
+      const { accessToken } = this.props;
       const { record: data } = this.state;
       try {
         await speciesFacade.saveSpecies(
-          { data, accessToken: this.accessToken },
+          { data, accessToken },
         );
         notifications.success('Saved');
         this.handleHide();

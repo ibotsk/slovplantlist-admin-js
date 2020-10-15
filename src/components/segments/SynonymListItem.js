@@ -69,7 +69,7 @@ const SynonymListItem = ({
 export default SynonymListItem;
 
 SynonymListItem.propTypes = {
-  rowId: PropTypes.number.isRequired,
+  rowId: PropTypes.number,
   data: PropTypes.shape({
     prefix: PropTypes.string.isRequired,
     value: SpeciesType.type.isRequired,
@@ -80,6 +80,7 @@ SynonymListItem.propTypes = {
 };
 
 SynonymListItem.defaultProps = {
+  rowId: undefined,
   additions: undefined,
   removable: false,
 };
