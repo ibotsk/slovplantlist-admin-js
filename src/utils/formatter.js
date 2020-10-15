@@ -1,5 +1,6 @@
 import React from 'react';
-import config from '../config/config';
+
+import config from 'config/config';
 
 const italic = (subject) => <i>{subject}</i>;
 

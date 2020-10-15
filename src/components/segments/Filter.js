@@ -8,7 +8,7 @@ import {
   Well,
 } from 'react-bootstrap';
 
-import config from '../../config/config';
+import config from 'config/config';
 
 /**
  *

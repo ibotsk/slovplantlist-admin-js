@@ -1,7 +1,7 @@
-import rolesService from '../services/roles';
-import roleMappingsService from '../services/roleMappings';
+import rolesService from 'services/roles';
+import roleMappingsService from 'services/roleMappings';
 
-import config from '../config/config';
+import config from 'config/config';
 
 const getAllRoles = async ({ accessToken, format }) => {
   const roles = await rolesService.getAll({ accessToken });

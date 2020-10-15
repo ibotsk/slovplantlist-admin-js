@@ -9,15 +9,15 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import PropTypes from 'prop-types';
+import LoggedUserType from 'components/propTypes/loggedUser';
+import FamilyType from 'components/propTypes/family';
 
-import LoggedUserType from '../../propTypes/loggedUser';
-import FamilyType from '../../propTypes/family';
+import TabledPage from 'components/wrappers/TabledPageParent';
+import Can from 'components/segments/auth/Can';
 
-import TabledPage from '../../wrappers/TabledPageParent';
+import config from 'config/config';
+
 import FamiliesApgModal from './Modals/FamiliesApgModal';
-import Can from '../../segments/auth/Can';
-
-import config from '../../../config/config';
 
 const columns = [
   {

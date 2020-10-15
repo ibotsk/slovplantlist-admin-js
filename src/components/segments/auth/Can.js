@@ -1,4 +1,4 @@
-import configRules from '../../../config/rules';
+import configRules from 'config/rules';
 
 const check = (rules, role, action, data) => {
   const permissions = rules[role];

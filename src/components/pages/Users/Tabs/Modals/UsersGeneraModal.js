@@ -8,16 +8,15 @@ import {
 } from 'react-bootstrap';
 
 import PropTypes from 'prop-types';
+import UserType from 'components/propTypes/user';
 
-import UserType from '../../../../propTypes/user';
+import AddableList from 'components/segments/AddableList';
 
-import AddableList from '../../../../segments/AddableList';
+import notifications from 'utils/notifications';
 
-import notifications from '../../../../../utils/notifications';
-
-import generaFacade from '../../../../../facades/genus';
-import usersFacade from '../../../../../facades/users';
-import usersGeneraFacade from '../../../../../facades/users-genera';
+import generaFacade from 'facades/genus';
+import usersFacade from 'facades/users';
+import usersGeneraFacade from 'facades/users-genera';
 
 const genusFormat = (g) => ({ id: g.id, label: g.name });
 const genusCompare = (g1, g2) => (

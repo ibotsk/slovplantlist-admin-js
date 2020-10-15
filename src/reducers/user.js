@@ -1,5 +1,5 @@
-import { SET_USER, UNSET_USER } from '../actions/action-types';
-import config from '../config/config';
+import { SET_USER, UNSET_USER } from 'actions/action-types';
+import config from 'config/config';
 
 const initialState = {
   role: config.mappings.userRole.author.name,

@@ -1,5 +1,6 @@
+import config from 'config/config';
+
 import formatter from './formatter';
-import config from '../config/config';
 
 const { name: configName } = config.nomenclature;
 const { format: { formatted: ff, plain: plf } } = config;

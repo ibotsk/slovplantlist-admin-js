@@ -7,7 +7,7 @@ import {
 
 import PropTypes from 'prop-types';
 
-import GenusType from '../propTypes/genus';
+import GenusType from 'components/propTypes/genus';
 
 const tooltip = (info) => (
   <Tooltip id="tooltip">

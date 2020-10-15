@@ -7,11 +7,12 @@ import {
   Tabs, Tab,
 } from 'react-bootstrap';
 
-import LoggedUserType from '../../propTypes/loggedUser';
+import LoggedUserType from 'components/propTypes/loggedUser';
+
+import Can from 'components/segments/auth/Can';
 
 import AllUsers from './Tabs/AllUsers';
 import GeneraUsers from './Tabs/GeneraUsers';
-import Can from '../../segments/auth/Can';
 
 class Users extends React.Component {
   constructor(props) {

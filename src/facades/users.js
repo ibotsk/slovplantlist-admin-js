@@ -1,6 +1,6 @@
-import usersService from '../services/user-service';
+import usersService from 'services/user-service';
 
-import config from '../config/config';
+import config from 'config/config';
 
 const getAllUsers = async ({ accessToken }) => (
   usersService.getAll({ accessToken })

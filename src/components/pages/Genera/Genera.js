@@ -10,15 +10,15 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import PropTypes from 'prop-types';
+import LoggedUserType from 'components/propTypes/loggedUser';
+import GenusType from 'components/propTypes/genus';
 
-import LoggedUserType from '../../propTypes/loggedUser';
-import GenusType from '../../propTypes/genus';
+import TabledPage from 'components/wrappers/TabledPageParent';
+import Can from 'components/segments/auth/Can';
 
-import TabledPage from '../../wrappers/TabledPageParent';
+import config from 'config/config';
+
 import GeneraModal from './Modals/GeneraModal';
-import Can from '../../segments/auth/Can';
-
-import config from '../../../config/config';
 
 const columns = [
   {

@@ -2,18 +2,18 @@ import React from 'react';
 import { NotificationContainer } from 'react-notifications';
 import { Switch } from 'react-router-dom';
 
+import Users from 'components/pages/Users/Users';
+import Checklist from 'components/pages/Checklist/Checklist';
+import SpeciesRecord from 'components/pages/SpeciesRecord/SpeciesRecord';
+import Genera from 'components/pages/Genera/Genera';
+import FamiliesAPG from 'components/pages/FamiliesAPG/FamiliesAPG';
+import Families from 'components/pages/Families/Families';
+
+import PrivateRoute from 'components/wrappers/PrivateRoute';
+
 import Footer from './Footer';
 import CNavbar from './Navbar/Navbar';
-
-import Checklist from '../Checklist/Checklist';
-import SpeciesRecord from '../SpeciesRecord/SpeciesRecord';
-import Genera from '../Genera/Genera';
-import FamiliesAPG from '../FamiliesAPG/FamiliesAPG';
-import Families from '../Families/Families';
-import Users from '../Users/Users';
 import Logout from './Logout';
-
-import PrivateRoute from '../../wrappers/PrivateRoute';
 
 const Routing = () => (
   <Switch>

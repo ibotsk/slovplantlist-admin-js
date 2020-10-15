@@ -12,14 +12,14 @@ import {
 
 import PropTypes from 'prop-types';
 
-import userFacade from '../../facades/users';
+import userFacade from 'facades/users';
 import {
   setAuthenticated as setAuthenticatedAction,
   unsetAuthenticated as unsetAuthenticatedAction,
   setUser as setUserAction,
   unsetUser as unsetUserAction,
-} from '../../actions';
-import config from '../../config/config';
+} from 'actions';
+import config from 'config/config';
 
 class Login extends Component {
   constructor(props) {

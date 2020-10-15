@@ -9,13 +9,13 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import PropTypes from 'prop-types';
+import UserType from 'components/propTypes/user';
 
-import UserType from '../../../propTypes/user';
+import TabledPage from 'components/wrappers/TabledPageParent';
+import GeneraList from 'components/segments/GeneraList';
 
-import TabledPage from '../../../wrappers/TabledPageParent';
+import config from 'config/config';
 
-import config from '../../../../config/config';
-import GeneraList from '../../../segments/GeneraList';
 import UsersGeneraModal from './Modals/UsersGeneraModal';
 
 const columns = [

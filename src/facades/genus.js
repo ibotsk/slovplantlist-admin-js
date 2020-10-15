@@ -1,4 +1,4 @@
-import genusService from '../services/genus';
+import genusService from 'services/genus';
 
 const getAllGeneraBySearchTerm = async ({ term, format, accessToken }) => {
   const genera = await genusService.getAllGeneraBySearchTerm(

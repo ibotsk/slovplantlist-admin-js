@@ -6,13 +6,13 @@ import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.m
 
 import PropTypes from 'prop-types';
 
-import LoggedUserType from '../propTypes/loggedUser';
+import LoggedUserType from 'components/propTypes/loggedUser';
 
-import tablesService from '../../services/tables';
+import tablesService from 'services/tables';
 
-import helper from '../../utils/helper';
-import filtershelper from '../../utils/filters';
-import config from '../../config/config';
+import helper from 'utils/helper';
+import filtershelper from 'utils/filters';
+import config from 'config/config';
 
 const customTotal = (from, to, size) => (
   <span className="react-bootstrap-table-pagination-total">

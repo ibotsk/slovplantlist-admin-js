@@ -14,18 +14,18 @@ import filterFactory, {
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import PropTypes from 'prop-types';
+import LoggedUserType from 'components/propTypes/loggedUser';
+import SpeciesType from 'components/propTypes/species';
 
-import LoggedUserType from '../../propTypes/loggedUser';
-import SpeciesType from '../../propTypes/species';
+import LosName from 'components/segments/LosName';
+import TabledPage from 'components/wrappers/TabledPageParent';
+import Can from 'components/segments/auth/Can';
+import Ownership from 'components/segments/auth/Ownership';
 
-import LosName from '../../segments/LosName';
+import config from 'config/config';
+import helper from 'utils/helper';
+
 import SpeciesNameModal from './Modals/SpeciesNameModal';
-import TabledPage from '../../wrappers/TabledPageParent';
-import Can from '../../segments/auth/Can';
-import Ownership from '../../segments/auth/Ownership';
-
-import config from '../../../config/config';
-import helper from '../../../utils/helper';
 
 const PAGE_DETAIL = '/checklist/detail/';
 const EDIT_RECORD = '/checklist/edit/';

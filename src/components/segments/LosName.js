@@ -1,4 +1,4 @@
-import helper from '../../utils/helper';
+import helper from 'utils/helper';
 
 const LosName = ({ data, format = 'plain' }) => {
   if (!data) {

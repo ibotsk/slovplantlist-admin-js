@@ -11,10 +11,10 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 
 import PropTypes from 'prop-types';
 
-import notifications from '../../../../utils/notifications';
+import notifications from 'utils/notifications';
 
-import generaFacade from '../../../../facades/genus';
-import familiesFacade from '../../../../facades/families';
+import generaFacade from 'facades/genus';
+import familiesFacade from 'facades/families';
 
 const VALIDATION_STATE_SUCCESS = 'success';
 const VALIDATION_STATE_ERROR = 'error';

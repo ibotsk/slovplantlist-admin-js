@@ -8,11 +8,11 @@ import {
 
 import PropTypes from 'prop-types';
 
-import SpeciesType from '../propTypes/species';
+import SpeciesType from 'components/propTypes/species';
+
+import config from 'config/config';
 
 import LosName from './LosName';
-
-import config from '../../config/config';
 
 const constructSubNomenlatoric = (subNomenclatoricList) => {
   if (!subNomenclatoricList || subNomenclatoricList.length === 0) {

@@ -9,14 +9,14 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import PropTypes from 'prop-types';
+import UserType from 'components/propTypes/user';
 
-import UserType from '../../../propTypes/user';
+import TabledPage from 'components/wrappers/TabledPageParent';
 
-import TabledPage from '../../../wrappers/TabledPageParent';
+import formatter from 'utils/formatter';
+import config from 'config/config';
+
 import UsersModal from './Modals/UsersModal';
-
-import formatter from '../../../../utils/formatter';
-import config from '../../../../config/config';
 
 const columns = [
   {

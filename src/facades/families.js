@@ -1,5 +1,5 @@
-import familiesService from '../services/families';
-import utils from '../utils/utils';
+import familiesService from 'services/families';
+import utils from 'utils/utils';
 
 const getFamilyByIdCurated = async ({ id, accessToken }) => {
   const data = await familiesService.getFamilyById({ id, accessToken });

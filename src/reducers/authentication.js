@@ -1,7 +1,7 @@
 import {
   SET_AUTHENTICATED,
   UNSET_AUTHENTICATED,
-} from '../actions/action-types';
+} from 'actions/action-types';
 
 const initialState = { accessToken: '', isAuthenticated: false };
 

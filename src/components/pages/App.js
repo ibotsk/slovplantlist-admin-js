@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
+import PrivateRoute from 'components/wrappers/PrivateRoute';
+
 import Login from './Login';
 import HomePage from './HomePage/HomePage';
-import PrivateRoute from '../wrappers/PrivateRoute';
 
 const App = () => (
   <BrowserRouter>

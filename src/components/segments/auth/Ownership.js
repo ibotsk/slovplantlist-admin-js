@@ -1,4 +1,4 @@
-import config from '../../../config/config';
+import config from 'config/config';
 
 const Ownership = ({ role, isOwner, owners }) => {
   if (role === config.mappings.userRole.author.name) {

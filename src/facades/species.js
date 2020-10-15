@@ -1,7 +1,7 @@
-import speciesService from '../services/species';
-import helper from '../utils/helper';
+import speciesService from 'services/species';
+import helper from 'utils/helper';
 
-import config from '../config/config';
+import config from 'config/config';
 
 const saveSynonyms = async ({
   id, list, syntype, accessToken,

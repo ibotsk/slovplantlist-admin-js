@@ -2,14 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import PropTypes from 'prop-types';
+import LoggedUserType from 'components/propTypes/loggedUser';
 
-import LoggedUserType from '../../propTypes/loggedUser';
+import Can from 'components/segments/auth/Can';
 
-import Can from '../../segments/auth/Can';
+import speciesFacade from 'facades/species';
+
 import SpeciesRecordEdit from './Components/SpeciesRecordEdit';
 import SpeciesRecordView from './Components/SpeciesRecordView';
-
-import speciesFacade from '../../../facades/species';
 
 class SpeciesRecord extends React.Component {
   constructor(props) {

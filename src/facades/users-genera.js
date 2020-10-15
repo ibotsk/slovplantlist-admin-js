@@ -1,4 +1,4 @@
-import usersGeneraService from '../services/users-genera';
+import usersGeneraService from 'services/users-genera';
 
 async function getIdsForRemoval(userId, generaIdsToRemove, accessToken) {
   const idsForRemoval = [];
