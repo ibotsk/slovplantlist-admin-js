@@ -89,7 +89,10 @@ const getRecordById = async ({ id, accessToken }) => {
   const accepted = helperUtils.losToTypeaheadSelected(speciesRecord.accepted);
   const basionym = helperUtils.losToTypeaheadSelected(speciesRecord.basionym);
   const replaced = helperUtils.losToTypeaheadSelected(speciesRecord.replaced);
-  const nomenNovum = helperUtils.losToTypeaheadSelected(speciesRecord.nomenNovum);
+  const nomenNovum = helperUtils.losToTypeaheadSelected(
+    speciesRecord.nomenNovum,
+  );
+
   const genus = [{
     id: speciesRecord.genusRel.id,
     label: speciesRecord.genusRel.name,
