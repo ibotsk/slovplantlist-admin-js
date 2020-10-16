@@ -1,4 +1,4 @@
-import { getRequest, putRequest } from 'services/services';
+import { getRequest, putRequest } from 'services/backend';
 import { miscUtils } from 'utils';
 
 import config from 'config/config';

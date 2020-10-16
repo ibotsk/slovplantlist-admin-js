@@ -3,7 +3,7 @@ import {
   postRequest,
   deleteRequest,
   putRequest,
-} from 'services/services';
+} from 'services/backend';
 import { helperUtils } from 'utils';
 
 import config from 'config/config';

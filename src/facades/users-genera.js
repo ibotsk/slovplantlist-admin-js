@@ -2,7 +2,7 @@ import {
   getRequest,
   putRequest,
   deleteRequest,
-} from 'services/services';
+} from 'services/backend';
 
 import config from 'config/config';
 

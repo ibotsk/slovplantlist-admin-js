@@ -1,4 +1,4 @@
-import { getRequest, postRequest } from 'services/services';
+import { getRequest, postRequest } from 'services/backend';
 
 import config from 'config/config';
 
