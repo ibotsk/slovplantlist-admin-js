@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 
 import LoggedUserType from 'components/propTypes/loggedUser';
 
-import tablesService from 'services/tables';
+import { tablesFacade } from 'facades';
 
 import { helperUtils, filterUtils } from 'utils';
 import config from 'config/config';
@@ -95,7 +95,7 @@ const TabledPage = (injectedProps) =>
 
       fetchRecords = async (where, order, offset, limit) => {
         const { accessToken } = this.props;
-        return tablesService.getAll(
+        return tablesFacade.getAll(
           injectedProps.getAll,
           offset,
           where,
@@ -108,7 +108,7 @@ const TabledPage = (injectedProps) =>
       fetchCount = async (where) => {
         const { accessToken } = this.props;
         const whereString = JSON.stringify(where);
-        const countResponse = await tablesService.getCount(
+        const countResponse = await tablesFacade.getCount(
           injectedProps.getCount, whereString, accessToken,
         );
         return countResponse.count;
