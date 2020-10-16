@@ -8,12 +8,12 @@ import {
   unsetAuthenticated as unsetAuthenticatedAction,
 } from 'actions/index';
 import { removeState } from 'services/local-storage';
-import userService from 'services/user-service';
+import { usersFacade } from 'facades';
 
 class Logout extends React.Component {
   async componentWillMount() {
     const { accessToken, unsetAuthenticated } = this.props;
-    await userService.logout(accessToken);
+    await usersFacade.logout(accessToken);
     unsetAuthenticated();
     removeState();
   }

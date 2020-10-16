@@ -60,10 +60,15 @@ const login = async (username, password) => {
   return response.data;
 };
 
+const logout = async (accessToken) => (
+  postRequest(usersUri.logoutUri, undefined, undefined, accessToken)
+);
+
 export default {
   getAllUsers,
   getUserById,
   getGeneraOfUser,
   saveUser,
   login,
+  logout,
 };
