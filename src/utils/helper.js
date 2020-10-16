@@ -140,7 +140,7 @@ const resolveByComparator = (comparator, key, value) => {
     case 'LIKE':
       return {
         [key]: {
-          like: `%${value}%`,
+          like: `%25${value}%25`,
         },
       };
     case 'REGEXP':

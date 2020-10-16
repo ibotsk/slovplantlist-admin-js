@@ -1,8 +1,8 @@
-import template from 'url-template';
 import axios from './axios';
+import Mustache from './mustache';
 
 const getAll = async (uri, offset, where, order, limit, accessToken) => {
-  const getAllUri = template.parse(uri).expand({
+  const getAllUri = Mustache.render(uri, {
     offset,
     where: JSON.stringify(where),
     order: JSON.stringify(order),
@@ -14,7 +14,7 @@ const getAll = async (uri, offset, where, order, limit, accessToken) => {
 };
 
 const getCount = async (uri, whereString, accessToken) => {
-  const getCountUri = template.parse(uri).expand({ whereString, accessToken });
+  const getCountUri = Mustache.render(uri, { whereString, accessToken });
   const response = await axios.get(getCountUri);
   return response.data;
 };

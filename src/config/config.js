@@ -12,6 +12,7 @@ export default {
     },
     userRealm: 'slovplantlist',
     userPrincipalType: 'user',
+    mustacheTags: ['<%', '%>'],
   },
   nomenclature: {
     name: {

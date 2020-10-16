@@ -1,13 +1,11 @@
-import template from 'url-template';
-
 import config from 'config/config';
 
 import axios from './axios';
+import Mustache from './mustache';
 
 const getAll = async ({ accessToken }) => {
-  const getAllUri = template
-    .parse(config.uris.rolesUri.getAllWOrderUri)
-    .expand({ accessToken });
+  const getAllUri = Mustache
+    .render(config.uris.rolesUri.getAllWOrderUri, { accessToken });
   const response = await axios.get(getAllUri);
   return response.data;
 };
