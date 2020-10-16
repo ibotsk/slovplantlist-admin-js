@@ -14,9 +14,11 @@ import AddableList from 'components/segments/AddableList';
 
 import notifications from 'utils/notifications';
 
-import generaFacade from 'facades/genus';
-import usersFacade from 'facades/users';
-import usersGeneraFacade from 'facades/users-genera';
+import {
+  genusFacade,
+  usersFacade,
+  usersGeneraFacade,
+} from 'facades';
 
 const genusFormat = (g) => ({ id: g.id, label: g.name });
 const genusCompare = (g1, g2) => (
@@ -53,7 +55,7 @@ class UsersGeneraModal extends Component {
 
   async componentDidMount() {
     const { accessToken } = this.props;
-    const genera = await generaFacade.getAllGeneraWithFamilies({
+    const genera = await genusFacade.getAllGeneraWithFamilies({
       format: genusFormat,
       accessToken,
     });

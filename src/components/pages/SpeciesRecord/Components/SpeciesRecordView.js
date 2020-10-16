@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import LosName from 'components/segments/LosName';
 import SynonymListItem from 'components/segments/SynonymListItem';
 
-import speciesFacade from 'facades/species';
+import { speciesFacade } from 'facades';
 
 import config from 'config/config';
 

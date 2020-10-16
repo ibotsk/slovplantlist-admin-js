@@ -6,7 +6,7 @@ import LoggedUserType from 'components/propTypes/loggedUser';
 
 import Can from 'components/segments/auth/Can';
 
-import speciesFacade from 'facades/species';
+import { speciesFacade } from 'facades';
 
 import SpeciesRecordEdit from './Components/SpeciesRecordEdit';
 import SpeciesRecordView from './Components/SpeciesRecordView';

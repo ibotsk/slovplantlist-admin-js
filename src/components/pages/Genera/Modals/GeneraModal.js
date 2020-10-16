@@ -13,8 +13,7 @@ import PropTypes from 'prop-types';
 
 import notifications from 'utils/notifications';
 
-import generaFacade from 'facades/genus';
-import familiesFacade from 'facades/families';
+import { genusFacade, familiesFacade } from 'facades';
 
 const VALIDATION_STATE_SUCCESS = 'success';
 const VALIDATION_STATE_ERROR = 'error';
@@ -62,7 +61,7 @@ class GeneraModal extends Component {
   onEnter = async () => {
     const { id, accessToken } = this.props;
     if (id) {
-      const { genus } = await generaFacade.getGenusByIdWithFamilies({
+      const { genus } = await genusFacade.getGenusByIdWithFamilies({
         id, accessToken,
       });
       this.setState({
@@ -102,7 +101,7 @@ class GeneraModal extends Component {
       const { accessToken } = this.props;
       const { genus } = this.state;
       try {
-        await generaFacade.saveGenus({ data: genus, accessToken });
+        await genusFacade.saveGenus({ data: genus, accessToken });
         notifications.success('Saved');
         this.handleHide();
       } catch (error) {

@@ -19,8 +19,7 @@ import AddableList from 'components/segments/AddableList';
 import LosName from 'components/segments/LosName';
 import SynonymListItem from 'components/segments/SynonymListItem';
 
-import speciesFacade from 'facades/species';
-import genusFacade from 'facades/genus';
+import { speciesFacade, genusFacade } from 'facades';
 
 import helper from 'utils/helper';
 import config from 'config/config';

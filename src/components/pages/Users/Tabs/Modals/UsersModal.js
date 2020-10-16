@@ -10,8 +10,7 @@ import PropTypes from 'prop-types';
 
 import notifications from 'utils/notifications';
 
-import usersFacade from 'facades/users';
-import rolesFacade from 'facades/roles';
+import { usersFacade, rolesFacade } from 'facades';
 
 const VALIDATION_STATE_SUCCESS = 'success';
 const VALIDATION_STATE_ERROR = 'error';
@@ -260,7 +259,7 @@ export default connect(mapStateToProps)(UsersModal);
 
 UsersModal.propTypes = {
   show: PropTypes.bool.isRequired,
-  id: PropTypes.string,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   accessToken: PropTypes.string.isRequired,
   onHide: PropTypes.func.isRequired,
 };

@@ -12,13 +12,15 @@ import {
 
 import PropTypes from 'prop-types';
 
-import userFacade from 'facades/users';
+import { usersFacade } from 'facades';
+
 import {
   setAuthenticated as setAuthenticatedAction,
   unsetAuthenticated as unsetAuthenticatedAction,
   setUser as setUserAction,
   unsetUser as unsetUserAction,
 } from 'actions';
+
 import config from 'config/config';
 
 class Login extends Component {
@@ -59,12 +61,12 @@ class Login extends Component {
     const {
       id: accessToken,
       userId,
-    } = await userFacade.login(username, password);
+    } = await usersFacade.login(username, password);
     if (!accessToken) {
       return;
     }
-    const { roles } = await userFacade.getUserById({ id: userId, accessToken });
-    const userGeneraIds = await userFacade.getGeneraOfUser({
+    const { roles } = await usersFacade.getUserById({ id: userId, accessToken });
+    const userGeneraIds = await usersFacade.getGeneraOfUser({
       userId,
       accessToken,
       format: (g) => g.id,

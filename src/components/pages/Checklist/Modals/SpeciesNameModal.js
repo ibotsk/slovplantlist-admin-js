@@ -14,8 +14,7 @@ import PropTypes from 'prop-types';
 
 import notifications from 'utils/notifications';
 
-import speciesFacade from 'facades/species';
-import generaFacade from 'facades/genus';
+import { speciesFacade, genusFacade } from 'facades';
 
 import config from 'config/config';
 
@@ -69,7 +68,7 @@ class SpeciesNameModal extends Component {
 
   async componentDidMount() {
     const { accessToken } = this.props;
-    const genera = await generaFacade.getAllGeneraWithFamilies({ accessToken });
+    const genera = await genusFacade.getAllGeneraWithFamilies({ accessToken });
     this.setState({
       genera,
     });
