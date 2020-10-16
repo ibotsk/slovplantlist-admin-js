@@ -1,11 +1,13 @@
-import rolesService from 'services/roles';
-import roleMappingsService from 'services/roleMappings';
+import { getRequest, putRequest } from 'services/services';
 
 import config from 'config/config';
 
-const getAllRoles = async ({ accessToken, format }) => {
-  const roles = await rolesService.getAll({ accessToken });
+const {
+  uris: { rolesUri, roleMappingsUri },
+} = config;
 
+const getAllRoles = async ({ accessToken, format }) => {
+  const roles = await getRequest(rolesUri.getAllWOrderUri, {}, accessToken);
   if (!format) {
     return roles;
   }
@@ -18,8 +20,8 @@ const getAllRoles = async ({ accessToken, format }) => {
  * @param {*} param0
  */
 const saveRoleForUser = async ({ userId, roleId, accessToken }) => {
-  const roleMappings = await roleMappingsService.getRoleMappingByUser(
-    { userId, accessToken },
+  const roleMappings = await getRequest(
+    roleMappingsUri.getByPrincipalIdUri, { principalId: userId }, accessToken,
   );
   const roleMappingOfUser = roleMappings[0];
   const data = {
@@ -29,7 +31,7 @@ const saveRoleForUser = async ({ userId, roleId, accessToken }) => {
     roleId,
   };
 
-  await roleMappingsService.putRoleMapping({ data, accessToken });
+  return putRequest(roleMappingsUri.baseUri, data, accessToken);
 };
 
 export default {

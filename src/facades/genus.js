@@ -1,10 +1,15 @@
-import genusService from 'services/genus';
+import { getRequest, putRequest } from 'services/services';
+
+import config from 'config/config';
+
+const {
+  uris: { generaUri },
+} = config;
 
 const getAllGeneraBySearchTerm = async ({ term, format, accessToken }) => {
-  const genera = await genusService.getAllGeneraBySearchTerm(
-    { term, accessToken },
+  const genera = await getRequest(
+    generaUri.getAllBySearchTermUri, { term }, accessToken,
   );
-
   if (!format) {
     return genera;
   }
@@ -12,8 +17,9 @@ const getAllGeneraBySearchTerm = async ({ term, format, accessToken }) => {
 };
 
 const getAllGeneraWithFamilies = async ({ format, accessToken }) => {
-  const genera = await genusService.getAllGeneraWithFamilies({ accessToken });
-
+  const genera = await getRequest(
+    generaUri.getAllWithFamiliesUri, {}, accessToken,
+  );
   if (!format) {
     return genera;
   }
@@ -21,10 +27,9 @@ const getAllGeneraWithFamilies = async ({ format, accessToken }) => {
 };
 
 const getGenusByIdWithFamilies = async ({ id, format, accessToken }) => {
-  const genus = await genusService.getGenusByIdWithFamilies(
-    { id, accessToken },
+  const genus = await getRequest(
+    generaUri.getByIdWithFamilies, { id }, accessToken,
   );
-
   const { family } = genus;
   const { familyApg } = genus;
 
@@ -39,9 +44,9 @@ const getGenusByIdWithFamilies = async ({ id, format, accessToken }) => {
   return { genus: toReturn, family, familyApg };
 };
 
-const saveGenus = async ({ data, accessToken }) => {
-  await genusService.putGenus({ data, accessToken });
-};
+const saveGenus = async ({ data, accessToken }) => (
+  putRequest(generaUri.baseUri, data, accessToken)
+);
 
 export default {
   getAllGeneraBySearchTerm,

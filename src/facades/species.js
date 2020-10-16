@@ -1,7 +1,16 @@
-import speciesService from 'services/species';
+import {
+  getRequest,
+  postRequest,
+  deleteRequest,
+  putRequest,
+} from 'services/services';
 import { helperUtils } from 'utils';
 
 import config from 'config/config';
+
+const {
+  uris: { nomenclaturesUri, synonymsUri },
+} = config;
 
 const saveSynonyms = async ({
   id, list, syntype, accessToken,
@@ -16,7 +25,8 @@ const saveSynonyms = async ({
       rorder: i,
     };
     i += 1;
-    speciesService.postSynonym({ data, accessToken });
+    // speciesService.postSynonym({ data, accessToken });
+    postRequest(synonymsUri.baseUri, data, accessToken);
   }
 };
 
@@ -31,8 +41,8 @@ const submitSynonyms = async ({
   isInvalidDesignationsChanged,
 }) => {
   // get synonyms to be deleted
-  const originalSynonyms = await speciesService.getAllSynonymsOf(
-    { id, accessToken },
+  const originalSynonyms = await getRequest(
+    nomenclaturesUri.getSynonymsOfParent, { id }, accessToken,
   );
 
   const toBeDeleted = [];
@@ -75,15 +85,15 @@ const submitSynonyms = async ({
   // delete originals
   // TODO: Promise.all
   for (const syn of toBeDeleted) {
-    speciesService.deleteSynonym({ id: syn.id, accessToken });
+    deleteRequest(synonymsUri.synonymsByIdUri, { id: syn.id }, accessToken);
   }
 };
 
 // ----- PUBLIC ----- //
 
 const getRecordById = async ({ id, accessToken }) => {
-  const speciesRecord = await speciesService.getSpeciesRecordByIdWithFilter(
-    { id, accessToken },
+  const speciesRecord = await getRequest(
+    nomenclaturesUri.getByIdWFilterUri, { id }, accessToken,
   );
 
   const accepted = helperUtils.losToTypeaheadSelected(speciesRecord.accepted);
@@ -119,24 +129,22 @@ const getRecordById = async ({ id, accessToken }) => {
 };
 
 const getSpeciesById = async ({ id, accessToken }) => (
-  speciesService.getSpeciesById({ id, accessToken })
+  getRequest(nomenclaturesUri.getByIdUri, { id }, accessToken)
 );
 
 const getAllSpecies = async ({ format, accessToken }) => {
-  const listOfSpeciess = await speciesService.getAllSpecies(
-    { format, accessToken },
+  const listOfSpeciess = await getRequest(
+    nomenclaturesUri.getAllWOrderUri, {}, accessToken,
   );
-
   if (!format) {
     return listOfSpeciess;
   }
-
   return listOfSpeciess.map(format);
 };
 
 const getAllSpeciesBySearchTerm = async ({ term, format, accessToken }) => {
-  const listOfSpeciess = await speciesService.getAllSpeciesBySearchTerm(
-    { term, accessToken },
+  const listOfSpeciess = await getRequest(
+    nomenclaturesUri.getAllBySearchTermUri, { term }, accessToken,
   );
 
   if (!format) {
@@ -146,26 +154,39 @@ const getAllSpeciesBySearchTerm = async ({ term, format, accessToken }) => {
 };
 
 const getSynonyms = async ({ id, accessToken }) => {
-  const nomenclatoricSynonyms = await speciesService
-    .getSynonymsNomenclatoricOf({ id, accessToken });
+  // const nomenclatoricSynonyms = await speciesService
+  //   .getSynonymsNomenclatoricOf({ id, accessToken });
+  const nomenclatoricSynonyms = await getRequest(
+    nomenclaturesUri.getNomenclatoricSynonymsUri, { id }, accessToken,
+  );
   nomenclatoricSynonyms.sort(helperUtils.listOfSpeciesSorterLex);
 
-  const taxonomicSynonyms = await speciesService
-    .getSynonymsTaxonomicOf({ id, accessToken });
+  // const taxonomicSynonyms = await speciesService
+  //   .getSynonymsTaxonomicOf({ id, accessToken });
+  const taxonomicSynonyms = await getRequest(
+    nomenclaturesUri.getTaxonomicSynonymsUri, { id }, accessToken,
+  );
   taxonomicSynonyms.sort(helperUtils.listOfSpeciesSorterLex);
 
-  const invalidDesignations = await speciesService
-    .getInvalidDesignationsOf({ id, accessToken });
+  // const invalidDesignations = await speciesService
+  //   .getInvalidDesignationsOf({ id, accessToken });
+  const invalidDesignations = await getRequest(
+    nomenclaturesUri.getInvalidSynonymsUri, { id }, accessToken,
+  );
   invalidDesignations.sort(helperUtils.listOfSpeciesSorterLex);
 
   return { nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations };
 };
 
 const getBasionymsFor = async ({ id, accessToken }) => {
-  const basionymFor = await speciesService.getBasionymFor({ id, accessToken });
-  const replacedFor = await speciesService.getReplacedFor({ id, accessToken });
-  const nomenNovumFor = await speciesService.getNomenNovumFor(
-    { id, accessToken },
+  const basionymFor = await getRequest(
+    nomenclaturesUri.getBasionymForUri, { id }, accessToken,
+  );
+  const replacedFor = await getRequest(
+    nomenclaturesUri.getReplacedForUri, { id }, accessToken,
+  );
+  const nomenNovumFor = await getRequest(
+    nomenclaturesUri.getNomenNovumForUri, { id }, accessToken,
   );
   return {
     basionymFor,
@@ -183,23 +204,25 @@ const saveSpeciesAndSynonyms = async ({
   isNomenclatoricSynonymsChanged = true,
   isTaxonomicSynonymsChanged = true,
   isInvalidDesignationsChanged = true,
-}) => {
-  await speciesService.putNomenclature({ data: species, accessToken });
-  await submitSynonyms({
-    id: species.id,
-    nomenclatoricSynonyms,
-    taxonomicSynonyms,
-    invalidDesignations,
-    accessToken,
-    isNomenclatoricSynonymsChanged,
-    isTaxonomicSynonymsChanged,
-    isInvalidDesignationsChanged,
-  });
-};
+}) => (
+  Promise.all([
+    putRequest(nomenclaturesUri.baseUri, species, accessToken),
+    submitSynonyms({
+      id: species.id,
+      nomenclatoricSynonyms,
+      taxonomicSynonyms,
+      invalidDesignations,
+      accessToken,
+      isNomenclatoricSynonymsChanged,
+      isTaxonomicSynonymsChanged,
+      isInvalidDesignationsChanged,
+    }),
+  ])
+);
 
-const saveSpecies = async ({ data, accessToken }) => {
-  await speciesService.putNomenclature({ data, accessToken });
-};
+const saveSpecies = async ({ data, accessToken }) => (
+  putRequest(nomenclaturesUri.baseUri, data, accessToken)
+);
 
 export default {
   getRecordById,
