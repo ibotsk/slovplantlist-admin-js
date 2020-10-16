@@ -25,46 +25,69 @@ const makeSl = (string) => {
   return { s: string, hasSl: false };
 };
 
-const subspecies = (subsp) => {
-  const result = [];
-  let isUnrankedOrProles = false;
-  if (subsp.includes(configName.unranked)) {
-    result.push(Plain(configName.unranked));
-    isUnrankedOrProles = true;
-  }
-  if (subsp.includes(configName.proles)) {
-    result.push(Plain(configName.proles));
-    isUnrankedOrProles = true;
-  }
-  subsp = subsp.replace(/\[unranked\]|proles/g, '');
-
-  if (!isUnrankedOrProles) {
-    result.push(Plain(configName.subsp));
-  }
-  result.push(Formatted(subsp));
-  return result;
-};
-
 /*
-    Nothosubsp and nothoforma not used
+    For every property in config.nomenclature.name.infra
+
+    Names of the infra taxa must match the ones of the listOfSpecies table columns.
+    Notho- are not used.
 */
-const infraTaxa = (subsp, vari, subvar, forma, nothosubsp, nothoforma) => {
+const infraTaxa = (nomenclature) => {
   let infs = [];
-  if (subsp) {
-    infs = infs.concat(subspecies(subsp));
-  }
-  if (vari) {
-    infs = infs.concat([Plain(configName.var), Formatted(vari)]);
-  }
-  if (subvar) {
-    infs = infs.concat([Plain(configName.subvar), Formatted(subvar)]);
-  }
-  if (forma) {
-    infs = infs.concat([Plain(configName.forma), Formatted(forma)]);
+
+  const configInfraTaxa = configName.infra;
+
+  for (const infra of Object.keys(configInfraTaxa)) {
+    const infraValue = nomenclature[infra];
+
+    if (infraValue) {
+      const infraLabel = configInfraTaxa[infra];
+      infs = infs.concat([Plain(infraLabel), Formatted(infraValue)]);
+    }
   }
 
   return infs;
 };
+
+// const subspecies = (subsp) => {
+//   const result = [];
+//   let isUnrankedOrProles = false;
+//   if (subsp.includes(configName.unranked)) {
+//     result.push(Plain(configName.unranked));
+//     isUnrankedOrProles = true;
+//   }
+//   if (subsp.includes(configName.proles)) {
+//     result.push(Plain(configName.proles));
+//     isUnrankedOrProles = true;
+//   }
+//   subsp = subsp.replace(/\[unranked\]|proles/g, '');
+
+//   if (!isUnrankedOrProles) {
+//     result.push(Plain(configName.subsp));
+//   }
+//   result.push(Formatted(subsp));
+//   return result;
+// };
+
+// /*
+//     Nothosubsp and nothoforma not used
+// */
+// const infraTaxa = (subsp, vari, subvar, forma, nothosubsp, nothoforma) => {
+//   let infs = [];
+//   if (subsp) {
+//     infs = infs.concat(subspecies(subsp));
+//   }
+//   if (vari) {
+//     infs = infs.concat([Plain(configName.var), Formatted(vari)]);
+//   }
+//   if (subvar) {
+//     infs = infs.concat([Plain(configName.subvar), Formatted(subvar)]);
+//   }
+//   if (forma) {
+//     infs = infs.concat([Plain(configName.forma), Formatted(forma)]);
+//   }
+
+//   return infs;
+// };
 
 const invalidDesignation = (name, syntype) => {
   if (syntype === '1') {
@@ -76,6 +99,8 @@ const invalidDesignation = (name, syntype) => {
   }
   return name;
 };
+
+// ------------------------------------------------------- //
 
 const listOfSpeciesFormat = (nomenclature, options = {}) => {
   const opts = {
@@ -96,15 +121,15 @@ const listOfSpeciesFormat = (nomenclature, options = {}) => {
     name.push(Plain(configName.sl));
   }
 
-  const infras = infraTaxa(
-    nomenclature.subsp, nomenclature.var, nomenclature.subvar,
-    nomenclature.forma, nomenclature.nothosubsp, nomenclature.nothoforma,
-  );
+  const infras = infraTaxa(nomenclature);
 
   if (nomenclature.species === nomenclature.subsp
     || nomenclature.species === nomenclature.var
-    || nomenclature.species === nomenclature.forma) {
-    name.push(Plain(nomenclature.authors));
+    || nomenclature.species === nomenclature.forma
+  ) {
+    if (nomenclature.authors) {
+      name.push(Plain(nomenclature.authors));
+    }
     isAuthorLast = false;
   }
 
