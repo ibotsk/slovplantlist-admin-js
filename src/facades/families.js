@@ -1,9 +1,9 @@
 import familiesService from 'services/families';
-import utils from 'utils/utils';
+import { miscUtils } from 'utils';
 
 const getFamilyByIdCurated = async ({ id, accessToken }) => {
   const data = await familiesService.getFamilyById({ id, accessToken });
-  return utils.nullToEmpty(data);
+  return miscUtils.nullToEmpty(data);
 };
 
 const getAllFamilies = async ({ format, accessToken }) => {
@@ -17,7 +17,7 @@ const getAllFamilies = async ({ format, accessToken }) => {
 
 const getFamilyApgByIdCurated = async ({ id, accessToken }) => {
   const data = await familiesService.getFamilyApgById({ id, accessToken });
-  return utils.nullToEmpty(data);
+  return miscUtils.nullToEmpty(data);
 };
 
 const getAllFamiliesApg = async ({ format, accessToken }) => {

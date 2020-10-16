@@ -1,5 +1,5 @@
 import speciesService from 'services/species';
-import helper from 'utils/helper';
+import { helperUtils } from 'utils';
 
 import config from 'config/config';
 
@@ -86,10 +86,10 @@ const getRecordById = async ({ id, accessToken }) => {
     { id, accessToken },
   );
 
-  const accepted = helper.losToTypeaheadSelected(speciesRecord.accepted);
-  const basionym = helper.losToTypeaheadSelected(speciesRecord.basionym);
-  const replaced = helper.losToTypeaheadSelected(speciesRecord.replaced);
-  const nomenNovum = helper.losToTypeaheadSelected(speciesRecord.nomenNovum);
+  const accepted = helperUtils.losToTypeaheadSelected(speciesRecord.accepted);
+  const basionym = helperUtils.losToTypeaheadSelected(speciesRecord.basionym);
+  const replaced = helperUtils.losToTypeaheadSelected(speciesRecord.replaced);
+  const nomenNovum = helperUtils.losToTypeaheadSelected(speciesRecord.nomenNovum);
   const genus = [{
     id: speciesRecord.genusRel.id,
     label: speciesRecord.genusRel.name,
@@ -145,15 +145,15 @@ const getAllSpeciesBySearchTerm = async ({ term, format, accessToken }) => {
 const getSynonyms = async ({ id, accessToken }) => {
   const nomenclatoricSynonyms = await speciesService
     .getSynonymsNomenclatoricOf({ id, accessToken });
-  nomenclatoricSynonyms.sort(helper.listOfSpeciesSorterLex);
+  nomenclatoricSynonyms.sort(helperUtils.listOfSpeciesSorterLex);
 
   const taxonomicSynonyms = await speciesService
     .getSynonymsTaxonomicOf({ id, accessToken });
-  taxonomicSynonyms.sort(helper.listOfSpeciesSorterLex);
+  taxonomicSynonyms.sort(helperUtils.listOfSpeciesSorterLex);
 
   const invalidDesignations = await speciesService
     .getInvalidDesignationsOf({ id, accessToken });
-  invalidDesignations.sort(helper.listOfSpeciesSorterLex);
+  invalidDesignations.sort(helperUtils.listOfSpeciesSorterLex);
 
   return { nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations };
 };

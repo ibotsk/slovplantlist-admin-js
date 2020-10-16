@@ -8,7 +8,7 @@ import {
 
 import PropTypes from 'prop-types';
 
-import notifications from 'utils/notifications';
+import { notifications } from 'utils';
 
 import { usersFacade, rolesFacade } from 'facades';
 

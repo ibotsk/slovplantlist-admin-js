@@ -48,47 +48,6 @@ const infraTaxa = (nomenclature) => {
   return infs;
 };
 
-// const subspecies = (subsp) => {
-//   const result = [];
-//   let isUnrankedOrProles = false;
-//   if (subsp.includes(configName.unranked)) {
-//     result.push(Plain(configName.unranked));
-//     isUnrankedOrProles = true;
-//   }
-//   if (subsp.includes(configName.proles)) {
-//     result.push(Plain(configName.proles));
-//     isUnrankedOrProles = true;
-//   }
-//   subsp = subsp.replace(/\[unranked\]|proles/g, '');
-
-//   if (!isUnrankedOrProles) {
-//     result.push(Plain(configName.subsp));
-//   }
-//   result.push(Formatted(subsp));
-//   return result;
-// };
-
-// /*
-//     Nothosubsp and nothoforma not used
-// */
-// const infraTaxa = (subsp, vari, subvar, forma, nothosubsp, nothoforma) => {
-//   let infs = [];
-//   if (subsp) {
-//     infs = infs.concat(subspecies(subsp));
-//   }
-//   if (vari) {
-//     infs = infs.concat([Plain(configName.var), Formatted(vari)]);
-//   }
-//   if (subvar) {
-//     infs = infs.concat([Plain(configName.subvar), Formatted(subvar)]);
-//   }
-//   if (forma) {
-//     infs = infs.concat([Plain(configName.forma), Formatted(forma)]);
-//   }
-
-//   return infs;
-// };
-
 const invalidDesignation = (name, syntype) => {
   if (syntype === '1') {
     let newname = [];

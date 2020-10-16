@@ -10,8 +10,7 @@ import LoggedUserType from 'components/propTypes/loggedUser';
 
 import tablesService from 'services/tables';
 
-import helper from 'utils/helper';
-import filtershelper from 'utils/filters';
+import { helperUtils, filterUtils } from 'utils';
 import config from 'config/config';
 
 const customTotal = (from, to, size) => (
@@ -70,13 +69,13 @@ const TabledPage = (injectedProps) =>
         const { user } = this.props;
         const ownerId = user ? user.id : undefined;
 
-        const curatedFilters = filtershelper.curateSearchFilters(
+        const curatedFilters = filterUtils.curateSearchFilters(
           filters, { ownerId },
         );
-        const where = helper.makeWhere(curatedFilters); // TODO make function to take into account existing where
+        const where = helperUtils.makeWhere(curatedFilters); // TODO make function to take into account existing where
 
-        const curatedSortField = filtershelper.curateSortFields(sortField);
-        const order = helper.makeOrder(curatedSortField, sortOrder);
+        const curatedSortField = filterUtils.curateSortFields(sortField);
+        const order = helperUtils.makeOrder(curatedSortField, sortOrder);
 
         const totalSize = await this.fetchCount(where);
         const offset = (page - 1) * sizePerPage;

@@ -12,7 +12,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 
 import PropTypes from 'prop-types';
 
-import notifications from 'utils/notifications';
+import { notifications } from 'utils';
 
 import { speciesFacade, genusFacade } from 'facades';
 

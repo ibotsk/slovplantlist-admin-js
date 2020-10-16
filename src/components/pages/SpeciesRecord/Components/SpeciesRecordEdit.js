@@ -13,7 +13,6 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import PropTypes from 'prop-types';
 
 import { NotificationContainer } from 'react-notifications';
-import notifications from 'utils/notifications';
 
 import AddableList from 'components/segments/AddableList';
 import LosName from 'components/segments/LosName';
@@ -21,7 +20,7 @@ import SynonymListItem from 'components/segments/SynonymListItem';
 
 import { speciesFacade, genusFacade } from 'facades';
 
-import helper from 'utils/helper';
+import { notifications, helperUtils } from 'utils';
 import config from 'config/config';
 
 import 'styles/custom.css';
@@ -229,7 +228,7 @@ class SpeciesRecord extends Component {
       term: query,
       format: (l) => ({
         id: l.id,
-        label: helper.listOfSpeciesString(l),
+        label: helperUtils.listOfSpeciesString(l),
       }),
       accessToken,
     });
@@ -369,7 +368,7 @@ class SpeciesRecord extends Component {
     });
 
     synonyms.push(speciesRecord);
-    synonyms.sort(helper.listOfSpeciesSorterLex);
+    synonyms.sort(helperUtils.listOfSpeciesSorterLex);
     return synonyms;
   }
 

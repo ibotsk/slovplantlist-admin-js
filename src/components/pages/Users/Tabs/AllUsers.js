@@ -13,7 +13,7 @@ import UserType from 'components/propTypes/user';
 
 import TabledPage from 'components/wrappers/TabledPageParent';
 
-import formatter from 'utils/formatter';
+import { formatterUtils } from 'utils';
 import config from 'config/config';
 
 import UsersModal from './Modals/UsersModal';
@@ -73,7 +73,7 @@ class AllUsers extends React.Component {
     ),
     username: u.username,
     email: u.email,
-    roles: formatter.userRole(u.roles),
+    roles: formatterUtils.userRole(u.roles),
   }))
 
   showModal = (id) => {

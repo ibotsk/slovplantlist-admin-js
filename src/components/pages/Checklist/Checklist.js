@@ -23,7 +23,7 @@ import Can from 'components/segments/auth/Can';
 import Ownership from 'components/segments/auth/Ownership';
 
 import config from 'config/config';
-import helper from 'utils/helper';
+import { helperUtils } from 'utils';
 
 import SpeciesNameModal from './Modals/SpeciesNameModal';
 
@@ -36,8 +36,10 @@ const {
   mappings,
 } = config;
 
-const ntypesOptions = helper.buildOptionsFromKeys(mappings.losType);
-const ownershipOptionsAdmin = helper.buildOptionsFromKeys(mappings.ownership);
+const ntypesOptions = helperUtils.buildOptionsFromKeys(mappings.losType);
+const ownershipOptionsAdmin = helperUtils.buildOptionsFromKeys(
+  mappings.ownership,
+);
 const { unassigned, others, ...ownershipOptionsAuthor } = ownershipOptionsAdmin;
 
 const columns = (isAuthor) => [

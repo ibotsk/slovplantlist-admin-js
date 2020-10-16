@@ -12,7 +12,7 @@ import UserType from 'components/propTypes/user';
 
 import AddableList from 'components/segments/AddableList';
 
-import notifications from 'utils/notifications';
+import { notifications } from 'utils';
 
 import {
   genusFacade,
