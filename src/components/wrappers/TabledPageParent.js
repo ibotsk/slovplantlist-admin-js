@@ -20,9 +20,11 @@ const customTotal = (from, to, size) => (
     {from}
     {' '}
     to
+    {' '}
     {to}
     {' '}
     of
+    {' '}
     {size}
     {' '}
     Results
