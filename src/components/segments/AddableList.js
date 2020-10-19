@@ -28,7 +28,7 @@ class AddableList extends Component {
     });
   }
 
-  onAddItem = () => {
+  handleAddItem = () => {
     const { onAddItemToList } = this.props;
     this.setState((state) => {
       const { selected } = state;
@@ -124,7 +124,7 @@ class AddableList extends Component {
                   <InputGroup.Button>
                     <Button
                       bsStyle="success"
-                      onClick={this.onAddItem}
+                      onClick={this.handleAddItem}
                       disabled={!selected || selected.length < 1}
                       title="Add to this list"
                     >

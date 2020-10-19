@@ -1,3 +1,6 @@
+import differenceWith from 'lodash.differencewith';
+import intersectionWith from 'lodash.intersectionwith';
+
 import {
   getRequest,
   postRequest,
@@ -12,23 +15,52 @@ const {
   uris: { nomenclaturesUri, synonymsUri },
 } = config;
 
-const saveSynonyms = async ({
-  id, list, syntype, accessToken,
-}) => {
-  let i = 1;
-  // TODO: Promise.all
-  for (const s of list) {
-    const data = {
-      id_parent: id,
-      id_synonym: s.id,
-      syntype,
-      rorder: i,
-    };
-    i += 1;
-    // speciesService.postSynonym({ data, accessToken });
-    postRequest(synonymsUri.baseUri, data, accessToken);
-  }
+/**
+ * Upsert synonyms:
+ *  - that are in currentList and are in newList
+ *  - use id from currentList (an item can be removed and then added to the list -> it does not have id anymore)
+ *  - everything else from newList (e.g. rorder, syntype might have changed)
+ * Insert synonyms:
+ *  - that are not in currentList and are in newList
+ *  - they do not have id
+ * Compare by id_parent and id_synonym.
+ * @param {array} currentList
+ * @param {array} newList
+ * @param {number} syntype
+ * @param {string} accessToken
+ */
+const saveSynonyms = async (
+  currentList, newList, accessToken,
+) => {
+  const comparator = (value, other) => (
+    value.id_parent === other.id_parent
+    && value.id_synonym === other.id_synonym
+  );
+  // in newList that are not in currentList
+  const toCreate = differenceWith(newList, currentList, comparator);
+  const toUpdate = intersectionWith(currentList, newList, comparator) // find items that are in both arrays
+    .map((cItem) => { // find those items in newList and use everything except id
+      const newItem = newList.find((l) => comparator(cItem, l));
+      return {
+        ...newItem,
+        id: cItem.id,
+      };
+    });
+
+  const toUpsert = [...toCreate, ...toUpdate];
+
+  return Promise.all(toUpsert.map((synonym) => (
+    putRequest(synonymsUri.baseUri, synonym, {}, accessToken)
+  )));
 };
+
+/**
+ * is in currentList but is not in newList.
+ * Compare by id_parent && id_synonym
+ * @param {array} currentList
+ * @param {array} newList
+ */
+const synonymIdsToBeDeleted = (currentList, newList) => undefined;
 
 const submitSynonyms = async ({
   id,
@@ -49,44 +81,41 @@ const submitSynonyms = async ({
 
   // save new
   if (isNomenclatoricSynonymsChanged) {
-    toBeDeleted.push(...originalSynonyms.filter((s) => (
-      s.syntype === config.mappings.synonym.nomenclatoric.numType
-    )));
-    await saveSynonyms({
-      id,
-      list: nomenclatoricSynonyms,
-      syntype: config.mappings.synonym.nomenclatoric.numType,
+    // toBeDeleted.push(...originalSynonyms.filter((s) => (
+    //   s.syntype === config.mappings.synonym.nomenclatoric.numType
+    // )));
+    await saveSynonyms(
+      originalSynonyms,
+      nomenclatoricSynonyms,
       accessToken,
-    });
+    );
   }
   if (isTaxonomicSynonymsChanged) {
-    toBeDeleted.push(...originalSynonyms.filter((s) => (
-      s.syntype === config.mappings.synonym.taxonomic.numType
-    )));
-    await saveSynonyms({
-      id,
-      list: taxonomicSynonyms,
-      syntype: config.mappings.synonym.taxonomic.numType,
+    // toBeDeleted.push(...originalSynonyms.filter((s) => (
+    //   s.syntype === config.mappings.synonym.taxonomic.numType
+    // )));
+    await saveSynonyms(
+      originalSynonyms,
+      taxonomicSynonyms,
       accessToken,
-    });
+    );
   }
   if (isInvalidDesignationsChanged) {
-    toBeDeleted.push(...originalSynonyms.filter((s) => (
-      s.syntype === config.mappings.synonym.invalid.numType
-    )));
-    await saveSynonyms({
-      id,
-      list: invalidDesignations,
-      syntype: config.mappings.synonym.invalid.numType,
+    // toBeDeleted.push(...originalSynonyms.filter((s) => (
+    //   s.syntype === config.mappings.synonym.invalid.numType
+    // )));
+    await saveSynonyms(
+      originalSynonyms,
+      invalidDesignations,
       accessToken,
-    });
+    );
   }
 
   // delete originals
   // TODO: Promise.all
-  for (const syn of toBeDeleted) {
-    deleteRequest(synonymsUri.synonymsByIdUri, { id: syn.id }, accessToken);
-  }
+  // for (const syn of toBeDeleted) {
+  //   deleteRequest(synonymsUri.synonymsByIdUri, { id: syn.id }, accessToken);
+  // }
 };
 
 // ----- PUBLIC ----- //
@@ -193,6 +222,10 @@ const getBasionymsFor = async ({ id, accessToken }) => {
   };
 };
 
+const saveSpecies = async ({ data, accessToken }) => (
+  putRequest(nomenclaturesUri.baseUri, data, {}, accessToken)
+);
+
 const saveSpeciesAndSynonyms = async ({
   species,
   nomenclatoricSynonyms,
@@ -204,7 +237,7 @@ const saveSpeciesAndSynonyms = async ({
   isInvalidDesignationsChanged = true,
 }) => (
   Promise.all([
-    putRequest(nomenclaturesUri.baseUri, species, accessToken),
+    saveSpecies({ data: species, accessToken }),
     submitSynonyms({
       id: species.id,
       nomenclatoricSynonyms,
@@ -218,9 +251,13 @@ const saveSpeciesAndSynonyms = async ({
   ])
 );
 
-const saveSpecies = async ({ data, accessToken }) => (
-  putRequest(nomenclaturesUri.baseUri, data, accessToken)
-);
+function createSynonym(idParent, idSynonym, syntype) {
+  return {
+    id_parent: parseInt(idParent, 10),
+    id_synonym: idSynonym,
+    syntype,
+  };
+}
 
 export default {
   getRecordById,
@@ -231,4 +268,5 @@ export default {
   getBasionymsFor,
   saveSpeciesAndSynonyms,
   saveSpecies,
+  createSynonym,
 };

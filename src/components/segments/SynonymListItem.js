@@ -7,6 +7,7 @@ import {
 } from 'react-bootstrap';
 
 import PropTypes from 'prop-types';
+import SpeciesType from 'components/propTypes/species';
 
 import config from 'config/config';
 
@@ -81,7 +82,7 @@ export default SynonymListItem;
 SynonymListItem.propTypes = {
   rowId: PropTypes.number,
   data: PropTypes.shape({
-    synonym: PropTypes.object.isRequired,
+    synonym: SpeciesType.isRequired,
   }).isRequired,
   prefix: PropTypes.string.isRequired,
   additions: PropTypes.func,

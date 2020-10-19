@@ -369,6 +369,10 @@ function listOfSpeciesSorterLex(losA, losB) {
   return 0;
 }
 
+function synonymSorterLex(synA, synB) {
+  return listOfSpeciesSorterLex(synA.synonym, synB.synonym);
+}
+
 export default {
   listOfSpeciesForComponent,
   listOfSpeciesString,
@@ -379,4 +383,5 @@ export default {
   // curateSearchFilters,
   // curateSortFields,
   listOfSpeciesSorterLex,
+  synonymSorterLex,
 };

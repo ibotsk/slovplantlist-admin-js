@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.1",
+    "lodash.differencewith": "^4.5.0",
+    "lodash.intersectionwith": "^4.4.0",
     "mustache": "^4.0.1",
     "prop-types": "^15.6.2",
     "react": "^16.13.1",
