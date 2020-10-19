@@ -8,8 +8,6 @@ import {
 
 import PropTypes from 'prop-types';
 
-import SpeciesType from 'components/propTypes/species';
-
 import config from 'config/config';
 
 import LosName from './LosName';
@@ -34,53 +32,68 @@ const constructSubNomenlatoric = (subNomenclatoricList) => {
 };
 
 const SynonymListItem = ({
-  rowId, data: { prefix, value: losObject },
-  additions: Additions, removable = false, ...props
-}) => (
-  <ListGroupItem bsSize="sm">
-    <Row>
-      <Col xs={12}>
-        {prefix}
-        {' '}
-        <LosName data={losObject} />
-        <span className="pull-right">
-          {Additions
-            && <Additions rowId={rowId} {...props} />}
-          {removable
-            && (
-              <span className="remove-list-item">
-                <Button
-                  bsStyle="danger"
-                  bsSize="xsmall"
-                  onClick={() => props.onRowDelete(rowId)}
-                  title="Remove from this list"
-                >
-                  <Glyphicon glyph="remove" />
-                </Button>
-              </span>
-            )}
-        </span>
-      </Col>
-    </Row>
-    {constructSubNomenlatoric(losObject['synonyms-nomenclatoric'])}
-  </ListGroupItem>
-);
+  rowId,
+  data,
+  prefix,
+  additions: Additions,
+  showSubNomenclatoric = false,
+  children,
+  onRowDelete,
+}) => {
+  const { synonym: speciesName } = data;
+  return (
+    <ListGroupItem bsSize="sm">
+      <Row>
+        <Col xs={12}>
+          {prefix}
+          {' '}
+          <LosName data={speciesName} />
+          <span className="pull-right">
+            {Additions && <Additions />}
+            {onRowDelete
+              && (
+                <span className="remove-list-item">
+                  <Button
+                    bsStyle="danger"
+                    bsSize="xsmall"
+                    onClick={() => onRowDelete(rowId)}
+                    title="Remove from this list"
+                  >
+                    <Glyphicon glyph="remove" />
+                  </Button>
+                </span>
+              )}
+          </span>
+        </Col>
+      </Row>
+      {children}
+      {showSubNomenclatoric
+        && constructSubNomenlatoric(
+          speciesName['synonyms-nomenclatoric'],
+        )
+      }
+    </ListGroupItem>
+  );
+};
 
 export default SynonymListItem;
 
 SynonymListItem.propTypes = {
   rowId: PropTypes.number,
   data: PropTypes.shape({
-    prefix: PropTypes.string.isRequired,
-    value: SpeciesType.type.isRequired,
+    synonym: PropTypes.object.isRequired,
   }).isRequired,
+  prefix: PropTypes.string.isRequired,
   additions: PropTypes.func,
-  removable: PropTypes.bool,
-  onRowDelete: PropTypes.func.isRequired,
+  onRowDelete: PropTypes.func,
+  showSubNomenclatoric: PropTypes.bool,
+  children: PropTypes.element,
 };
 
 SynonymListItem.defaultProps = {
   rowId: undefined,
   additions: undefined,
-  removable: false,
+  onRowDelete: undefined,
+  showSubNomenclatoric: false,
+  children: undefined,
 };

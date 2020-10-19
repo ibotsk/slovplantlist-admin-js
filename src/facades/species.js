@@ -154,28 +154,26 @@ const getAllSpeciesBySearchTerm = async ({ term, format, accessToken }) => {
 };
 
 const getSynonyms = async ({ id, accessToken }) => {
-  // const nomenclatoricSynonyms = await speciesService
-  //   .getSynonymsNomenclatoricOf({ id, accessToken });
   const nomenclatoricSynonyms = await getRequest(
     nomenclaturesUri.getNomenclatoricSynonymsUri, { id }, accessToken,
   );
   nomenclatoricSynonyms.sort(helperUtils.listOfSpeciesSorterLex);
 
-  // const taxonomicSynonyms = await speciesService
-  //   .getSynonymsTaxonomicOf({ id, accessToken });
   const taxonomicSynonyms = await getRequest(
     nomenclaturesUri.getTaxonomicSynonymsUri, { id }, accessToken,
   );
   taxonomicSynonyms.sort(helperUtils.listOfSpeciesSorterLex);
 
-  // const invalidDesignations = await speciesService
-  //   .getInvalidDesignationsOf({ id, accessToken });
   const invalidDesignations = await getRequest(
     nomenclaturesUri.getInvalidSynonymsUri, { id }, accessToken,
   );
   invalidDesignations.sort(helperUtils.listOfSpeciesSorterLex);
 
-  return { nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations };
+  return {
+    nomenclatoricSynonyms,
+    taxonomicSynonyms,
+    invalidDesignations,
+  };
 };
 
 const getBasionymsFor = async ({ id, accessToken }) => {

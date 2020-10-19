@@ -7,10 +7,9 @@ import {
   ListGroup, ListGroupItem,
 } from 'react-bootstrap';
 
-import { AsyncTypeahead, Typeahead } from 'react-bootstrap-typeahead';
-
 import PropTypes from 'prop-types';
-// import SynonymListItem from './SynonymListItem';
+
+import { AsyncTypeahead, Typeahead } from 'react-bootstrap-typeahead';
 
 class AddableList extends Component {
   constructor(props) {
@@ -55,7 +54,7 @@ class AddableList extends Component {
     });
   }
 
-  renderAsync = (async) => {
+  renderTypeahead = (async) => {
     const { id } = this.props;
     const { isLoading, options, selected } = this.state;
     if (async) {
@@ -89,9 +88,11 @@ class AddableList extends Component {
   render() {
     const {
       data = [],
-      itemComponent: ListRow,
+      itemComponent: ListRowItem,
+      getRowId,
       onRowDelete,
       async,
+      ...props
     } = this.props;
     const { selected } = this.state;
     return (
@@ -100,20 +101,26 @@ class AddableList extends Component {
           {
             // row must contain id, props is the rest
             // ListRow is an injected component that will be rendered as item
-            data.map(({ id, ...props }) => (
-              <ListRow
-                rowId={id}
-                key={id}
-                data={props}
-                onRowDelete={() => onRowDelete(id)}
-              />
-            ))
+            data.map((d, index) => {
+              const rowId = getRowId ? getRowId(d) : index;
+              return (
+                <ListRowItem
+                  rowId={rowId}
+                  key={rowId}
+                  data={d}
+                  onRowDelete={() => onRowDelete(rowId)}
+                  // in the rest of the props are custom properties per item
+                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  {...props}
+                />
+              );
+            })
           }
           <ListGroupItem>
             <FormGroup>
               <Col sm={12}>
                 <InputGroup bsSize="sm">
-                  {this.renderAsync(async)}
+                  {this.renderTypeahead(async)}
                   <InputGroup.Button>
                     <Button
                       bsStyle="success"
@@ -144,6 +151,7 @@ AddableList.propTypes = {
     id: PropTypes.number,
   })),
   itemComponent: PropTypes.func.isRequired,
+  getRowId: PropTypes.func,
   onAddItemToList: PropTypes.func.isRequired,
   onRowDelete: PropTypes.func.isRequired,
   onSearch: PropTypes.func,
@@ -155,4 +163,5 @@ AddableList.defaultProps = {
   data: [],
   async: false,
   onSearch: undefined,
+  getRowId: undefined,
 };
