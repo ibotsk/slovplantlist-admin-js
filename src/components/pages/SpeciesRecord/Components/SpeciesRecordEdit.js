@@ -922,7 +922,7 @@ class SpeciesRecord extends Component {
                       onSearch={this.handleSearchSpeciesAsync}
                       onAddItemToList={this.handleAddTaxonomicSynonym}
                       onRowDelete={this.handleRemoveTaxonomicSynonym}
-                      itemComponent={TaxonomicSynonymListItem}
+                      itemComponent={NomenclatoricSynonymListItem}
                     />
                   </Col>
                 </FormGroup>
@@ -938,7 +938,7 @@ class SpeciesRecord extends Component {
                       onSearch={this.handleSearchSpeciesAsync}
                       onAddItemToList={this.handleAddNomenclatoricSynonym}
                       onRowDelete={this.handleRemoveNomenclatoricSynonym}
-                      itemComponent={NomenclatoricSynonymListItem}
+                      itemComponent={TaxonomicSynonymListItem}
                     />
                   </Col>
                 </FormGroup>

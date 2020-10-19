@@ -68,6 +68,11 @@ InvalidSynonymListItem.propTypes = {
   rowId: PropTypes.number.isRequired,
   data: SynonymType.type.isRequired,
   onRowDelete: PropTypes.func.isRequired,
-  onChangeToNomenclatoric: PropTypes.func.isRequired,
-  onChangeToTaxonomic: PropTypes.func.isRequired,
+  onChangeToNomenclatoric: PropTypes.func,
+  onChangeToTaxonomic: PropTypes.func,
+};
+
+InvalidSynonymListItem.defaultProps = {
+  onChangeToNomenclatoric: undefined,
+  onChangeToTaxonomic: undefined,
 };
