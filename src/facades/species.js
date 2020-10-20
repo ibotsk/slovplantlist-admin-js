@@ -3,7 +3,6 @@ import intersectionWith from 'lodash.intersectionwith';
 
 import {
   getRequest,
-  postRequest,
   deleteRequest,
   putRequest,
 } from 'services/backend';
@@ -14,6 +13,11 @@ import config from 'config/config';
 const {
   uris: { nomenclaturesUri, synonymsUri },
 } = config;
+
+const synonymComparator = (value, other) => (
+  value.id_parent === other.id_parent
+  && value.id_synonym === other.id_synonym
+);
 
 /**
  * Upsert synonyms:
@@ -29,38 +33,35 @@ const {
  * @param {number} syntype
  * @param {string} accessToken
  */
-const saveSynonyms = async (
-  currentList, newList, accessToken,
+const synonymsToUpsert = (
+  currentList, newList,
 ) => {
-  const comparator = (value, other) => (
-    value.id_parent === other.id_parent
-    && value.id_synonym === other.id_synonym
-  );
   // in newList that are not in currentList
-  const toCreate = differenceWith(newList, currentList, comparator);
-  const toUpdate = intersectionWith(currentList, newList, comparator) // find items that are in both arrays
+  const toCreate = differenceWith(newList, currentList, synonymComparator);
+  const toUpdate = intersectionWith(currentList, newList, synonymComparator) // find items that are in both arrays
     .map((cItem) => { // find those items in newList and use everything except id
-      const newItem = newList.find((l) => comparator(cItem, l));
+      const newItem = newList.find((l) => synonymComparator(cItem, l));
       return {
         ...newItem,
         id: cItem.id,
       };
     });
 
-  const toUpsert = [...toCreate, ...toUpdate];
-
-  return Promise.all(toUpsert.map((synonym) => (
-    putRequest(synonymsUri.baseUri, synonym, {}, accessToken)
-  )));
+  return [...toCreate, ...toUpdate];
 };
 
 /**
- * is in currentList but is not in newList.
+ * Synonyms that:
+ *  are in currentList but are not in newList.
  * Compare by id_parent && id_synonym
  * @param {array} currentList
  * @param {array} newList
+ * @returns {array} of ids
  */
-const synonymIdsToBeDeleted = (currentList, newList) => undefined;
+const synonymIdsToBeDeleted = (currentList, newList) => {
+  const toDelete = differenceWith(currentList, newList, synonymComparator);
+  return toDelete.map(({ id }) => id);
+};
 
 const submitSynonyms = async ({
   id,
@@ -68,54 +69,31 @@ const submitSynonyms = async ({
   taxonomicSynonyms,
   invalidDesignations,
   accessToken,
-  isNomenclatoricSynonymsChanged,
-  isTaxonomicSynonymsChanged,
-  isInvalidDesignationsChanged,
 }) => {
   // get synonyms to be deleted
   const originalSynonyms = await getRequest(
     nomenclaturesUri.getSynonymsOfParent, { id }, accessToken,
   );
 
-  const toBeDeleted = [];
+  const allSynonyms = [
+    ...nomenclatoricSynonyms,
+    ...taxonomicSynonyms,
+    ...invalidDesignations,
+  ];
+  const toBeDeleted = synonymIdsToBeDeleted(originalSynonyms, allSynonyms);
+  const toBeUpserted = synonymsToUpsert(originalSynonyms, allSynonyms);
 
-  // save new
-  if (isNomenclatoricSynonymsChanged) {
-    // toBeDeleted.push(...originalSynonyms.filter((s) => (
-    //   s.syntype === config.mappings.synonym.nomenclatoric.numType
-    // )));
-    await saveSynonyms(
-      originalSynonyms,
-      nomenclatoricSynonyms,
-      accessToken,
-    );
-  }
-  if (isTaxonomicSynonymsChanged) {
-    // toBeDeleted.push(...originalSynonyms.filter((s) => (
-    //   s.syntype === config.mappings.synonym.taxonomic.numType
-    // )));
-    await saveSynonyms(
-      originalSynonyms,
-      taxonomicSynonyms,
-      accessToken,
-    );
-  }
-  if (isInvalidDesignationsChanged) {
-    // toBeDeleted.push(...originalSynonyms.filter((s) => (
-    //   s.syntype === config.mappings.synonym.invalid.numType
-    // )));
-    await saveSynonyms(
-      originalSynonyms,
-      invalidDesignations,
-      accessToken,
-    );
-  }
+  const deletePromises = toBeDeleted.map((synId) => (
+    deleteRequest(synonymsUri.synonymsByIdUri, { id: synId }, accessToken)
+  ));
+  const upsertPromises = toBeUpserted.map((synonym) => (
+    putRequest(synonymsUri.baseUri, synonym, {}, accessToken)
+  ));
 
-  // delete originals
-  // TODO: Promise.all
-  // for (const syn of toBeDeleted) {
-  //   deleteRequest(synonymsUri.synonymsByIdUri, { id: syn.id }, accessToken);
-  // }
+  return Promise.all([
+    ...deletePromises,
+    ...upsertPromises,
+  ]);
 };
 
 // ----- PUBLIC ----- //
