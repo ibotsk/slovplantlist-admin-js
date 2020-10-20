@@ -296,30 +296,27 @@ class SpeciesRecord extends Component {
     })
   )
 
-  // handleChangeToTaxonomic = async (id, fromList) => {
-  //   // const selected = this.state.nomenclatoricSynonyms.find(s => s.id === id);
-  //   const selected = fromList.find((s) => s.id === id);
-  //   await this.handleAddTaxonomicSynonym(selected);
-  //   // remove from all others
-  //   await this.handleRemoveNomenclatoricSynonym(id);
-  //   await this.handleRemoveInvalidDesignation(id);
-  // }
+  handleSynonymTransition = (rowId, fromListName, toListName, newNumType) => (
+    this.setState((state) => {
+      const {
+        [fromListName]: synonymsFrom,
+        [toListName]: synonymsTo,
+      } = state;
+      const selected = synonymsFrom[rowId];
+      selected.syntype = newNumType;
+      // add selected to toList
+      synonymsTo.push(selected);
+      const synonymsToChanged = synonymsChanged(synonymsTo);
 
-  // handleChangeToNomenclatoric = async (id, fromList) => {
-  //   const selected = fromList.find((s) => s.id === id);
-  //   await this.handleAddNomenclatoricSynonym(selected);
-  //   // remove from all others
-  //   await this.handleRemoveTaxonomicSynonym(id);
-  //   await this.handleRemoveInvalidDesignation(id);
-  // }
+      const synonymsFromWORemoved = synonymsFrom.filter((s, i) => i !== rowId);
+      const synonymsFromChanged = synonymsChanged(synonymsFromWORemoved);
 
-  // handleChangeToInvalid = async (id, fromList) => {
-  //   const selected = fromList.find((s) => s.id === id);
-  //   await this.handleAddInvalidDesignation(selected);
-  //   // remove from all others
-  //   await this.handleRemoveNomenclatoricSynonym(id);
-  //   await this.handleRemoveTaxonomicSynonym(id);
-  // }
+      return {
+        [fromListName]: synonymsFromChanged,
+        [toListName]: synonymsToChanged,
+      };
+    })
+  )
 
   submitForm = async (e) => {
     e.preventDefault();
@@ -881,6 +878,21 @@ class SpeciesRecord extends Component {
                         'nomenclatoricSynonyms',
                       )}
                       itemComponent={NomenclatoricSynonymListItem}
+                      // props specific to itemComponent
+                      onChangeToTaxonomic={(rowId) => (
+                        this.handleSynonymTransition(
+                          rowId,
+                          'nomenclatoricSynonyms',
+                          'taxonomicSynonyms',
+                          config.mappings.synonym.taxonomic.numType,
+                        ))}
+                      onChangeToInvalid={(rowId) => (
+                        this.handleSynonymTransition(
+                          rowId,
+                          'nomenclatoricSynonyms',
+                          'invalidDesignations',
+                          config.mappings.synonym.invalid.numType,
+                        ))}
                     />
                   </Col>
                 </FormGroup>
@@ -904,6 +916,21 @@ class SpeciesRecord extends Component {
                         'taxonomicSynonyms',
                       )}
                       itemComponent={TaxonomicSynonymListItem}
+                      // props specific to itemComponent
+                      onChangeToNomenclatoric={(rowId) => (
+                        this.handleSynonymTransition(
+                          rowId,
+                          'taxonomicSynonyms',
+                          'nomenclatoricSynonyms',
+                          config.mappings.synonym.nomenclatoric.numType,
+                        ))}
+                      onChangeToInvalid={(rowId) => (
+                        this.handleSynonymTransition(
+                          rowId,
+                          'taxonomicSynonyms',
+                          'invalidDesignations',
+                          config.mappings.synonym.invalid.numType,
+                        ))}
                     />
                   </Col>
                 </FormGroup>
@@ -927,6 +954,21 @@ class SpeciesRecord extends Component {
                       )}
                       onSearch={this.handleSearchSpeciesAsync}
                       itemComponent={InvalidSynonymListItem}
+                      // props specific to itemComponent
+                      onChangeToNomenclatoric={(rowId) => (
+                        this.handleSynonymTransition(
+                          rowId,
+                          'invalidDesignations',
+                          'nomenclatoricSynonyms',
+                          config.mappings.synonym.nomenclatoric.numType,
+                        ))}
+                      onChangeToTaxonomic={(rowId) => (
+                        this.handleSynonymTransition(
+                          rowId,
+                          'invalidDesignations',
+                          'taxonomicSynonyms',
+                          config.mappings.synonym.taxonomic.numType,
+                        ))}
                     />
                   </Col>
                 </FormGroup>
