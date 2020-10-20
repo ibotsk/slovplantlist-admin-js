@@ -6,20 +6,20 @@ const {
   uris: { rolesUri, roleMappingsUri },
 } = config;
 
-const getAllRoles = async ({ accessToken, format }) => {
+async function getAllRoles({ accessToken, format }) {
   const roles = await getRequest(rolesUri.getAllWOrderUri, {}, accessToken);
   if (!format) {
     return roles;
   }
   return roles.map(format);
-};
+}
 
 /**
  * Replaces existing role mapping or creates new.
  * User can have only one role.
  * @param {*} param0
  */
-const saveRoleForUser = async ({ userId, roleId, accessToken }) => {
+async function saveRoleForUser({ userId, roleId, accessToken }) {
   const roleMappings = await getRequest(
     roleMappingsUri.getByPrincipalIdUri, { principalId: userId }, accessToken,
   );
@@ -32,7 +32,7 @@ const saveRoleForUser = async ({ userId, roleId, accessToken }) => {
   };
 
   return putRequest(roleMappingsUri.baseUri, data, accessToken);
-};
+}
 
 export default {
   getAllRoles,

@@ -6,7 +6,7 @@ const {
   uris: { generaUri },
 } = config;
 
-const getAllGeneraBySearchTerm = async ({ term, format, accessToken }) => {
+async function getAllGeneraBySearchTerm({ term, format, accessToken }) {
   const genera = await getRequest(
     generaUri.getAllBySearchTermUri, { term }, accessToken,
   );
@@ -14,9 +14,9 @@ const getAllGeneraBySearchTerm = async ({ term, format, accessToken }) => {
     return genera;
   }
   return genera.map(format);
-};
+}
 
-const getAllGeneraWithFamilies = async ({ format, accessToken }) => {
+async function getAllGeneraWithFamilies({ format, accessToken }) {
   const genera = await getRequest(
     generaUri.getAllWithFamiliesUri, {}, accessToken,
   );
@@ -24,9 +24,9 @@ const getAllGeneraWithFamilies = async ({ format, accessToken }) => {
     return genera;
   }
   return genera.map(format);
-};
+}
 
-const getGenusByIdWithFamilies = async ({ id, format, accessToken }) => {
+async function getGenusByIdWithFamilies({ id, format, accessToken }) {
   const genus = await getRequest(
     generaUri.getByIdWithFamilies, { id }, accessToken,
   );
@@ -42,11 +42,11 @@ const getGenusByIdWithFamilies = async ({ id, format, accessToken }) => {
   }
 
   return { genus: toReturn, family, familyApg };
-};
+}
 
-const saveGenus = async ({ data, accessToken }) => (
-  putRequest(generaUri.baseUri, data, accessToken)
-);
+async function saveGenus({ data, accessToken }) {
+  return putRequest(generaUri.baseUri, data, accessToken);
+}
 
 export default {
   getAllGeneraBySearchTerm,

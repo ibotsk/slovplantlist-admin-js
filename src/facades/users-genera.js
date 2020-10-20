@@ -25,9 +25,11 @@ async function getIdsForRemoval(userId, generaIdsToRemove, accessToken) {
   return idsForRemoval;
 }
 
-const saveUserGenera = async ({
+// ----- PUBLIC ----- //
+
+async function saveUserGenera({
   userId, generaIdsAdded, generaRemoved, accessToken,
-}) => {
+}) {
   const generaIdsToRemove = [...new Set(generaRemoved)];
   const idsToRemove = await getIdsForRemoval(
     userId, generaIdsToRemove, accessToken,
@@ -46,7 +48,7 @@ const saveUserGenera = async ({
     };
     putRequest(userGeneraUri.baseUri, data, accessToken);
   }
-};
+}
 
 export default {
   saveUserGenera,

@@ -6,11 +6,11 @@ const {
   uris: { usersUri },
 } = config;
 
-const getAllUsers = async ({ accessToken }) => (
-  getRequest(usersUri.getAllWOrderUri, {}, accessToken)
-);
+async function getAllUsers({ accessToken }) {
+  return getRequest(usersUri.getAllWOrderUri, {}, accessToken);
+}
 
-const getUserById = async ({ id, accessToken }) => {
+async function getUserById({ id, accessToken }) {
   const user = await getRequest(
     usersUri.getByIdWithRolesUri, { id }, accessToken,
   );
@@ -23,9 +23,9 @@ const getUserById = async ({ id, accessToken }) => {
     user,
     roles,
   };
-};
+}
 
-const getGeneraOfUser = async ({ userId, accessToken, format }) => {
+async function getGeneraOfUser({ userId, accessToken, format }) {
   const genera = await getRequest(
     usersUri.getGeneraByUserId, { id: userId }, accessToken,
   );
@@ -34,9 +34,9 @@ const getGeneraOfUser = async ({ userId, accessToken, format }) => {
     return genera;
   }
   return genera.map(format);
-};
+}
 
-const saveUser = async ({ data, accessToken }) => {
+async function saveUser({ data, accessToken }) {
   const user = {
     ...data,
     realm: config.constants.userRealm,
@@ -51,18 +51,18 @@ const saveUser = async ({ data, accessToken }) => {
     return user.id;
   }
   return postRequest(usersUri.baseUri, data, {}, accessToken);
-};
+}
 
-const login = async (username, password) => {
+async function login(username, password) {
   const response = await postRequest(
     usersUri.loginUri, { username, password }, {}, undefined,
   );
   return response.data;
-};
+}
 
-const logout = async (accessToken) => (
-  postRequest(usersUri.logoutUri, undefined, undefined, accessToken)
-);
+async function logout(accessToken) {
+  return postRequest(usersUri.logoutUri, undefined, undefined, accessToken);
+}
 
 export default {
   getAllUsers,

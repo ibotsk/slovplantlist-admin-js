@@ -2,7 +2,7 @@ import { removeState } from '../local-storage';
 
 const HTTP_UNAUTHORIZED = 401;
 
-const handleAxiosError = (error) => {
+function handleAxiosError(error) {
   if (!error.response) {
     return;
   }
@@ -14,7 +14,7 @@ const handleAxiosError = (error) => {
     default:
       break;
   }
-};
+}
 
 export default {
   handleAxiosError,
