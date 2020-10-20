@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import {
   Grid, Col, Row, Well, Panel,
   Form, FormControl, FormGroup, ControlLabel,
-  ListGroup, ListGroupItem,
   Checkbox, Button,
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -15,7 +14,9 @@ import PropTypes from 'prop-types';
 import { NotificationContainer } from 'react-notifications';
 
 import AddableList from 'components/segments/AddableList';
-import LosName from 'components/segments/LosName';
+import LosName from 'components/segments/Checklist/LosName';
+import PlainListOfSpeciesNames from
+  'components/segments/Checklist/PlainListOfSpeciesNames';
 
 import { speciesFacade, genusFacade } from 'facades';
 
@@ -319,21 +320,6 @@ class SpeciesRecord extends Component {
   //   await this.handleRemoveNomenclatoricSynonym(id);
   //   await this.handleRemoveTaxonomicSynonym(id);
   // }
-
-  renderPlainListOfSpeciesNames = (list) => {
-    if (!list || list.length === 0) {
-      return <ListGroupItem />;
-    }
-    return (
-      <ListGroup>
-        {list.map((b) => (
-          <ListGroupItem key={b.id}>
-            <LosName data={b} />
-          </ListGroupItem>
-        ))}
-      </ListGroup>
-    );
-  }
 
   submitForm = async (e) => {
     e.preventDefault();
@@ -954,7 +940,7 @@ class SpeciesRecord extends Component {
                     Basionym For
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
-                    {this.renderPlainListOfSpeciesNames(basionymFor)}
+                    <PlainListOfSpeciesNames list={basionymFor} />
                   </Col>
                 </FormGroup>
                 <FormGroup controlId="idReplacedFor" bsSize="sm">
@@ -962,7 +948,7 @@ class SpeciesRecord extends Component {
                     Replaced For
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
-                    {this.renderPlainListOfSpeciesNames(replacedFor)}
+                    <PlainListOfSpeciesNames list={replacedFor} />
                   </Col>
                 </FormGroup>
                 <FormGroup controlId="idNomenNovumFor" bsSize="sm">
@@ -970,7 +956,7 @@ class SpeciesRecord extends Component {
                     Nomen Novum For
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
-                    {this.renderPlainListOfSpeciesNames(nomenNovumFor)}
+                    <PlainListOfSpeciesNames list={nomenNovumFor} />
                   </Col>
                 </FormGroup>
               </Well>

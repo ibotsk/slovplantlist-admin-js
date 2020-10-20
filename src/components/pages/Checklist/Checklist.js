@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import LoggedUserType from 'components/propTypes/loggedUser';
 import SpeciesType from 'components/propTypes/species';
 
-import LosName from 'components/segments/LosName';
+import LosName from 'components/segments/Checklist/LosName';
 import TabledPage from 'components/wrappers/TabledPageParent';
 import Can from 'components/segments/auth/Can';
 import Ownership from 'components/segments/auth/Ownership';

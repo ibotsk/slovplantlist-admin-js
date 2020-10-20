@@ -9,7 +9,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 import PropTypes from 'prop-types';
 
-import LosName from 'components/segments/LosName';
+import LosName from 'components/segments/Checklist/LosName';
 import SynonymListItem from 'components/segments/SynonymListItem';
 
 import { speciesFacade } from 'facades';

@@ -11,7 +11,7 @@ import SpeciesType from 'components/propTypes/species';
 
 import config from 'config/config';
 
-import LosName from './LosName';
+import LosName from './Checklist/LosName';
 
 const constructSubNomenlatoric = (subNomenclatoricList) => {
   if (!subNomenclatoricList || subNomenclatoricList.length === 0) {
