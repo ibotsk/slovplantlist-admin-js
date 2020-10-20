@@ -88,11 +88,9 @@ const createNewSynonymToList = async (
   accessToken,
 ) => {
   // when adding synonyms to a new record, idParent is undefined
-  const synonymObj = speciesFacade.createSynonym(idParent, selected.id, type);
-  const species = await speciesFacade.getSpeciesById({
-    id: selected.id,
-    accessToken,
-  });
+  const { id: selectedId } = selected;
+  const synonymObj = speciesFacade.createSynonym(idParent, selectedId, type);
+  const species = await speciesFacade.getSpeciesById(selectedId, accessToken);
   return {
     ...synonymObj,
     synonym: species,
@@ -139,14 +137,14 @@ class SpeciesRecord extends Component {
       const {
         speciesRecord, accepted, basionym, replaced,
         nomenNovum, genus, familyApg, family,
-      } = await speciesFacade.getRecordById({ id: recordId, accessToken });
+      } = await speciesFacade.getRecordById(recordId, accessToken);
 
       const {
         nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
-      } = await speciesFacade.getSynonyms({ id: recordId, accessToken });
+      } = await speciesFacade.getSynonyms(recordId, accessToken);
       const {
         basionymFor, replacedFor, nomenNovumFor,
-      } = await speciesFacade.getBasionymsFor({ id: recordId, accessToken });
+      } = await speciesFacade.getBasionymsFor(recordId, accessToken);
 
       this.setState({
         record: speciesRecord,
@@ -190,10 +188,9 @@ class SpeciesRecord extends Component {
     const { accessToken } = this.props;
     const id = selected[0] ? selected[0].id : undefined;
     if (id) {
-      const { family, familyApg } = await genusFacade.getGenusByIdWithFamilies({
-        id,
-        accessToken,
-      });
+      const { family, familyApg } = await genusFacade.getGenusByIdWithFamilies(
+        id, accessToken,
+      );
       this.setState({
         family: family.name,
         familyApg: familyApg.name,
@@ -224,14 +221,12 @@ class SpeciesRecord extends Component {
   handleSearchGeneraAsyncTypeahead = async (query) => {
     this.setState({ isLoading: true });
     const { accessToken } = this.props;
-    const genera = await genusFacade.getAllGeneraBySearchTerm({
-      term: query,
-      format: (g) => ({
+    const genera = await genusFacade.getAllGeneraBySearchTerm(
+      query, accessToken, (g) => ({
         id: g.id,
         label: g.name,
       }),
-      accessToken,
-    });
+    );
 
     this.setState({
       isLoading: false,
@@ -241,14 +236,12 @@ class SpeciesRecord extends Component {
 
   handleSearchSpeciesAsync = async (query) => {
     const { accessToken } = this.props;
-    return speciesFacade.getAllSpeciesBySearchTerm({
-      term: query,
-      format: (l) => ({
+    return speciesFacade.getAllSpeciesBySearchTerm(
+      query, accessToken, (l) => ({
         id: l.id,
         label: helperUtils.listOfSpeciesString(l),
       }),
-      accessToken,
-    });
+    );
   };
 
   handleSynonymAddRow = async (selectedSpecies, synonymName, type) => {
@@ -326,9 +319,6 @@ class SpeciesRecord extends Component {
       nomenclatoricSynonyms,
       taxonomicSynonyms,
       invalidDesignations,
-      isNomenclatoricSynonymsChanged,
-      isTaxonomicSynonymsChanged,
-      isInvalidDesignationsChanged,
     } = this.state;
     try {
       await speciesFacade.saveSpeciesAndSynonyms({
@@ -337,17 +327,8 @@ class SpeciesRecord extends Component {
         taxonomicSynonyms,
         invalidDesignations,
         accessToken,
-        isNomenclatoricSynonymsChanged,
-        isTaxonomicSynonymsChanged,
-        isInvalidDesignationsChanged,
       });
       notifications.success('Saved');
-
-      this.setState({
-        isNomenclatoricSynonymsChanged: false,
-        isTaxonomicSynonymsChanged: false,
-        isInvalidDesignationsChanged: false,
-      });
     } catch (error) {
       notifications.error('Error saving');
       throw error;

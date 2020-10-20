@@ -46,12 +46,10 @@ class GeneraModal extends Component {
   async componentDidMount() {
     const { accessToken } = this.props;
     const format = (f) => ({ id: f.id, label: f.name });
-    const families = await familiesFacade.getAllFamilies({
-      format, accessToken,
-    });
-    const familiesApg = await familiesFacade.getAllFamiliesApg({
-      format, accessToken,
-    });
+    const families = await familiesFacade.getAllFamilies(accessToken, format);
+    const familiesApg = await familiesFacade.getAllFamiliesApg(
+      accessToken, format,
+    );
     this.setState({
       families,
       familiesApg,
@@ -61,9 +59,9 @@ class GeneraModal extends Component {
   onEnter = async () => {
     const { id, accessToken } = this.props;
     if (id) {
-      const { genus } = await genusFacade.getGenusByIdWithFamilies({
+      const { genus } = await genusFacade.getGenusByIdWithFamilies(
         id, accessToken,
-      });
+      );
       this.setState({
         genus,
       });
@@ -101,7 +99,7 @@ class GeneraModal extends Component {
       const { accessToken } = this.props;
       const { genus } = this.state;
       try {
-        await genusFacade.saveGenus({ data: genus, accessToken });
+        await genusFacade.saveGenus(genus, accessToken);
         notifications.success('Saved');
         this.handleHide();
       } catch (error) {

@@ -46,14 +46,14 @@ class SpeciesRecordView extends React.Component {
       const {
         speciesRecord, accepted, basionym, replaced, nomenNovum,
         genus, familyApg, family,
-      } = await speciesFacade.getRecordById({ id: recordId, accessToken });
+      } = await speciesFacade.getRecordById(recordId, accessToken);
 
       const {
         nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
-      } = await speciesFacade.getSynonyms({ id: recordId, accessToken });
+      } = await speciesFacade.getSynonyms(recordId, accessToken);
       const {
         basionymFor, replacedFor, nomenNovumFor,
-      } = await speciesFacade.getBasionymsFor({ id: recordId, accessToken });
+      } = await speciesFacade.getBasionymsFor(recordId, accessToken);
 
       this.setState({
         record: speciesRecord,

@@ -68,7 +68,7 @@ class SpeciesNameModal extends Component {
 
   async componentDidMount() {
     const { accessToken } = this.props;
-    const genera = await genusFacade.getAllGeneraWithFamilies({ accessToken });
+    const genera = await genusFacade.getAllGeneraWithFamilies(accessToken);
     this.setState({
       genera,
     });
@@ -77,7 +77,7 @@ class SpeciesNameModal extends Component {
   onEnter = async () => {
     const { id, accessToken } = this.props;
     if (id) {
-      const data = await speciesFacade.getSpeciesById({ id, accessToken });
+      const data = await speciesFacade.getSpeciesById(id, accessToken);
       this.setState((state) => {
         const { genera } = state;
         const genusSelected = genera
@@ -159,9 +159,7 @@ class SpeciesNameModal extends Component {
       const { accessToken } = this.props;
       const { record: data } = this.state;
       try {
-        await speciesFacade.saveSpecies(
-          { data, accessToken },
-        );
+        await speciesFacade.saveSpecies(data, accessToken);
         notifications.success('Saved');
         this.handleHide();
       } catch (error) {

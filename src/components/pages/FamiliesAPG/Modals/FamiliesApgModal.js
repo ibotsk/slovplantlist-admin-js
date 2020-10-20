@@ -36,9 +36,9 @@ class FamiliesApgModal extends Component {
   onEnter = async () => {
     const { id, accessToken } = this.props;
     if (id) {
-      const data = await familiesFacade.getFamilyApgByIdCurated({
+      const data = await familiesFacade.getFamilyApgByIdCurated(
         id, accessToken,
-      });
+      );
       this.setState({ ...data });
     }
   }
@@ -70,7 +70,7 @@ class FamiliesApgModal extends Component {
       const { data } = this.state;
       const { accessToken } = this.props;
       try {
-        await familiesFacade.saveFamilyApg({ data, accessToken });
+        await familiesFacade.saveFamilyApg(data, accessToken);
         notifications.success('Saved');
         this.handleHide();
       } catch (error) {

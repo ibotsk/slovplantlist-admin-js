@@ -6,11 +6,11 @@ const {
   uris: { usersUri },
 } = config;
 
-async function getAllUsers({ accessToken }) {
+async function getAllUsers(accessToken) {
   return getRequest(usersUri.getAllWOrderUri, {}, accessToken);
 }
 
-async function getUserById({ id, accessToken }) {
+async function getUserById(id, accessToken) {
   const user = await getRequest(
     usersUri.getByIdWithRolesUri, { id }, accessToken,
   );
@@ -25,7 +25,7 @@ async function getUserById({ id, accessToken }) {
   };
 }
 
-async function getGeneraOfUser({ userId, accessToken, format }) {
+async function getGeneraOfUser(userId, accessToken, format = undefined) {
   const genera = await getRequest(
     usersUri.getGeneraByUserId, { id: userId }, accessToken,
   );
@@ -36,7 +36,7 @@ async function getGeneraOfUser({ userId, accessToken, format }) {
   return genera.map(format);
 }
 
-async function saveUser({ data, accessToken }) {
+async function saveUser(data, accessToken) {
   const user = {
     ...data,
     realm: config.constants.userRealm,

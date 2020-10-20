@@ -63,25 +63,18 @@ const synonymIdsToBeDeleted = (currentList, newList) => {
   return toDelete.map(({ id }) => id);
 };
 
-const submitSynonyms = async ({
+const submitSynonyms = async (
   id,
-  nomenclatoricSynonyms,
-  taxonomicSynonyms,
-  invalidDesignations,
+  allNewSynonyms,
   accessToken,
-}) => {
+) => {
   // get synonyms to be deleted
   const originalSynonyms = await getRequest(
     nomenclaturesUri.getSynonymsOfParent, { id }, accessToken,
   );
 
-  const allSynonyms = [
-    ...nomenclatoricSynonyms,
-    ...taxonomicSynonyms,
-    ...invalidDesignations,
-  ];
-  const toBeDeleted = synonymIdsToBeDeleted(originalSynonyms, allSynonyms);
-  const toBeUpserted = synonymsToUpsert(originalSynonyms, allSynonyms);
+  const toBeDeleted = synonymIdsToBeDeleted(originalSynonyms, allNewSynonyms);
+  const toBeUpserted = synonymsToUpsert(originalSynonyms, allNewSynonyms);
 
   const deletePromises = toBeDeleted.map((synId) => (
     deleteRequest(synonymsUri.synonymsByIdUri, { id: synId }, accessToken)
@@ -98,7 +91,7 @@ const submitSynonyms = async ({
 
 // ----- PUBLIC ----- //
 
-async function getRecordById({ id, accessToken }) {
+async function getRecordById(id, accessToken) {
   const speciesRecord = await getRequest(
     nomenclaturesUri.getByIdWFilterUri, { id }, accessToken,
   );
@@ -135,11 +128,11 @@ async function getRecordById({ id, accessToken }) {
   };
 }
 
-async function getSpeciesById({ id, accessToken }) {
+async function getSpeciesById(id, accessToken) {
   return getRequest(nomenclaturesUri.getByIdUri, { id }, accessToken);
 }
 
-async function getAllSpecies({ format, accessToken }) {
+async function getAllSpecies(accessToken, format = undefined) {
   const listOfSpeciess = await getRequest(
     nomenclaturesUri.getAllWOrderUri, {}, accessToken,
   );
@@ -149,7 +142,9 @@ async function getAllSpecies({ format, accessToken }) {
   return listOfSpeciess.map(format);
 }
 
-async function getAllSpeciesBySearchTerm({ term, format, accessToken }) {
+async function getAllSpeciesBySearchTerm(
+  term, accessToken, format = undefined,
+) {
   const listOfSpeciess = await getRequest(
     nomenclaturesUri.getAllBySearchTermUri, { term }, accessToken,
   );
@@ -160,7 +155,7 @@ async function getAllSpeciesBySearchTerm({ term, format, accessToken }) {
   return listOfSpeciess.map(format);
 }
 
-async function getSynonyms({ id, accessToken }) {
+async function getSynonyms(id, accessToken) {
   const nomenclatoricSynonyms = await getRequest(
     nomenclaturesUri.getNomenclatoricSynonymsUri, { id }, accessToken,
   );
@@ -183,7 +178,7 @@ async function getSynonyms({ id, accessToken }) {
   };
 }
 
-async function getBasionymsFor({ id, accessToken }) {
+async function getBasionymsFor(id, accessToken) {
   const basionymFor = await getRequest(
     nomenclaturesUri.getBasionymForUri, { id }, accessToken,
   );
@@ -200,7 +195,7 @@ async function getBasionymsFor({ id, accessToken }) {
   };
 }
 
-async function saveSpecies({ data, accessToken }) {
+async function saveSpecies(data, accessToken) {
   return putRequest(nomenclaturesUri.baseUri, data, {}, accessToken);
 }
 
@@ -210,22 +205,16 @@ async function saveSpeciesAndSynonyms({
   taxonomicSynonyms,
   invalidDesignations,
   accessToken,
-  isNomenclatoricSynonymsChanged = true,
-  isTaxonomicSynonymsChanged = true,
-  isInvalidDesignationsChanged = true,
 }) {
+  const allNewSynonyms = [
+    ...nomenclatoricSynonyms,
+    ...taxonomicSynonyms,
+    ...invalidDesignations,
+  ];
+
   return Promise.all([
-    saveSpecies({ data: species, accessToken }),
-    submitSynonyms({
-      id: species.id,
-      nomenclatoricSynonyms,
-      taxonomicSynonyms,
-      invalidDesignations,
-      accessToken,
-      isNomenclatoricSynonymsChanged,
-      isTaxonomicSynonymsChanged,
-      isInvalidDesignationsChanged,
-    }),
+    saveSpecies(species, accessToken),
+    submitSynonyms(species.id, allNewSynonyms, accessToken),
   ]);
 }
 

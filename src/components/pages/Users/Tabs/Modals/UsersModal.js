@@ -53,7 +53,7 @@ class UsersModal extends Component {
   async componentDidMount() {
     const { accessToken } = this.props;
     const format = (r) => ({ id: r.id, name: r.name });
-    const rolesOptions = await rolesFacade.getAllRoles({ accessToken, format });
+    const rolesOptions = await rolesFacade.getAllRoles(accessToken, format);
     this.setState({
       rolesOptions,
     });
@@ -62,9 +62,7 @@ class UsersModal extends Component {
   onEnter = async () => {
     const { id, accessToken } = this.props;
     if (id) {
-      const { user, roles } = await usersFacade.getUserById({
-        id, accessToken,
-      });
+      const { user, roles } = await usersFacade.getUserById(id, accessToken);
       const userRole = roles[0] || { ...userRoleInitialValues };
       this.setState({
         user,
@@ -125,8 +123,8 @@ class UsersModal extends Component {
       const { accessToken } = this.props;
       const { user, userRole: { id: roleId } } = this.state;
       try {
-        const userId = await usersFacade.saveUser({ data: user, accessToken });
-        await rolesFacade.saveRoleForUser({ userId, roleId, accessToken });
+        const userId = await usersFacade.saveUser(user, accessToken);
+        await rolesFacade.saveRoleForUser(userId, roleId, accessToken);
         notifications.success('Saved');
         this.handleHide();
       } catch (error) {

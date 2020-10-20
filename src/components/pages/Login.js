@@ -65,15 +65,10 @@ class Login extends Component {
     if (!accessToken) {
       return;
     }
-    const { roles } = await usersFacade.getUserById({
-      id: userId,
-      accessToken,
-    });
-    const userGeneraIds = await usersFacade.getGeneraOfUser({
-      userId,
-      accessToken,
-      format: (g) => g.id,
-    });
+    const { roles } = await usersFacade.getUserById(userId, accessToken);
+    const userGeneraIds = await usersFacade.getGeneraOfUser(
+      userId, accessToken, (g) => g.id,
+    );
 
     const userRole = roles[0]
       ? roles[0].name

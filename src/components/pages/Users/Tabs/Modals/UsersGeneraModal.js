@@ -55,10 +55,9 @@ class UsersGeneraModal extends Component {
 
   async componentDidMount() {
     const { accessToken } = this.props;
-    const genera = await genusFacade.getAllGeneraWithFamilies({
-      format: genusFormat,
-      accessToken,
-    });
+    const genera = await genusFacade.getAllGeneraWithFamilies(
+      accessToken, genusFormat,
+    );
     this.setState({
       genera,
     });
@@ -68,11 +67,9 @@ class UsersGeneraModal extends Component {
     const { user, accessToken } = this.props;
 
     if (user) {
-      const userGenera = await usersFacade.getGeneraOfUser({
-        userId: user.id,
-        format: genusFormat,
-        accessToken,
-      });
+      const userGenera = await usersFacade.getGeneraOfUser(
+        user.id, accessToken, genusFormat,
+      );
       userGenera.sort(genusCompare);
       this.setState({
         userGenera,

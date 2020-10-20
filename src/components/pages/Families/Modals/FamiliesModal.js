@@ -36,9 +36,7 @@ class FamiliesModal extends Component {
     onEnter = async () => {
       const { id, accessToken } = this.props;
       if (id) {
-        const data = await familiesFacade.getFamilyByIdCurated({
-          id, accessToken,
-        });
+        const data = await familiesFacade.getFamilyByIdCurated(id, accessToken);
         this.setState({ ...data });
       }
     }
@@ -70,7 +68,7 @@ class FamiliesModal extends Component {
         const { data } = this.state;
         const { accessToken } = this.props;
         try {
-          await familiesFacade.saveFamily({ data, accessToken });
+          await familiesFacade.saveFamily(data, accessToken);
           notifications.success('Saved');
           this.handleHide();
         } catch (error) {
