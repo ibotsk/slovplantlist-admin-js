@@ -1,6 +1,8 @@
+import differenceWith from 'lodash.differencewith';
+import intersectionWith from 'lodash.intersectionwith';
+
 import {
   getRequest,
-  postRequest,
   deleteRequest,
   putRequest,
 } from 'services/backend';
@@ -12,22 +14,53 @@ const {
   uris: { nomenclaturesUri, synonymsUri },
 } = config;
 
-const saveSynonyms = async ({
-  id, list, syntype, accessToken,
-}) => {
-  let i = 1;
-  // TODO: Promise.all
-  for (const s of list) {
-    const data = {
-      id_parent: id,
-      id_synonym: s.id,
-      syntype,
-      rorder: i,
-    };
-    i += 1;
-    // speciesService.postSynonym({ data, accessToken });
-    postRequest(synonymsUri.baseUri, data, accessToken);
-  }
+const synonymComparator = (value, other) => (
+  value.id_parent === other.id_parent
+  && value.id_synonym === other.id_synonym
+);
+
+/**
+ * Upsert synonyms:
+ *  - that are in currentList and are in newList
+ *  - use id from currentList (an item can be removed and then added to the list -> it does not have id anymore)
+ *  - everything else from newList (e.g. rorder, syntype might have changed)
+ * Insert synonyms:
+ *  - that are not in currentList and are in newList
+ *  - they do not have id
+ * Compare by id_parent and id_synonym.
+ * @param {array} currentList
+ * @param {array} newList
+ * @param {number} syntype
+ * @param {string} accessToken
+ */
+const synonymsToUpsert = (
+  currentList, newList,
+) => {
+  // in newList that are not in currentList
+  const toCreate = differenceWith(newList, currentList, synonymComparator);
+  const toUpdate = intersectionWith(currentList, newList, synonymComparator) // find items that are in both arrays
+    .map((cItem) => { // find those items in newList and use everything except id
+      const newItem = newList.find((l) => synonymComparator(cItem, l));
+      return {
+        ...newItem,
+        id: cItem.id,
+      };
+    });
+
+  return [...toCreate, ...toUpdate];
+};
+
+/**
+ * Synonyms that:
+ *  are in currentList but are not in newList.
+ * Compare by id_parent && id_synonym
+ * @param {array} currentList
+ * @param {array} newList
+ * @returns {array} of ids
+ */
+const synonymIdsToBeDeleted = (currentList, newList) => {
+  const toDelete = differenceWith(currentList, newList, synonymComparator);
+  return toDelete.map(({ id }) => id);
 };
 
 const submitSynonyms = async ({
@@ -36,57 +69,31 @@ const submitSynonyms = async ({
   taxonomicSynonyms,
   invalidDesignations,
   accessToken,
-  isNomenclatoricSynonymsChanged,
-  isTaxonomicSynonymsChanged,
-  isInvalidDesignationsChanged,
 }) => {
   // get synonyms to be deleted
   const originalSynonyms = await getRequest(
     nomenclaturesUri.getSynonymsOfParent, { id }, accessToken,
   );
 
-  const toBeDeleted = [];
+  const allSynonyms = [
+    ...nomenclatoricSynonyms,
+    ...taxonomicSynonyms,
+    ...invalidDesignations,
+  ];
+  const toBeDeleted = synonymIdsToBeDeleted(originalSynonyms, allSynonyms);
+  const toBeUpserted = synonymsToUpsert(originalSynonyms, allSynonyms);
 
-  // save new
-  if (isNomenclatoricSynonymsChanged) {
-    toBeDeleted.push(...originalSynonyms.filter((s) => (
-      s.syntype === config.mappings.synonym.nomenclatoric.numType
-    )));
-    await saveSynonyms({
-      id,
-      list: nomenclatoricSynonyms,
-      syntype: config.mappings.synonym.nomenclatoric.numType,
-      accessToken,
-    });
-  }
-  if (isTaxonomicSynonymsChanged) {
-    toBeDeleted.push(...originalSynonyms.filter((s) => (
-      s.syntype === config.mappings.synonym.taxonomic.numType
-    )));
-    await saveSynonyms({
-      id,
-      list: taxonomicSynonyms,
-      syntype: config.mappings.synonym.taxonomic.numType,
-      accessToken,
-    });
-  }
-  if (isInvalidDesignationsChanged) {
-    toBeDeleted.push(...originalSynonyms.filter((s) => (
-      s.syntype === config.mappings.synonym.invalid.numType
-    )));
-    await saveSynonyms({
-      id,
-      list: invalidDesignations,
-      syntype: config.mappings.synonym.invalid.numType,
-      accessToken,
-    });
-  }
+  const deletePromises = toBeDeleted.map((synId) => (
+    deleteRequest(synonymsUri.synonymsByIdUri, { id: synId }, accessToken)
+  ));
+  const upsertPromises = toBeUpserted.map((synonym) => (
+    putRequest(synonymsUri.baseUri, synonym, {}, accessToken)
+  ));
 
-  // delete originals
-  // TODO: Promise.all
-  for (const syn of toBeDeleted) {
-    deleteRequest(synonymsUri.synonymsByIdUri, { id: syn.id }, accessToken);
-  }
+  return Promise.all([
+    ...deletePromises,
+    ...upsertPromises,
+  ]);
 };
 
 // ----- PUBLIC ----- //
@@ -154,28 +161,26 @@ const getAllSpeciesBySearchTerm = async ({ term, format, accessToken }) => {
 };
 
 const getSynonyms = async ({ id, accessToken }) => {
-  // const nomenclatoricSynonyms = await speciesService
-  //   .getSynonymsNomenclatoricOf({ id, accessToken });
   const nomenclatoricSynonyms = await getRequest(
     nomenclaturesUri.getNomenclatoricSynonymsUri, { id }, accessToken,
   );
   nomenclatoricSynonyms.sort(helperUtils.listOfSpeciesSorterLex);
 
-  // const taxonomicSynonyms = await speciesService
-  //   .getSynonymsTaxonomicOf({ id, accessToken });
   const taxonomicSynonyms = await getRequest(
     nomenclaturesUri.getTaxonomicSynonymsUri, { id }, accessToken,
   );
   taxonomicSynonyms.sort(helperUtils.listOfSpeciesSorterLex);
 
-  // const invalidDesignations = await speciesService
-  //   .getInvalidDesignationsOf({ id, accessToken });
   const invalidDesignations = await getRequest(
     nomenclaturesUri.getInvalidSynonymsUri, { id }, accessToken,
   );
   invalidDesignations.sort(helperUtils.listOfSpeciesSorterLex);
 
-  return { nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations };
+  return {
+    nomenclatoricSynonyms,
+    taxonomicSynonyms,
+    invalidDesignations,
+  };
 };
 
 const getBasionymsFor = async ({ id, accessToken }) => {
@@ -195,6 +200,10 @@ const getBasionymsFor = async ({ id, accessToken }) => {
   };
 };
 
+const saveSpecies = async ({ data, accessToken }) => (
+  putRequest(nomenclaturesUri.baseUri, data, {}, accessToken)
+);
+
 const saveSpeciesAndSynonyms = async ({
   species,
   nomenclatoricSynonyms,
@@ -206,7 +215,7 @@ const saveSpeciesAndSynonyms = async ({
   isInvalidDesignationsChanged = true,
 }) => (
   Promise.all([
-    putRequest(nomenclaturesUri.baseUri, species, accessToken),
+    saveSpecies({ data: species, accessToken }),
     submitSynonyms({
       id: species.id,
       nomenclatoricSynonyms,
@@ -220,9 +229,13 @@ const saveSpeciesAndSynonyms = async ({
   ])
 );
 
-const saveSpecies = async ({ data, accessToken }) => (
-  putRequest(nomenclaturesUri.baseUri, data, accessToken)
-);
+function createSynonym(idParent, idSynonym, syntype) {
+  return {
+    id_parent: parseInt(idParent, 10),
+    id_synonym: idSynonym,
+    syntype,
+  };
+}
 
 export default {
   getRecordById,
@@ -233,4 +246,5 @@ export default {
   getBasionymsFor,
   saveSpeciesAndSynonyms,
   saveSpecies,
+  createSynonym,
 };
