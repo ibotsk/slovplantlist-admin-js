@@ -56,7 +56,7 @@ const NomenclatoricSynonymListItem = ({
       data={data}
       prefix={config.mappings.synonym.nomenclatoric.prefix}
       additions={Additions}
-      // showSubNomenclatoric
+      showSubNomenclatoric
       onRowDelete={onRowDelete}
     />
   );

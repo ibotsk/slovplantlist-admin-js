@@ -70,7 +70,7 @@ const SynonymListItem = ({
       {children}
       {showSubNomenclatoric
         && constructSubNomenlatoric(
-          speciesName['synonyms-nomenclatoric'],
+          speciesName['synonyms-nomenclatoric-through'],
         )
       }
     </ListGroupItem>
