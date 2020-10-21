@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
@@ -10,18 +10,19 @@ import {
 import { removeState } from 'services/local-storage';
 import { usersFacade } from 'facades';
 
-class Logout extends React.Component {
-  async componentWillMount() {
-    const { accessToken, unsetAuthenticated } = this.props;
-    await usersFacade.logout(accessToken);
-    unsetAuthenticated();
-    removeState();
-  }
+const Logout = ({ accessToken, unsetAuthenticated }) => {
+  useEffect(() => {
+    async function doLogout() {
+      await usersFacade.logout(accessToken);
+      unsetAuthenticated();
+      removeState();
+    }
 
-  render() {
-    return <Redirect to="/" />;
-  }
-}
+    doLogout();
+  });
+
+  return <Redirect to="/" />;
+};
 
 const mapStateToProps = (state) => ({
   accessToken: state.authentication.accessToken,
