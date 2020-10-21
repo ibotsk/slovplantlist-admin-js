@@ -1,36 +1,40 @@
-import rolesService from '../services/roles';
-import roleMappingsService from '../services/roleMappings';
+import { getRequest, putRequest } from 'services/backend';
 
-import config from '../config/config';
+import config from 'config/config';
 
-const getAllRoles = async ({ accessToken, format }) => {
-    const roles = await rolesService.getAll({ accessToken });
+const {
+  uris: { rolesUri, roleMappingsUri },
+} = config;
 
-    if (!format) {
-        return roles;
-    }
-    return roles.map(format);
+async function getAllRoles(accessToken, format = undefined) {
+  const roles = await getRequest(rolesUri.getAllWOrderUri, {}, accessToken);
+  if (!format) {
+    return roles;
+  }
+  return roles.map(format);
 }
 
 /**
  * Replaces existing role mapping or creates new.
  * User can have only one role.
- * @param {*} param0 
+ * @param {*} param0
  */
-const saveRoleForUser = async ({ userId, roleId, accessToken }) => {
-    const roleMappings = await roleMappingsService.getRoleMappingByUser({ userId, accessToken });
-    const roleMappingOfUser = roleMappings[0];
-    const data = {
-        ...roleMappingOfUser,
-        principalType: config.constants.userPrincipalType,
-        principalId: userId,
-        roleId
-    };
-    
-    await roleMappingsService.putRoleMapping({ data, accessToken });
+async function saveRoleForUser(userId, roleId, accessToken) {
+  const roleMappings = await getRequest(
+    roleMappingsUri.getByPrincipalIdUri, { principalId: userId }, accessToken,
+  );
+  const roleMappingOfUser = roleMappings[0];
+  const data = {
+    ...roleMappingOfUser,
+    principalType: config.constants.userPrincipalType,
+    principalId: userId,
+    roleId,
+  };
+
+  return putRequest(roleMappingsUri.baseUri, data, undefined, accessToken);
 }
 
 export default {
-    getAllRoles,
-    saveRoleForUser
-}
+  getAllRoles,
+  saveRoleForUser,
+};

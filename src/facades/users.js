@@ -1,64 +1,74 @@
-import usersService from '../services/user-service';
+import { getRequest, postRequest } from 'services/backend';
 
-import config from '../config/config';
+import config from 'config/config';
 
-const getAllUsers = async ({ accessToken }) => {
-    return usersService.getAll({ accessToken });
+const {
+  uris: { usersUri },
+} = config;
+
+async function getAllUsers(accessToken) {
+  return getRequest(usersUri.getAllWOrderUri, {}, accessToken);
 }
 
-const getUserById = async ({ id, accessToken }) => {
-    const user = await usersService.getByIdWithRoles({ id, accessToken });
-    user.password = '';
-    const roles = user.roles;
+async function getUserById(id, accessToken) {
+  const user = await getRequest(
+    usersUri.getByIdWithRolesUri, { id }, accessToken,
+  );
+  user.password = '';
+  const { roles } = user;
 
-    delete user.roles;
+  delete user.roles;
 
-    return { 
-        user, 
-        roles 
-    };
-};
+  return {
+    user,
+    roles,
+  };
+}
 
-const getGeneraOfUser = async ({ userId, accessToken, format }) => {
-    const genera = await usersService.getGeneraByUserId({ id: userId, accessToken });
-    
-    if (!format) {
-        return genera;
+async function getGeneraOfUser(userId, accessToken, format = undefined) {
+  const genera = await getRequest(
+    usersUri.getGeneraByUserId, { id: userId }, accessToken,
+  );
+
+  if (!format) {
+    return genera;
+  }
+  return genera.map(format);
+}
+
+async function saveUser(data, accessToken) {
+  const user = {
+    ...data,
+    realm: config.constants.userRealm,
+  };
+  if (data.id) {
+    if (!user.password) { // when editing, password is set to empty, unless set new
+      delete user.password;
     }
-    return genera.map(format);
+    await postRequest(
+      usersUri.updateByIdUri, user, { id: user.id }, accessToken,
+    );
+    return user.id;
+  }
+  return postRequest(usersUri.baseUri, data, undefined, accessToken);
 }
 
-const saveUser = async ({ data, accessToken }) => {
-    const user = {
-        ...data,
-        realm: config.constants.userRealm
-    };
-    if (data.id) {
-        if (!user.password) { // when editing, password is set to empty, unless set new
-            delete user.password;
-        }
-        await usersService.updateUser({ 
-            id: user.id, 
-            data: user, 
-            accessToken 
-        });
-        return user.id;
-    } else {
-        return await usersService.createUser({ 
-            data: user,
-            accessToken
-        });
-    }
+async function login(username, password) {
+  const response = await postRequest(
+    usersUri.loginUri, { username, password }, undefined, undefined,
+  );
+  return response.data;
 }
 
-const login = async (username, password) => {
-    return await usersService.login(username, password);
+async function logout(accessToken) {
+  return postRequest(usersUri.logoutUri, undefined, undefined, accessToken);
 }
 
 export default {
-    getAllUsers,
-    getUserById,
-    getGeneraOfUser,
-    saveUser,
-    login
-}
+  getAllUsers,
+  getUserById,
+  getGeneraOfUser,
+  saveUser,
+  login,
+  logout,
+};

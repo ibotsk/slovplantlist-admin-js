@@ -1,35 +1,64 @@
-import usersGeneraService from '../services/users-genera';
+import {
+  getRequest,
+  putRequest,
+  deleteRequest,
+} from 'services/backend';
 
-const saveUserGenera = async ({ userId, generaIdsAdded, generaRemoved, accessToken }) => {
+import config from 'config/config';
+
+const {
+  uris: { userGeneraUri },
+} = config;
+
+const getIdsForRemoval = async (userId, generaIdsToRemove, accessToken) => {
+  const idsForRemoval = [];
+
+  const promises = generaIdsToRemove.map(async (genusId) => {
+    const userGenera = await getRequest(
+      userGeneraUri.getAllByUserAndGenusUri, { userId, genusId }, accessToken,
+    );
+    const userGeneraIds = userGenera.map((ug) => ug.id);
+    idsForRemoval.push(...userGeneraIds);
+  });
+
+  await Promise.all(promises);
+
+  return idsForRemoval;
+};
+
+// ----- PUBLIC ----- //
+
+async function saveUserGenera({
+  userId, generaIdsAdded, generaRemoved, accessToken,
+}) {
+  const promises = [];
+
+  if (generaRemoved && generaRemoved.length > 0) {
     const generaIdsToRemove = [...new Set(generaRemoved)];
-    const idsToRemove = await getIdsForRemoval(userId, generaIdsToRemove, accessToken);
+    const idsToRemove = await getIdsForRemoval(
+      userId, generaIdsToRemove, accessToken,
+    );
 
-    for (const id of idsToRemove) {
-        await usersGeneraService.deleteUserGenus({ id, accessToken });
-    }
+    const idsToDeletePromises = idsToRemove.map((id) => (
+      deleteRequest(userGeneraUri.deleteUri, { id }, accessToken)
+    ));
+    promises.push(...idsToDeletePromises);
+  }
 
-    for (const genusId of generaIdsAdded) {
-        const data = {
-            id_user: userId,
-            id_genus: genusId
-        };
-        await usersGeneraService.putUserGenus({ data, accessToken });
-    }
+  if (generaIdsAdded && generaIdsAdded.length > 0) {
+    const generaIdsToSavePromises = generaIdsAdded.map(async (genusId) => {
+      const data = {
+        id_user: userId,
+        id_genus: genusId,
+      };
+      return putRequest(userGeneraUri.baseUri, data, undefined, accessToken);
+    });
+    promises.push(...generaIdsToSavePromises);
+  }
 
-}
-
-async function getIdsForRemoval(userId, generaIdsToRemove, accessToken) {
-    const idsForRemoval = [];
-
-    for (const genusId of generaIdsToRemove) {
-        const userGenera = await usersGeneraService.getUserGeneraByUserIdAndGenusId({ userId, genusId, accessToken });
-        
-        const userGeneraIds = userGenera.map(ug => ug.id);
-        idsForRemoval.push(...userGeneraIds);
-    }
-    return idsForRemoval;
+  return Promise.all(promises);
 }
 
 export default {
-    saveUserGenera
-}
+  saveUserGenera,
+};

@@ -1,48 +1,53 @@
-import familiesService from '../services/families';
-import utils from '../utils/utils';
+import { getRequest, putRequest } from 'services/backend';
+import { miscUtils } from 'utils';
 
-const getFamilyByIdCurated = async ({ id, accessToken }) => {
-    const data = await familiesService.getFamilyById({ id, accessToken });
-    return utils.nullToEmpty(data);
+import config from 'config/config';
+
+const {
+  uris: { familiesUri, familiesApgUri },
+} = config;
+
+async function getFamilyByIdCurated(id, accessToken) {
+  const data = await getRequest(familiesUri.getByIdUri, { id }, accessToken);
+  return miscUtils.nullToEmpty(data);
 }
 
-const getAllFamilies = async ({ format, accessToken }) => {
-    const data = await familiesService.getAllFamilies({ accessToken });
-
-    if (!format) {
-        return data;
-    }
-    return data.map(format);
+async function getAllFamilies(accessToken, format = undefined) {
+  const data = await getRequest(familiesUri.getAllWOrderUri, {}, accessToken);
+  if (!format) {
+    return data;
+  }
+  return data.map(format);
 }
 
-const getFamilyApgByIdCurated = async ({ id, accessToken }) => {
-    const data = await familiesService.getFamilyApgById({ id, accessToken });
-    return utils.nullToEmpty(data);
+async function getFamilyApgByIdCurated(id, accessToken) {
+  const data = await getRequest(familiesApgUri.getByIdUri, { id }, accessToken);
+  return miscUtils.nullToEmpty(data);
 }
 
-const getAllFamiliesApg = async ({ format, accessToken }) => {
-    const data = await familiesService.getAllFamiliesApg({ accessToken });
-
-    if (!format) {
-        return data;
-    }
-    return data.map(format);
+async function getAllFamiliesApg(accessToken, format = undefined) {
+  const data = await getRequest(
+    familiesApgUri.getAllWOrderUri, {}, accessToken,
+  );
+  if (!format) {
+    return data;
+  }
+  return data.map(format);
 }
 
-const saveFamily = async ({ data, accessToken }) => {
-    await familiesService.putFamily({ data, accessToken });
+async function saveFamily(data, accessToken) {
+  return putRequest(familiesUri.baseUri, data, undefined, accessToken);
 }
 
-const saveFamilyApg = async ({ data, accessToken }) => {
-    await familiesService.putFamilyApg({ data, accessToken });
+async function saveFamilyApg(data, accessToken) {
+  return putRequest(familiesApgUri.baseUri, data, undefined, accessToken);
 }
 
 export default {
-    getFamilyByIdCurated,
-    getAllFamilies,
-    getFamilyApgByIdCurated,
-    getAllFamiliesApg,
-    saveFamily,
-    saveFamilyApg
+  getFamilyByIdCurated,
+  getAllFamilies,
+  getFamilyApgByIdCurated,
+  getAllFamiliesApg,
+  saveFamily,
+  saveFamilyApg,
 };
-
