@@ -95,13 +95,12 @@ class UsersGeneraModal extends Component {
     });
   }
 
-  handleRemoveGenus = (id) => (
+  handleRemoveGenus = (genusId) => (
     this.setState((state) => {
       const { userGenera, userGeneraToRemove } = state;
-      const userGeneraWithoutId = userGenera.filter((g) => g.id !== id);
+      const userGeneraWithoutId = userGenera.filter((g) => g.id !== genusId);
 
-      userGeneraToRemove.push(id);
-
+      userGeneraToRemove.push(genusId);
       return {
         userGenera: userGeneraWithoutId,
         userGeneraToRemove,
@@ -168,6 +167,7 @@ class UsersGeneraModal extends Component {
                   options={genera}
                   onAddItemToList={this.handleAddGenus}
                   onRowDelete={this.handleRemoveGenus}
+                  getRowId={(d) => d.id} // this overrides default rowIndex
                   itemComponent={UserGenusListItem}
                 />
               </Col>

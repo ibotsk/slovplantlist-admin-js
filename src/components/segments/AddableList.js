@@ -150,6 +150,7 @@ AddableList.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number,
   })),
+  options: PropTypes.arrayOf(PropTypes.object),
   itemComponent: PropTypes.func.isRequired,
   getRowId: PropTypes.func,
   onAddItemToList: PropTypes.func.isRequired,
@@ -161,6 +162,7 @@ AddableList.propTypes = {
 AddableList.defaultProps = {
   id: undefined,
   data: [],
+  options: undefined,
   async: false,
   onSearch: undefined,
   getRowId: undefined,
