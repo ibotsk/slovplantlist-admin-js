@@ -10,20 +10,21 @@ const {
   uris: { userGeneraUri },
 } = config;
 
-async function getIdsForRemoval(userId, generaIdsToRemove, accessToken) {
+const getIdsForRemoval = async (userId, generaIdsToRemove, accessToken) => {
   const idsForRemoval = [];
 
-  // TODO: Promise.all
-  for (const genusId of generaIdsToRemove) {
+  const promises = generaIdsToRemove.map(async (genusId) => {
     const userGenera = await getRequest(
       userGeneraUri.getAllByUserAndGenusUri, { userId, genusId }, accessToken,
     );
-
     const userGeneraIds = userGenera.map((ug) => ug.id);
     idsForRemoval.push(...userGeneraIds);
-  }
+  });
+
+  await Promise.all(promises);
+
   return idsForRemoval;
-}
+};
 
 // ----- PUBLIC ----- //
 
@@ -46,7 +47,7 @@ async function saveUserGenera({
       id_user: userId,
       id_genus: genusId,
     };
-    putRequest(userGeneraUri.baseUri, data, accessToken);
+    putRequest(userGeneraUri.baseUri, data, undefined, accessToken);
   }
 }
 

@@ -31,7 +31,7 @@ async function saveRoleForUser(userId, roleId, accessToken) {
     roleId,
   };
 
-  return putRequest(roleMappingsUri.baseUri, data, accessToken);
+  return putRequest(roleMappingsUri.baseUri, data, undefined, accessToken);
 }
 
 export default {

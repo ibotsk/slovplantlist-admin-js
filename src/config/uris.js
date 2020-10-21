@@ -42,7 +42,7 @@ export default {
     getAllWFilterUri: `${backendBase}/api/genera?access_token=<%accessToken%>&filter={"offset":<%offset%>,"where":<%&where%>,"limit":<%limit%>,"include":["familyApg","family"],"order":<%&order%>}`,
     getAllBySearchTermUri: `${backendBase}/api/genera?access_token=<%accessToken%>&filter={"where":{"name":{"like":"%25<%term%>%25"}}}`,
     getAllWithFamiliesUri: `${backendBase}/api/genera?access_token=<%accessToken%>&filter={"include":["familyApg","family"]}`,
-    getByIdWithFamilies: `${backendBase}/api/genera/<%accessToken%>?access_token=<%accessToken%>&filter={"include":["familyApg","family"]}`,
+    getByIdWithFamilies: `${backendBase}/api/genera/<%id%>?access_token=<%accessToken%>&filter={"include":["familyApg","family"]}`,
     countUri: `${backendBase}/api/genera/count?access_token=<%accessToken%>&where=<%&whereString%>`,
   },
   familiesApgUri: {

@@ -50,12 +50,12 @@ async function saveUser(data, accessToken) {
     );
     return user.id;
   }
-  return postRequest(usersUri.baseUri, data, {}, accessToken);
+  return postRequest(usersUri.baseUri, data, undefined, accessToken);
 }
 
 async function login(username, password) {
   const response = await postRequest(
-    usersUri.loginUri, { username, password }, {}, undefined,
+    usersUri.loginUri, { username, password }, undefined, undefined,
   );
   return response.data;
 }

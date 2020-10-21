@@ -36,11 +36,11 @@ async function getAllFamiliesApg(accessToken, format = undefined) {
 }
 
 async function saveFamily(data, accessToken) {
-  return putRequest(familiesUri.baseUri, data, accessToken);
+  return putRequest(familiesUri.baseUri, data, undefined, accessToken);
 }
 
 async function saveFamilyApg(data, accessToken) {
-  return putRequest(familiesApgUri.baseUri, data, accessToken);
+  return putRequest(familiesApgUri.baseUri, data, undefined, accessToken);
 }
 
 export default {

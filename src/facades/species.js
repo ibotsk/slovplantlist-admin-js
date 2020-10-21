@@ -196,7 +196,7 @@ async function getBasionymsFor(id, accessToken) {
 }
 
 async function saveSpecies(data, accessToken) {
-  return putRequest(nomenclaturesUri.baseUri, data, {}, accessToken);
+  return putRequest(nomenclaturesUri.baseUri, data, undefined, accessToken);
 }
 
 async function saveSpeciesAndSynonyms({

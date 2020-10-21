@@ -55,8 +55,8 @@ class AddableList extends Component {
   }
 
   renderTypeahead = (async) => {
-    const { id } = this.props;
-    const { isLoading, options, selected } = this.state;
+    const { id, options: propsOptions } = this.props;
+    const { isLoading, options: stateOptions, selected } = this.state;
     if (async) {
       return (
         <AsyncTypeahead
@@ -64,7 +64,7 @@ class AddableList extends Component {
           bsSize="sm"
           ref={(typeahead) => { this.typeahead = typeahead; }}
           isLoading={isLoading}
-          options={options}
+          options={stateOptions}
           onChange={this.onChange}
           selected={selected}
           onSearch={this.handleSearchAsync}
@@ -77,7 +77,7 @@ class AddableList extends Component {
         id={id}
         bsSize="sm"
         ref={(typeahead) => { this.typeahead = typeahead; }}
-        options={options}
+        options={propsOptions}
         onChange={this.onChange}
         selected={selected}
         placeholder="Start by typing"

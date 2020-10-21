@@ -45,7 +45,7 @@ async function getGenusByIdWithFamilies(id, accessToken, format = undefined) {
 }
 
 async function saveGenus(data, accessToken) {
-  return putRequest(generaUri.baseUri, data, accessToken);
+  return putRequest(generaUri.baseUri, data, undefined, accessToken);
 }
 
 export default {
