@@ -26,8 +26,8 @@ const initialValues = {
   name: '',
   authors: '',
   vernacular: '',
-  id_family: undefined,
-  id_family_apg: undefined,
+  idFamily: undefined,
+  idFamilyApg: undefined,
 };
 
 class GeneraModal extends Component {
@@ -127,7 +127,7 @@ class GeneraModal extends Component {
     const {
       families, familiesApg,
       genus: {
-        name, authors, id_family: idFamily, id_family_apg: idFamilyApg,
+        name, authors, idFamily, idFamilyApg,
         vernacular,
       },
     } = this.state;
@@ -189,7 +189,7 @@ class GeneraModal extends Component {
                   options={families}
                   selected={families.filter((f) => f.id === idFamily)}
                   onChange={(selected) => (
-                    this.handleChangeTypeahead(selected, 'id_family')
+                    this.handleChangeTypeahead(selected, 'idFamily')
                   )}
                   placeholder="Start by typing a family in the database"
                 />
@@ -208,7 +208,7 @@ class GeneraModal extends Component {
                   options={familiesApg}
                   selected={familiesApg.filter((f) => f.id === idFamilyApg)}
                   onChange={(selected) => (
-                    this.handleChangeTypeahead(selected, 'id_family_apg')
+                    this.handleChangeTypeahead(selected, 'idFamilyApg')
                   )}
                   placeholder="Start by typing a family APG in the database"
                 />

@@ -34,19 +34,19 @@ const initialValues = {
   nothosubsp: '',
   nothoforma: '',
   authors: '',
-  genus_h: '',
-  species_h: '',
-  subsp_h: '',
-  var_h: '',
-  subvar_h: '',
-  forma_h: '',
-  nothosubsp_h: '',
-  nothoforma_h: '',
-  authors_h: '',
+  genusH: '',
+  speciesH: '',
+  subspH: '',
+  varH: '',
+  subvarH: '',
+  formaH: '',
+  nothosubspH: '',
+  nothoformaH: '',
+  authorsH: '',
   publication: '',
   vernacular: '',
   tribus: '',
-  id_genus: undefined,
+  idGenus: undefined,
 };
 
 const ntypes = config.mappings.losType;
@@ -81,11 +81,11 @@ class SpeciesNameModal extends Component {
       this.setState((state) => {
         const { genera } = state;
         const genusSelected = genera
-          .filter((g) => g.id === data.id_genus)
+          .filter((g) => g.id === data.idGenus)
           .map((g) => ({ id: g.id, label: g.name }));
         const {
           familySelected, familyApgSelected,
-        } = this.filterFamilies(data.id_genus);
+        } = this.filterFamilies(data.idGenus);
 
         this.setState({
           record: data,
@@ -132,7 +132,7 @@ class SpeciesNameModal extends Component {
     const id = selected[0] ? selected[0].id : undefined;
     this.setState((state) => {
       const { record } = state;
-      record.id_genus = id;
+      record.idGenus = id;
       const { familySelected, familyApgSelected } = this.filterFamilies(id);
       return {
         record,
@@ -189,16 +189,14 @@ class SpeciesNameModal extends Component {
     if (isHybrid) {
       const {
         record: {
-          genus_h: genusH, species_h: speciesH, subsp_h: subspH,
-          var_h: varH, subvar_h: subvarH, forma_h: formaH,
-          nothosubsp_h: nothosubspH, nothoforma_h: nothoformaH,
-          authors_h: authorsH,
+          genusH, speciesH, subspH, varH, subvarH, formaH,
+          nothosubspH, nothoformaH, authorsH,
         },
       } = this.state;
       return (
         <Panel>
           <Panel.Body>
-            <FormGroup controlId="genus_h" bsSize="sm">
+            <FormGroup controlId="genusH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={titleColWidth}>
                 Hybrid Genus
               </Col>
@@ -211,7 +209,7 @@ class SpeciesNameModal extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="species_h" bsSize="sm">
+            <FormGroup controlId="speciesH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={titleColWidth}>
                 Hybrid Species
               </Col>
@@ -224,7 +222,7 @@ class SpeciesNameModal extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="subsp_h" bsSize="sm">
+            <FormGroup controlId="subspH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={titleColWidth}>
                 Hybrid Subsp
               </Col>
@@ -237,7 +235,7 @@ class SpeciesNameModal extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="var_h" bsSize="sm">
+            <FormGroup controlId="varH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={titleColWidth}>
                 Hybrid Var
               </Col>
@@ -250,7 +248,7 @@ class SpeciesNameModal extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="subvar_h" bsSize="sm">
+            <FormGroup controlId="subvarH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={titleColWidth}>
                 Hybrid Subvar
               </Col>
@@ -263,7 +261,7 @@ class SpeciesNameModal extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="forma_h" bsSize="sm">
+            <FormGroup controlId="formaH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={titleColWidth}>
                 Hybrid Forma
               </Col>
@@ -276,7 +274,7 @@ class SpeciesNameModal extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="nothosubsp_h" bsSize="sm">
+            <FormGroup controlId="nothosubspH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={titleColWidth}>
                 Hybrid Nothosubsp
               </Col>
@@ -289,7 +287,7 @@ class SpeciesNameModal extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="nothoforma_h" bsSize="sm">
+            <FormGroup controlId="nothoformaH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={titleColWidth}>
                 Hybrid Nothoforma
               </Col>
@@ -302,7 +300,7 @@ class SpeciesNameModal extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="authors_h" bsSize="sm">
+            <FormGroup controlId="authorsH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={titleColWidth}>
                 Hybrid Authors
               </Col>

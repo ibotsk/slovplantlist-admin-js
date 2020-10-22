@@ -15,8 +15,8 @@ const {
 } = config;
 
 const synonymComparator = (value, other) => (
-  value.id_parent === other.id_parent
-  && value.id_synonym === other.id_synonym
+  value.idParent === other.idParent
+  && value.idPynonym === other.idSynonym
 );
 
 /**
@@ -27,7 +27,7 @@ const synonymComparator = (value, other) => (
  * Insert synonyms:
  *  - that are not in currentList and are in newList
  *  - they do not have id
- * Compare by id_parent and id_synonym.
+ * Compare by idParent and idPynonym.
  * @param {array} currentList
  * @param {array} newList
  * @param {number} syntype
@@ -53,7 +53,7 @@ const synonymsToUpsert = (
 /**
  * Synonyms that:
  *  are in currentList but are not in newList.
- * Compare by id_parent && id_synonym
+ * Compare by idParent && idPynonym
  * @param {array} currentList
  * @param {array} newList
  * @returns {array} of ids
@@ -220,8 +220,8 @@ async function saveSpeciesAndSynonyms({
 
 function createSynonym(idParent, idSynonym, syntype) {
   return {
-    id_parent: parseInt(idParent, 10),
-    id_synonym: idSynonym,
+    idParent: parseInt(idParent, 10),
+    idSynonym,
     syntype,
   };
 }

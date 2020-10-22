@@ -48,8 +48,8 @@ async function saveUserGenera({
   if (generaIdsAdded && generaIdsAdded.length > 0) {
     const generaIdsToSavePromises = generaIdsAdded.map(async (genusId) => {
       const data = {
-        id_user: userId,
-        id_genus: genusId,
+        idUser: userId,
+        idGenus: genusId,
       };
       return putRequest(userGeneraUri.baseUri, data, undefined, accessToken);
     });
