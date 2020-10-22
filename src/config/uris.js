@@ -73,7 +73,7 @@ export default {
     countUri: `${backendBase}/api/user-lbs/count?access_token=<%accessToken%>&where=<%&whereString%>`,
   },
   userGeneraUri: {
-    baseUri: `${backendBase}/api/users_generas?access_token=<%accessToken%>`,
+    baseUri: `${backendBase}/api/users-generas?access_token=<%accessToken%>`,
     getAllByUserAndGenusUri: `${backendBase}/api/users-generas?filter={"where":{"and":[{"idUser":<%userId%>},{"idGenus":<%genusId%>}]}}&access_token=<%accessToken%>`,
     deleteUri: `${backendBase}/api/users-generas/<%id%>?access_token=<%accessToken%>`,
   },
