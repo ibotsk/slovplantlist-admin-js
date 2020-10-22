@@ -76,15 +76,16 @@ class GeneraModal extends Component {
     return VALIDATION_STATE_ERROR;
   }
 
-  handleChangeInput = (e) => (
-    this.setState((state) => {
+  handleChangeInput = (e) => {
+    const { id: prop, value } = e.target;
+    return this.setState((state) => {
       const { genus } = state;
-      genus[e.target.id] = e.target.value;
+      genus[prop] = value;
       return {
         genus,
       };
-    })
-  );
+    });
+  };
 
   handleHide = () => {
     this.setState({
@@ -252,7 +253,7 @@ export default connect(mapStateToProps)(GeneraModal);
 
 GeneraModal.propTypes = {
   show: PropTypes.bool.isRequired,
-  id: PropTypes.number.isRequired,
+  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   accessToken: PropTypes.string.isRequired,
   onHide: PropTypes.func.isRequired,
 };

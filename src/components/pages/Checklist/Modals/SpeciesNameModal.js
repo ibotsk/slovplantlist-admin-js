@@ -87,12 +87,12 @@ class SpeciesNameModal extends Component {
           familySelected, familyApgSelected,
         } = this.filterFamilies(data.idGenus);
 
-        this.setState({
+        return {
           record: data,
           genusSelected,
           familySelected,
           familyApgSelected,
-        });
+        };
       });
     }
   }
@@ -108,25 +108,27 @@ class SpeciesNameModal extends Component {
     return false;
   }
 
-  handleChange = (e) => (
-    this.setState((state) => {
+  handleChange = (e) => {
+    const { id: prop, value } = e.target;
+    return this.setState((state) => {
       const { record } = state;
-      record[e.target.id] = e.target.value;
+      record[prop] = value;
       return {
         record,
       };
-    })
-  );
+    });
+  };
 
-  handleChangeCheckbox = (e) => (
-    this.setState((state) => {
+  handleChangeCheckbox = (e) => {
+    const { id: prop, checked } = e.target;
+    return this.setState((state) => {
       const { record } = state;
-      record[e.target.id] = e.target.checked;
+      record[prop] = checked;
       return {
         record,
       };
-    })
-  );
+    });
+  };
 
   handleChangeTypeahead = (selected) => {
     const id = selected[0] ? selected[0].id : undefined;

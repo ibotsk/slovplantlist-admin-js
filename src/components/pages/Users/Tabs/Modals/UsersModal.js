@@ -83,10 +83,11 @@ class UsersModal extends Component {
   }
 
   handleChange = (e) => {
-    this.setState((state) => {
+    const { id: prop, value } = e.target;
+    return this.setState((state) => {
       const { user } = state;
-      const id = e.target.id.replace(PREFIX, '');
-      user[id] = e.target.value;
+      const id = prop.replace(PREFIX, '');
+      user[id] = value;
       return {
         user,
       };
@@ -94,10 +95,11 @@ class UsersModal extends Component {
   }
 
   handleChangeRole = (e) => {
-    this.setState((state) => {
+    const { value } = e.target;
+    return this.setState((state) => {
       const { rolesOptions } = state;
       const userRole = rolesOptions.find((r) => (
-        r.id === parseInt(e.target.value, 10)
+        r.id === parseInt(value, 10)
       ));
       return {
         userRole,

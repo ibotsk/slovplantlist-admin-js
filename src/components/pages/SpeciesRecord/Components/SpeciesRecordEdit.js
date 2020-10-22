@@ -173,11 +173,12 @@ class SpeciesRecord extends Component {
     this.handleChange(e.target.id, e.target.checked);
   }
 
-  handleChange = (property, value) => this.setState((state) => {
-    const { record } = state;
-    record[property] = value;
-    return record;
-  });
+  handleChange = (property, value) => (
+    this.setState((state) => {
+      const { record } = state;
+      record[property] = value;
+      return record;
+    }));
 
   getSelectedTypeahead = (id) => {
     const { [`${id}Selected`]: selectedTypeahead } = this.state;
