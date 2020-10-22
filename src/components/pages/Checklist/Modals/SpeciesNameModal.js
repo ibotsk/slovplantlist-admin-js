@@ -178,7 +178,7 @@ class SpeciesNameModal extends Component {
       .map((g) => (g.family ? g.family.name : '-'))[0];
     const familyApgSelected = genera
       .filter((g) => g.id === idGenus)
-      .map((g) => (g.familyApg ? g.familyApg.name : '-'))[0];
+      .map((g) => (g['family-apg'] ? g['family-apg'].name : '-'))[0];
     return {
       familySelected,
       familyApgSelected,

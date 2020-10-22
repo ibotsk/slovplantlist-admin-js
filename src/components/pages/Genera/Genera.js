@@ -49,7 +49,7 @@ const columns = [
     sort: true,
   },
   {
-    dataField: 'familyAPG',
+    dataField: 'familyApg',
     text: 'Family APG',
   },
   {
@@ -113,7 +113,7 @@ class Genera extends React.Component {
       name: g.name,
       authors: g.authors,
       vernacular: g.vernacular,
-      familyAPG: g.familyApg ? g.familyApg.name : '',
+      familyApg: g['family-apg'] ? g['family-apg'].name : '',
       family: g.family ? g.family.name : '',
     };
   })
@@ -123,7 +123,6 @@ class Genera extends React.Component {
       user, data, onTableChange, paginationOptions,
     } = this.props;
     const { editId, showModalGenera } = this.state;
-
     return (
       <div id="genera">
         <Grid id="functions-panel">

@@ -100,21 +100,21 @@ async function getRecordById(id, accessToken) {
   const basionym = helperUtils.losToTypeaheadSelected(speciesRecord.basionym);
   const replaced = helperUtils.losToTypeaheadSelected(speciesRecord.replaced);
   const nomenNovum = helperUtils.losToTypeaheadSelected(
-    speciesRecord.nomenNovum,
+    speciesRecord['nomen-novum'],
   );
 
   const genus = [{
-    id: speciesRecord.genusRel.id,
-    label: speciesRecord.genusRel.name,
+    id: speciesRecord['genus-rel'].id,
+    label: speciesRecord['genus-rel'].name,
   }];
-  const familyApg = speciesRecord.genusRel.familyApg.name;
-  const family = speciesRecord.genusRel.family.name;
+  const { name: familyApg } = speciesRecord['genus-rel']['family-apg'];
+  const { name: family } = speciesRecord['genus-rel'].family;
 
   delete speciesRecord.accepted;
   delete speciesRecord.basionym;
   delete speciesRecord.replaced;
-  delete speciesRecord.nomenNovum;
-  delete speciesRecord.genusRel;
+  delete speciesRecord['nomen-novum'];
+  delete speciesRecord['genus-rel'];
 
   return {
     speciesRecord,
