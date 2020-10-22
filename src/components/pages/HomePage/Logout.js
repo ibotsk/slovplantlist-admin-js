@@ -19,7 +19,7 @@ const Logout = ({ accessToken, unsetAuthenticated }) => {
     }
 
     doLogout();
-  });
+  }, [accessToken, unsetAuthenticated]);
 
   return <Redirect to="/" />;
 };
