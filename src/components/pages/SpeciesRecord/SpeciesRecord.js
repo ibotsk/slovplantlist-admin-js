@@ -22,7 +22,7 @@ class SpeciesRecord extends React.Component {
 
   async componentDidMount() {
     const { match: { params: { id } }, accessToken } = this.props;
-    const { id_genus: idGenus } = await speciesFacade.getSpeciesById(
+    const { idGenus } = await speciesFacade.getSpeciesById(
       id, accessToken,
     );
     this.setState({

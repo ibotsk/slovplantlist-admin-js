@@ -34,11 +34,11 @@ import {
 const LABEL_COL_WIDTH = 2;
 const CONTENT_COL_WIDTH = 10;
 
-const ID_GENUS_NAME_PROP = 'id_genus';
-const ID_ACCEPTED_NAME_PROP = 'id_accepted_name';
-const ID_BASIONYM_NAME_PROP = 'id_basionym';
-const ID_REPLACED_NAME_PROP = 'id_replaced';
-const ID_NOMEN_NOVUM_NAME_PROP = 'id_nomen_novum';
+const ID_GENUS_NAME_PROP = 'idGenus';
+const ID_ACCEPTED_NAME_PROP = 'idAcceptedName';
+const ID_BASIONYM_NAME_PROP = 'idBasionym';
+const ID_REPLACED_NAME_PROP = 'idReplaced';
+const ID_NOMEN_NOVUM_NAME_PROP = 'idNomenNovum';
 
 const CHECKLIST_LIST_URI = '/checklist';
 
@@ -46,38 +46,38 @@ const ntypes = config.mappings.losType;
 
 const recordInitialValues = {
   authors: '',
-  authors_h: '',
+  authorsH: '',
   forma: '',
-  forma_h: '',
+  formaH: '',
   genus: '',
-  genus_h: '',
+  genusH: '',
   hybrid: false,
   id: undefined,
-  id_accepted_name: undefined,
-  id_basionym: undefined,
-  id_genus: undefined,
-  id_nomen_novum: undefined,
-  id_replaced: undefined,
-  is_basionym: false,
-  is_isonym: false,
+  idAcceptedName: undefined,
+  idBasionym: undefined,
+  idGenus: undefined,
+  idNomenNovum: undefined,
+  idReplaced: undefined,
+  isBasionym: false,
+  isIsonym: false,
   notes: '',
   nothoforma: '',
-  nothoforma_h: '',
+  nothoformaH: '',
   nothosubsp: '',
-  nothosubsp_h: '',
+  nothosubspH: '',
   ntype: 'A',
-  ntype_order: 8,
+  ntypeOrder: 8,
   publication: '',
   species: '',
-  species_h: '',
+  speciesH: '',
   subsp: '',
-  subsp_h: '',
+  subspH: '',
   subvar: '',
-  subvar_h: '',
-  syn_type: undefined,
+  subvarH: '',
+  synType: undefined,
   tribus: '',
   var: '',
-  var_h: '',
+  varH: '',
   vernacular: '',
 };
 
@@ -173,11 +173,12 @@ class SpeciesRecord extends Component {
     this.handleChange(e.target.id, e.target.checked);
   }
 
-  handleChange = (property, value) => this.setState((state) => {
-    const { record } = state;
-    record[property] = value;
-    return record;
-  });
+  handleChange = (property, value) => (
+    this.setState((state) => {
+      const { record } = state;
+      record[property] = value;
+      return record;
+    }));
 
   getSelectedTypeahead = (id) => {
     const { [`${id}Selected`]: selectedTypeahead } = this.state;
@@ -339,16 +340,14 @@ class SpeciesRecord extends Component {
     if (isHybrid) {
       const {
         record: {
-          genus_h: genusH, species_h: speciesH, subsp_h: subspH,
-          var_h: varH, subvar_h: subvarH, forma_h: formaH,
-          nothosubsp_h: nothosubspH, nothoforma_h: nothoformaH,
-          authors_h: authorsH,
+          genusH, speciesH, subspH, varH, subvarH, formaH,
+          nothosubspH, nothoformaH, authorsH,
         } = {},
       } = this.state;
       return (
         <Panel>
           <Panel.Body>
-            <FormGroup controlId="genus_h" bsSize="sm">
+            <FormGroup controlId="genusH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                 Hybrid Genus
               </Col>
@@ -361,7 +360,7 @@ class SpeciesRecord extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="species_h" bsSize="sm">
+            <FormGroup controlId="speciesH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                 Hybrid Species
               </Col>
@@ -374,7 +373,7 @@ class SpeciesRecord extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="subsp_h" bsSize="sm">
+            <FormGroup controlId="subspH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                 Hybrid Subsp
               </Col>
@@ -387,7 +386,7 @@ class SpeciesRecord extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="var_h" bsSize="sm">
+            <FormGroup controlId="varH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                 Hybrid Var
               </Col>
@@ -400,7 +399,7 @@ class SpeciesRecord extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="subvar_h" bsSize="sm">
+            <FormGroup controlId="subvarH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                 Hybrid Subvar
               </Col>
@@ -413,7 +412,7 @@ class SpeciesRecord extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="forma_h" bsSize="sm">
+            <FormGroup controlId="formaH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                 Hybrid Forma
               </Col>
@@ -426,7 +425,7 @@ class SpeciesRecord extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="nothosubsp_h" bsSize="sm">
+            <FormGroup controlId="nothosubspH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                 Hybrid Nothosubsp
               </Col>
@@ -439,7 +438,7 @@ class SpeciesRecord extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="nothoforma_h" bsSize="sm">
+            <FormGroup controlId="nothoformaH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                 Hybrid Nothoforma
               </Col>
@@ -452,7 +451,7 @@ class SpeciesRecord extends Component {
                 />
               </Col>
             </FormGroup>
-            <FormGroup controlId="authors_h" bsSize="sm">
+            <FormGroup controlId="authorsH" bsSize="sm">
               <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                 Hybrid Authors
               </Col>

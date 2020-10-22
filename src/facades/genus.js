@@ -30,11 +30,10 @@ async function getGenusByIdWithFamilies(id, accessToken, format = undefined) {
   const genus = await getRequest(
     generaUri.getByIdWithFamilies, { id }, accessToken,
   );
-  const { family } = genus;
-  const { familyApg } = genus;
+  const { family, 'family-apg': familyApg } = genus;
 
   delete genus.family;
-  delete genus.familyApg;
+  delete genus['family-apg'];
 
   let toReturn = genus;
   if (format) {

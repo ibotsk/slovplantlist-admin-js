@@ -147,7 +147,7 @@ class Checklist extends React.Component {
           role={user.role}
           perform="species:edit"
           data={{
-            speciesGenusId: d.id_genus,
+            speciesGenusId: d.idGenus,
             userGeneraIds: user.userGenera,
           }}
           yes={() => (
@@ -162,17 +162,17 @@ class Checklist extends React.Component {
           role={user.role}
           perform="species:edit"
           data={{
-            speciesGenusId: d.id_genus,
+            speciesGenusId: d.idGenus,
             userGeneraIds: user.userGenera,
           }}
           yes={() => (
-            <Ownership role={user.role} isOwner owners={d.owner_names} />
+            <Ownership role={user.role} isOwner owners={d.ownerNames} />
           )}
           no={() => (
             <Ownership
               role={user.role}
               isOwner={false}
-              owners={d.owner_names}
+              owners={d.ownerNames}
             />
           )}
         />
@@ -187,7 +187,7 @@ class Checklist extends React.Component {
             role={user.role}
             perform="species:edit"
             data={{
-              speciesGenusId: d.id_genus,
+              speciesGenusId: d.idGenus,
               userGeneraIds: user.userGenera,
             }}
             yes={() => (
@@ -206,7 +206,7 @@ class Checklist extends React.Component {
           <LosName key={`acc${d.id}`} data={d.accepted} />
         </a>
       ),
-      idGenus: d.id_genus,
+      idGenus: d.idGenus,
     };
   });
 

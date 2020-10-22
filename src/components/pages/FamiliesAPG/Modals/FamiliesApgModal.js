@@ -67,7 +67,7 @@ class FamiliesApgModal extends Component {
 
   handleSave = async () => {
     if (this.getValidationState() === VALIDATION_STATE_SUCCESS) {
-      const { data } = this.state;
+      const data = this.state;
       const { accessToken } = this.props;
       try {
         await familiesFacade.saveFamilyApg(data, accessToken);
@@ -150,7 +150,7 @@ export default connect(mapStateToProps)(FamiliesApgModal);
 
 FamiliesApgModal.propTypes = {
   show: PropTypes.bool.isRequired,
-  id: PropTypes.number.isRequired,
+  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   accessToken: PropTypes.string.isRequired,
   onHide: PropTypes.func.isRequired,
 };

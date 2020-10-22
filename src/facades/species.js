@@ -15,8 +15,8 @@ const {
 } = config;
 
 const synonymComparator = (value, other) => (
-  value.id_parent === other.id_parent
-  && value.id_synonym === other.id_synonym
+  value.idParent === other.idParent
+  && value.idPynonym === other.idSynonym
 );
 
 /**
@@ -27,7 +27,7 @@ const synonymComparator = (value, other) => (
  * Insert synonyms:
  *  - that are not in currentList and are in newList
  *  - they do not have id
- * Compare by id_parent and id_synonym.
+ * Compare by idParent and idPynonym.
  * @param {array} currentList
  * @param {array} newList
  * @param {number} syntype
@@ -53,7 +53,7 @@ const synonymsToUpsert = (
 /**
  * Synonyms that:
  *  are in currentList but are not in newList.
- * Compare by id_parent && id_synonym
+ * Compare by idParent && idPynonym
  * @param {array} currentList
  * @param {array} newList
  * @returns {array} of ids
@@ -100,21 +100,21 @@ async function getRecordById(id, accessToken) {
   const basionym = helperUtils.losToTypeaheadSelected(speciesRecord.basionym);
   const replaced = helperUtils.losToTypeaheadSelected(speciesRecord.replaced);
   const nomenNovum = helperUtils.losToTypeaheadSelected(
-    speciesRecord.nomenNovum,
+    speciesRecord['nomen-novum'],
   );
 
   const genus = [{
-    id: speciesRecord.genusRel.id,
-    label: speciesRecord.genusRel.name,
+    id: speciesRecord['genus-rel'].id,
+    label: speciesRecord['genus-rel'].name,
   }];
-  const familyApg = speciesRecord.genusRel.familyApg.name;
-  const family = speciesRecord.genusRel.family.name;
+  const { name: familyApg } = speciesRecord['genus-rel']['family-apg'];
+  const { name: family } = speciesRecord['genus-rel'].family;
 
   delete speciesRecord.accepted;
   delete speciesRecord.basionym;
   delete speciesRecord.replaced;
-  delete speciesRecord.nomenNovum;
-  delete speciesRecord.genusRel;
+  delete speciesRecord['nomen-novum'];
+  delete speciesRecord['genus-rel'];
 
   return {
     speciesRecord,
@@ -220,8 +220,8 @@ async function saveSpeciesAndSynonyms({
 
 function createSynonym(idParent, idSynonym, syntype) {
   return {
-    id_parent: parseInt(idParent, 10),
-    id_synonym: idSynonym,
+    idParent: parseInt(idParent, 10),
+    idSynonym,
     syntype,
   };
 }
