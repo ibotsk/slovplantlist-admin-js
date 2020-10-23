@@ -16,7 +16,7 @@ const {
 
 const synonymComparator = (value, other) => (
   value.idParent === other.idParent
-  && value.idPynonym === other.idSynonym
+  && value.idSynonym === other.idSynonym
 );
 
 /**
