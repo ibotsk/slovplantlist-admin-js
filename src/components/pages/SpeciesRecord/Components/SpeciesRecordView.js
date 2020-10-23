@@ -101,13 +101,13 @@ class SpeciesRecordView extends React.Component {
       nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
       basionymFor, replacedFor, nomenNovumFor,
       record,
-      record: {
-        ntype, publication, vernacular, tribus,
-      },
     } = this.state;
     if (!record) {
       return null;
     }
+    const {
+      ntype, publication, vernacular, tribus,
+    } = record;
     const type = config.mappings.losType[ntype];
     return (
       <div id="species-detail">
