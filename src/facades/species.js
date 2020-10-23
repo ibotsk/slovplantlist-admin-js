@@ -171,10 +171,15 @@ async function getSynonyms(id, accessToken) {
   );
   invalidDesignations.sort(helperUtils.listOfSpeciesSorterLex);
 
+  const misidentifications = await getRequest(
+    nomenclaturesUri.getMisidentificationsUri, { id }, accessToken,
+  );
+
   return {
     nomenclatoricSynonyms,
     taxonomicSynonyms,
     invalidDesignations,
+    misidentifications,
   };
 }
 
@@ -204,12 +209,14 @@ async function saveSpeciesAndSynonyms({
   nomenclatoricSynonyms,
   taxonomicSynonyms,
   invalidDesignations,
+  misidentifications,
   accessToken,
 }) {
   const allNewSynonyms = [
     ...nomenclatoricSynonyms,
     ...taxonomicSynonyms,
     ...invalidDesignations,
+    ...misidentifications,
   ];
 
   return Promise.all([
