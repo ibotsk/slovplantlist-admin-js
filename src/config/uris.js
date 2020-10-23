@@ -27,6 +27,7 @@ export default {
     getNomenclatoricSynonymsUri: `${backendBase}/api/nomenclatures/<%id%>/synonyms-nomenclatoric?access_token=<%accessToken%>&filter={"include":"synonyms-nomenclatoric-through"}`,
     getTaxonomicSynonymsUri: `${backendBase}/api/nomenclatures/<%id%>/synonyms-taxonomic?access_token=<%accessToken%>&filter={"include":"synonyms-nomenclatoric-through"}`,
     getInvalidSynonymsUri: `${backendBase}/api/nomenclatures/<%id%>/synonyms-invalid?access_token=<%accessToken%>`,
+    getMisidentificationsUri: `${backendBase}/api/nomenclatures/<%id%>/synonyms-misidentification?access_token=<%accessToken%>`,
     getSynonymsOfParent: `${backendBase}/api/nomenclatures/<%id%>/parent-of-synonyms?access_token=<%accessToken%>`,
     getBasionymForUri: `${backendBase}/api/nomenclatures/<%id%>/basionym-for?access_token=<%accessToken%>`,
     getReplacedForUri: `${backendBase}/api/nomenclatures/<%id%>/replaced-for?access_token=<%accessToken%>`,

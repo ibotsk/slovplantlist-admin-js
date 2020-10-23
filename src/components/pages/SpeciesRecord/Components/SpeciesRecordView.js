@@ -8,6 +8,7 @@ import {
 import { LinkContainer } from 'react-router-bootstrap';
 
 import PropTypes from 'prop-types';
+import SynonymType from 'components/propTypes/synonym';
 
 import LosName from 'components/segments/Checklist/LosName';
 import SynonymListItem from 'components/segments/SynonymListItem';
@@ -17,6 +18,16 @@ import { speciesFacade } from 'facades';
 import config from 'config/config';
 
 const CHECKLIST_LIST_URI = '/checklist';
+
+const MisidentificationAuthor = ({ item }) => (
+  <div className="checklist-subinfo">
+    Misidentified by:
+    {' '}
+    {
+      `${item.misidentificationAuthor || '-'}`
+    }
+  </div>
+);
 
 class SpeciesRecordView extends React.Component {
   constructor(props) {
@@ -34,6 +45,7 @@ class SpeciesRecordView extends React.Component {
       nomenclatoricSynonyms: [],
       taxonomicSynonyms: [],
       invalidDesignations: [],
+      misidentifications: [],
       basionymFor: [],
       replacedFor: [],
       nomenNovumFor: [],
@@ -50,6 +62,7 @@ class SpeciesRecordView extends React.Component {
 
       const {
         nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
+        misidentifications,
       } = await speciesFacade.getSynonyms(recordId, accessToken);
       const {
         basionymFor, replacedFor, nomenNovumFor,
@@ -67,6 +80,7 @@ class SpeciesRecordView extends React.Component {
         nomenclatoricSynonyms,
         taxonomicSynonyms,
         invalidDesignations,
+        misidentifications,
         basionymFor,
         replacedFor,
         nomenNovumFor,
@@ -74,11 +88,23 @@ class SpeciesRecordView extends React.Component {
     }
   }
 
-  renderSynonyms = (list, prefix) => {
+  renderSynonyms = (list, prefix, Addition = undefined) => {
     if (list && list.length) {
-      return list.map((s) => (
-        <SynonymListItem data={{ prefix, value: s }} key={s.id} />
-      ));
+      return list.map((s) => {
+        let adt;
+        if (Addition) {
+          // used for misidentification authors
+          adt = () => (<Addition item={s} />);
+        }
+        return (
+          <SynonymListItem
+            data={s}
+            prefix={prefix}
+            key={s.id}
+            additions={adt}
+          />
+        );
+      });
     }
     return <ListGroupItem />;
   }
@@ -99,15 +125,16 @@ class SpeciesRecordView extends React.Component {
       familyApg, family, genus,
       accepted, basionym, replaced, nomenNovum,
       nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
+      misidentifications,
       basionymFor, replacedFor, nomenNovumFor,
       record,
-      record: {
-        ntype, publication, vernacular, tribus,
-      },
     } = this.state;
     if (!record) {
       return null;
     }
+    const {
+      ntype, publication, vernacular, tribus,
+    } = record;
     const type = config.mappings.losType[ntype];
     return (
       <div id="species-detail">
@@ -202,6 +229,16 @@ class SpeciesRecordView extends React.Component {
                     )}
                   </ListGroup>
                 </dd>
+                <dt>Misidentifications</dt>
+                <dd>
+                  <ListGroup>
+                    {this.renderSynonyms(
+                      misidentifications,
+                      config.mappings.synonym.misidentification.prefix,
+                      MisidentificationAuthor,
+                    )}
+                  </ListGroup>
+                </dd>
               </dl>
             </Well>
           </div>
@@ -259,4 +296,8 @@ SpeciesRecordView.propTypes = {
 
 SpeciesRecordView.defaultProps = {
   recordId: undefined,
+};
+
+MisidentificationAuthor.propTypes = {
+  item: SynonymType.type.isRequired,
 };

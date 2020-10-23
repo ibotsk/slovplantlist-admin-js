@@ -99,6 +99,10 @@ export default {
         numType: 1,
         prefix: '–',
       },
+      misidentification: {
+        numType: 4,
+        prefix: '–',
+      },
     },
     userRole: {
       admin: {

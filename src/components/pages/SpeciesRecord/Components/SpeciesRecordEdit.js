@@ -29,6 +29,7 @@ import {
   NomenclatoricSynonymListItem,
   TaxonomicSynonymListItem,
   InvalidSynonymListItem,
+  MisidentifiedSynonymListItem,
 } from './items';
 
 const LABEL_COL_WIDTH = 2;
@@ -124,6 +125,7 @@ class SpeciesRecord extends Component {
       nomenclatoricSynonyms: [], // contains objects of synonym
       taxonomicSynonyms: [],
       invalidDesignations: [],
+      misidentifications: [],
 
       basionymFor: [],
       replacedFor: [],
@@ -140,7 +142,8 @@ class SpeciesRecord extends Component {
       } = await speciesFacade.getRecordById(recordId, accessToken);
 
       const {
-        nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
+        nomenclatoricSynonyms, taxonomicSynonyms,
+        invalidDesignations, misidentifications,
       } = await speciesFacade.getSynonyms(recordId, accessToken);
       const {
         basionymFor, replacedFor, nomenNovumFor,
@@ -158,6 +161,7 @@ class SpeciesRecord extends Component {
         nomenclatoricSynonyms,
         taxonomicSynonyms,
         invalidDesignations,
+        misidentifications,
         basionymFor,
         replacedFor,
         nomenNovumFor,
@@ -290,6 +294,16 @@ class SpeciesRecord extends Component {
     })
   )
 
+  handleChangeMisidentificationAuthor = (rowId, value) => (
+    this.setState((state) => {
+      const { misidentifications } = state;
+      misidentifications[rowId].misidentificationAuthor = value;
+      return {
+        misidentifications,
+      };
+    })
+  )
+
   handleSynonymTransition = (rowId, fromListName, toListName, newNumType) => (
     this.setState((state) => {
       const {
@@ -320,6 +334,7 @@ class SpeciesRecord extends Component {
       nomenclatoricSynonyms,
       taxonomicSynonyms,
       invalidDesignations,
+      misidentifications,
     } = this.state;
     try {
       await speciesFacade.saveSpeciesAndSynonyms({
@@ -327,6 +342,7 @@ class SpeciesRecord extends Component {
         nomenclatoricSynonyms,
         taxonomicSynonyms,
         invalidDesignations,
+        misidentifications,
         accessToken,
       });
       notifications.success('Saved');
@@ -477,6 +493,7 @@ class SpeciesRecord extends Component {
       familyApg, family, genera, record,
       listOfSpecies,
       nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
+      misidentifications,
       basionymFor, replacedFor, nomenNovumFor,
       record: {
         id, ntype, genus, species, subsp, var: variety,
@@ -949,6 +966,31 @@ class SpeciesRecord extends Component {
                           'taxonomicSynonyms',
                           config.mappings.synonym.taxonomic.numType,
                         ))}
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="misidentifications" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Misidentifications
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <AddableList
+                      id="misidentifications"
+                      async
+                      data={misidentifications}
+                      onAddItemToList={(selected) => this.handleSynonymAddRow(
+                        selected,
+                        'misidentifications',
+                        config.mappings.synonym.misidentification.numType,
+                      )}
+                      onRowDelete={(rowId) => this.handleSynonymRemoveRow(
+                        rowId,
+                        'misidentifications',
+                      )}
+                      itemComponent={MisidentifiedSynonymListItem}
+                      onSearch={this.handleSearchSpeciesAsync}
+                      // props specific to itemComponent
+                      onChangeAuthor={this.handleChangeMisidentificationAuthor}
                     />
                   </Col>
                 </FormGroup>
