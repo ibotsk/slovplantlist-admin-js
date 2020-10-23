@@ -35,6 +35,11 @@
     padding-left: 7px;
 }
 
+.checklist-subinfo {
+    font-size: smaller;
+    margin-left: 1em;
+}
+
 /* Fix for typeahead menu in horizontal form */
 .form-horizontal .input-group .rbt-input-hint-container {
     display: flex;
