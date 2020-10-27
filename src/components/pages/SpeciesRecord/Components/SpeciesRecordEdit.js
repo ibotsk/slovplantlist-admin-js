@@ -497,7 +497,7 @@ class SpeciesRecord extends Component {
       basionymFor, replacedFor, nomenNovumFor,
       record: {
         id, ntype, genus, species, subsp, var: variety,
-        subvar, forma, nothosubsp, nothoforma, authors,
+        subvar, forma, nothosubsp, nothoforma, proles, unranked, authors,
         hybrid, publication, vernacular, tribus,
       } = {},
     } = this.state;
@@ -683,6 +683,32 @@ class SpeciesRecord extends Component {
                       type="text"
                       value={nothoforma || ''}
                       placeholder="Nothoforma"
+                      onChange={this.handleChangeInput}
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="proles" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Proles
+                  </Col>
+                  <Col sm={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={proles || ''}
+                      placeholder="Proles"
+                      onChange={this.handleChangeInput}
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="unranked" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Unranked
+                  </Col>
+                  <Col sm={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={unranked || ''}
+                      placeholder="Unranked"
                       onChange={this.handleChangeInput}
                     />
                   </Col>

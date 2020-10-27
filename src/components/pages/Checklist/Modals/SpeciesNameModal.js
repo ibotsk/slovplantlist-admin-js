@@ -328,7 +328,7 @@ class SpeciesNameModal extends Component {
       familySelected, familyApgSelected, genera, genusSelected,
       record: {
         ntype, genus, species, subsp, var: variety, subvar,
-        forma, nothosubsp, nothoforma, authors, hybrid,
+        forma, nothosubsp, nothoforma, proles, unranked, authors, hybrid,
         publication, tribus,
       },
     } = this.state;
@@ -491,6 +491,32 @@ class SpeciesNameModal extends Component {
                   type="text"
                   value={nothoforma || ''}
                   placeholder="Nothoforma"
+                  onChange={this.handleChange}
+                />
+              </Col>
+            </FormGroup>
+            <FormGroup controlId="proles" bsSize="sm">
+              <Col componentClass={ControlLabel} sm={titleColWidth}>
+                Proles
+              </Col>
+              <Col sm={mainColWidth}>
+                <FormControl
+                  type="text"
+                  value={proles || ''}
+                  placeholder="Proles"
+                  onChange={this.handleChange}
+                />
+              </Col>
+            </FormGroup>
+            <FormGroup controlId="unranked" bsSize="sm">
+              <Col componentClass={ControlLabel} sm={titleColWidth}>
+                Unranked
+              </Col>
+              <Col sm={mainColWidth}>
+                <FormControl
+                  type="text"
+                  value={unranked || ''}
+                  placeholder="Unranked"
                   onChange={this.handleChange}
                 />
               </Col>
