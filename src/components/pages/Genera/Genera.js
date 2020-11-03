@@ -6,7 +6,9 @@ import {
 } from 'react-bootstrap';
 
 import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
+import filterFactory, {
+  textFilter, multiSelectFilter, Comparator,
+} from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import PropTypes from 'prop-types';
@@ -17,8 +19,12 @@ import TabledPage from 'components/wrappers/TabledPageParent';
 import Can from 'components/segments/auth/Can';
 
 import config from 'config/config';
+import { helperUtils, formatterUtils } from 'utils';
 
 import GeneraModal from './Modals/GeneraModal';
+
+const { mappings: { losType: { A, S } } } = config;
+const ntypesOptions = helperUtils.buildOptionsFromKeys({ A, S });
 
 const columns = [
   {
@@ -29,6 +35,15 @@ const columns = [
   {
     dataField: 'action',
     text: 'Actions',
+  },
+  {
+    dataField: 'ntype',
+    text: 'Type',
+    filter: multiSelectFilter({
+      options: ntypesOptions,
+      comparator: Comparator.EQ,
+    }),
+    sort: true,
   },
   {
     dataField: 'name',
@@ -55,6 +70,10 @@ const columns = [
   {
     dataField: 'family',
     text: 'Family',
+  },
+  {
+    dataField: 'acceptedName',
+    text: 'Accepted name',
   },
 ];
 
@@ -111,10 +130,14 @@ class Genera extends React.Component {
           )}
         />),
       name: g.name,
+      ntype: g.ntype,
       authors: g.authors,
       vernacular: g.vernacular,
       familyApg: g['family-apg'] ? g['family-apg'].name : '',
       family: g.family ? g.family.name : '',
+      acceptedName: g.accepted
+        ? formatterUtils.genus(g.accepted.name, g.accepted.authors)
+        : '',
     };
   })
 

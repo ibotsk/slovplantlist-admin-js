@@ -28,7 +28,12 @@ const userRole = (roles) => {
   });
 };
 
+const genus = (name, authors) => (
+  [name, authors].filter((e) => e).join(' ')
+);
+
 export default {
   format,
   userRole,
+  genus,
 };
