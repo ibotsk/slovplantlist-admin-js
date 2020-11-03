@@ -48,14 +48,16 @@ export default {
   },
   familiesApgUri: {
     baseUri: `${backendBase}/api/family-apgs?access_token=<%accessToken%>`,
-    getByIdUri: `${backendBase}/api/family-apgs/<%id%>?access_token=<%accessToken%>`,
+    getAllWFilterUri: `${backendBase}/api/family-apgs?access_token=<%accessToken%>&filter={"offset":<%offset%>,"where":<%&where%>,"limit":<%limit%>,"order":<%&order%>}`,
     getAllWOrderUri: `${backendBase}/api/family-apgs?access_token=<%accessToken%>&filter={"order":["name","id"]}`,
+    getByIdUri: `${backendBase}/api/family-apgs/<%id%>?access_token=<%accessToken%>`,
     countUri: `${backendBase}/api/family-apgs/count?access_token=<%accessToken%>&where=<%&whereString%>`,
   },
   familiesUri: {
     baseUri: `${backendBase}/api/families?access_token=<%accessToken%>`,
-    getByIdUri: `${backendBase}/api/families/<%id%>?access_token=<%accessToken%>`,
+    getAllWFilterUri: `${backendBase}/api/families?access_token=<%accessToken%>&filter={"offset":<%offset%>,"where":<%&where%>,"limit":<%limit%>,"order":<%&order%>}`,
     getAllWOrderUri: `${backendBase}/api/families?access_token=<%accessToken%>&filter={"order":["name","id"]}`,
+    getByIdUri: `${backendBase}/api/families/<%id%>?access_token=<%accessToken%>`,
     countUri: `${backendBase}/api/families/count?access_token=<%accessToken%>&where=<%&whereString%>`,
   },
   synonymsUri: {

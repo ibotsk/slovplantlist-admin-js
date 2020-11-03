@@ -5,15 +5,14 @@ import {
   Grid, Button, Glyphicon,
 } from 'react-bootstrap';
 
-import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
-import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import PropTypes from 'prop-types';
 import LoggedUserType from 'components/propTypes/loggedUser';
 import GenusType from 'components/propTypes/genus';
 
 import TabledPage from 'components/wrappers/TabledPageParent';
+import RemotePagination from 'components/segments/RemotePagination';
 import Can from 'components/segments/auth/Can';
 
 import config from 'config/config';
@@ -81,13 +80,18 @@ class Genera extends React.Component {
   }
 
   hideModal = () => {
-    const { onTableChange, paginationOptions } = this.props;
+    const {
+      onTableChange, paginationOptions, filters, sorting,
+    } = this.props;
+    const { sortField, sortOrder } = sorting || {};
+    const { page, sizePerPage } = paginationOptions || {};
+
     onTableChange(undefined, {
-      page: paginationOptions.page,
-      sizePerPage: paginationOptions.sizePerPage,
-      filters: {},
-      sortField: 'name',
-      sortOrder: 'asc',
+      page,
+      sizePerPage,
+      filters,
+      sortField,
+      sortOrder,
     });
     this.setState({ showModalGenera: false });
   }
@@ -146,18 +150,18 @@ class Genera extends React.Component {
           <p>All filters are case sensitive</p>
         </Grid>
         <Grid fluid>
-          <BootstrapTable
+          <RemotePagination
             hover
             striped
             condensed
-            remote={{ filter: true, pagination: true }}
+            remote
             keyField="id"
             data={this.formatResult(data)}
             columns={columns}
             defaultSorted={defaultSorted}
             filter={filterFactory()}
             onTableChange={onTableChange}
-            pagination={paginationFactory(paginationOptions)}
+            paginationOptions={paginationOptions}
           />
         </Grid>
         <GeneraModal
@@ -190,4 +194,22 @@ Genera.propTypes = {
     page: PropTypes.number.isRequired,
     sizePerPage: PropTypes.number.isRequired,
   }).isRequired,
+  filters: PropTypes.objectOf(PropTypes.shape({
+    caseSensitive: PropTypes.bool.isRequired,
+    comparator: PropTypes.string.isRequired,
+    filterType: PropTypes.string.isRequired,
+    filterVal: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.string,
+    ]).isRequired,
+  })),
+  sorting: PropTypes.shape({
+    sortField: PropTypes.string,
+    sortOrder: PropTypes.string,
+  }),
+};
+
+Genera.defaultProps = {
+  filters: undefined,
+  sorting: undefined,
 };

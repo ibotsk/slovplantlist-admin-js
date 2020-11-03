@@ -5,7 +5,6 @@ import {
   Grid, Button, Glyphicon,
 } from 'react-bootstrap';
 
-import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import PropTypes from 'prop-types';
@@ -14,6 +13,7 @@ import FamilyType from 'components/propTypes/family';
 
 import TabledPage from 'components/wrappers/TabledPageParent';
 import Can from 'components/segments/auth/Can';
+import RemotePagination from 'components/segments/RemotePagination';
 
 import config from 'config/config';
 
@@ -66,11 +66,18 @@ class Families extends React.Component {
   };
 
   hideModal = () => {
-    const { onTableChange, paginationOptions } = this.props;
+    const {
+      onTableChange, paginationOptions, filters, sorting,
+    } = this.props;
+    const { sortField, sortOrder } = sorting || {};
+    const { page, sizePerPage } = paginationOptions || {};
+
     onTableChange(undefined, {
-      page: paginationOptions.page,
-      sizePerPage: paginationOptions.sizePerPage,
-      filters: {},
+      page,
+      sizePerPage,
+      filters,
+      sortField,
+      sortOrder,
     });
     this.setState({ showModalFamily: false });
   };
@@ -100,7 +107,9 @@ class Families extends React.Component {
   });
 
   render() {
-    const { user, data, onTableChange } = this.props;
+    const {
+      user, data, onTableChange, paginationOptions,
+    } = this.props;
     const { editId, showModalFamily } = this.state;
     return (
       <div id="families">
@@ -125,16 +134,18 @@ class Families extends React.Component {
           <p>All filters are case sensitive</p>
         </Grid>
         <Grid fluid>
-          <BootstrapTable
+          <RemotePagination
             hover
             striped
             condensed
+            remote
             keyField="id"
             data={this.formatResult(data)}
             columns={columns}
             defaultSorted={defaultSorted}
             filter={filterFactory()}
             onTableChange={onTableChange}
+            paginationOptions={paginationOptions}
           />
         </Grid>
         <FamiliesModal
@@ -154,7 +165,7 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps)(
   TabledPage({
-    getAll: config.uris.familiesUri.getAllWOrderUri,
+    getAll: config.uris.familiesUri.getAllWFilterUri,
     getCount: config.uris.familiesUri.countUri,
   })(Families),
 );
@@ -167,4 +178,22 @@ Families.propTypes = {
     page: PropTypes.number.isRequired,
     sizePerPage: PropTypes.number.isRequired,
   }).isRequired,
+  filters: PropTypes.objectOf(PropTypes.shape({
+    caseSensitive: PropTypes.bool.isRequired,
+    comparator: PropTypes.string.isRequired,
+    filterType: PropTypes.string.isRequired,
+    filterVal: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.string,
+    ]).isRequired,
+  })),
+  sorting: PropTypes.shape({
+    sortField: PropTypes.string,
+    sortOrder: PropTypes.string,
+  }),
+};
+
+Families.defaultProps = {
+  filters: undefined,
+  sorting: undefined,
 };

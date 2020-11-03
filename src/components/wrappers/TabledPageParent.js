@@ -30,8 +30,18 @@ const customTotal = (from, to, size) => (
     Results
   </span>
 );
-const paginationOptions = config.pagination;
-paginationOptions.paginationTotalRenderer = customTotal;
+const defaultPaginationOptions = config.pagination;
+defaultPaginationOptions.paginationTotalRenderer = customTotal;
+
+const defaultState = {
+  records: [],
+  totalSize: 0,
+  page: 1,
+  sizePerPage: defaultPaginationOptions.sizePerPageList[0].value,
+  filters: {},
+  sortField: 'id',
+  sortOrder: 'asc',
+};
 
 const TabledPage = (injectedProps) =>
   // eslint-disable-next-line implicit-arrow-linebreak
@@ -41,28 +51,8 @@ const TabledPage = (injectedProps) =>
         super(props);
 
         this.state = {
-          records: [],
-          totalSize: 0,
-          page: 1,
-          sizePerPage: paginationOptions.sizePerPageList[0].value,
-          filters: {},
-          sortField: 'id',
-          sortOrder: 'asc',
+          ...defaultState,
         };
-      }
-
-      componentDidMount() {
-        const {
-          page, filters, sortField, sortOrder,
-        } = this.state;
-
-        this.handleTableChange(undefined, {
-          page,
-          sizePerPage: paginationOptions.sizePerPageList[0].value,
-          filters,
-          sortField,
-          sortOrder,
-        });
       }
 
       handleTableChange = async (type, {
@@ -122,7 +112,7 @@ const TabledPage = (injectedProps) =>
           page, sizePerPage, totalSize, filters, sortField, sortOrder,
         } = this.state;
         const allPaginationOptions = {
-          ...paginationOptions, page, sizePerPage, totalSize,
+          ...defaultPaginationOptions, page, sizePerPage, totalSize,
         };
         const sorting = { sortField, sortOrder };
         return (

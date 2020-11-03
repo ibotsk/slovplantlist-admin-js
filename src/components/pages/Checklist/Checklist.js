@@ -7,11 +7,9 @@ import {
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
-import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, {
   textFilter, multiSelectFilter, selectFilter, Comparator,
 } from 'react-bootstrap-table2-filter';
-import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import PropTypes from 'prop-types';
 import LoggedUserType from 'components/propTypes/loggedUser';
@@ -21,6 +19,7 @@ import LosName from 'components/segments/Checklist/LosName';
 import TabledPage from 'components/wrappers/TabledPageParent';
 import Can from 'components/segments/auth/Can';
 import Ownership from 'components/segments/auth/Ownership';
+import RemotePagination from 'components/segments/RemotePagination';
 
 import config from 'config/config';
 import { helperUtils } from 'utils';
@@ -126,13 +125,15 @@ class Checklist extends React.Component {
     const {
       onTableChange, paginationOptions, filters, sorting,
     } = this.props;
+    const { sortField, sortOrder } = sorting || {};
+    const { page, sizePerPage } = paginationOptions || {};
 
     onTableChange(undefined, {
-      page: paginationOptions.page,
-      sizePerPage: paginationOptions.sizePerPage,
+      page,
+      sizePerPage,
       filters,
-      sortField: sorting.sortField,
-      sortOrder: sorting.sortOrder,
+      sortField,
+      sortOrder,
     });
     this.setState({ showModalSpecies: false });
   }
@@ -262,18 +263,18 @@ class Checklist extends React.Component {
           </div>
         </Grid>
         <Grid fluid>
-          <BootstrapTable
+          <RemotePagination
             hover
             striped
             condensed
-            remote={{ filter: true, pagination: true }}
+            remote
             keyField="id"
             data={this.formatResult(data)}
             columns={columns(user.role === mappings.userRole.author.name)}
             defaultSorted={defaultSorted}
             filter={filterFactory()}
             onTableChange={onTableChange}
-            pagination={paginationFactory(paginationOptions)}
+            paginationOptions={paginationOptions}
             rowEvents={this.rowEvents}
           />
         </Grid>
