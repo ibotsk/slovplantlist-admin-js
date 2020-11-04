@@ -10,8 +10,10 @@ async function getAll(uri, offset, where, order, limit, accessToken) {
   return getRequest(uri, params, accessToken);
 }
 
-async function getCount(uri, whereString, accessToken) {
-  return getRequest(uri, { whereString }, accessToken);
+async function getCount(uri, where, accessToken) {
+  const whereString = JSON.stringify(where);
+  const { count } = await getRequest(uri, { whereString }, accessToken);
+  return count;
 }
 
 export default {

@@ -20,7 +20,8 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react",
+        "react-hooks"
     ],
     "settings": {
         "import/resolver": {
@@ -63,6 +64,8 @@
                 "selector": "WithStatement",
                 "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
             }
-        ]
+        ],
+        "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+        "react-hooks/exhaustive-deps": "warn" // Checks effect dependencies
     }
 }

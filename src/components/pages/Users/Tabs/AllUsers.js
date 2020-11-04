@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -9,14 +9,16 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import PropTypes from 'prop-types';
-import UserType from 'components/propTypes/user';
 
-import TabledPage from 'components/wrappers/TabledPageParent';
-
-import { formatterUtils } from 'utils';
 import config from 'config/config';
+import { helperUtils, filterUtils, formatterUtils } from 'utils';
+
+import common from 'components/segments/hooks';
 
 import UsersModal from './Modals/UsersModal';
+
+const getAllUri = config.uris.usersUri.getAllWOrderUri;
+const getCountUri = config.uris.usersUri.countUri;
 
 const columns = [
   {
@@ -50,23 +52,29 @@ const defaultSorted = [{
   order: 'asc',
 }];
 
-class AllUsers extends React.Component {
-  constructor(props) {
-    super(props);
+const AllUsers = ({ accessToken }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [editId, setEditId] = useState(undefined);
+  const [where, setWhere] = useState({});
+  const [order, setOrder] = useState('id ASC');
 
-    this.state = {
-      showModalUser: false,
-      editId: undefined,
-    };
-  }
+  const { data, isFetching } = common.useTableData(
+    getCountUri, getAllUri, accessToken, where, 0,
+    undefined, order, showModal,
+  );
 
-  formatResult = (data) => data.map((u) => ({
+  const handleShowModal = (id) => {
+    setEditId(id);
+    setShowModal(true);
+  };
+
+  const formatResult = (records) => records.map((u) => ({
     id: u.id,
     action: (
       <Button
         bsSize="xsmall"
         bsStyle="warning"
-        onClick={() => this.showModal(u.id)}
+        onClick={() => handleShowModal(u.id)}
       >
         Edit
       </Button>
@@ -74,75 +82,62 @@ class AllUsers extends React.Component {
     username: u.username,
     email: u.email,
     roles: formatterUtils.userRole(u.roles),
-  }))
+  }));
 
-  showModal = (id) => {
-    this.setState({
-      showModalUser: true,
-      editId: id,
-    });
-  }
-
-  hideModal = () => {
-    const { onTableChange, paginationOptions } = this.props;
-    onTableChange(undefined, {
-      page: paginationOptions.page,
-      sizePerPage: paginationOptions.sizePerPage,
-      filters: {},
-      sortField: 'username',
-      sortOrder: 'asc',
-    });
-    this.setState({ showModalUser: false });
-  }
-
-  render() {
-    const { data, onTableChange } = this.props;
-    const { editId, showModalUser } = this.state;
-
-    return (
-      <div id="all-users">
-        <Panel id="functions">
-          <Panel.Body>
-            <Button bsStyle="success" onClick={() => this.showModal('')}>
-              <Glyphicon glyph="plus" />
-              {' '}
-              Add new user
-            </Button>
-          </Panel.Body>
-        </Panel>
-        <BootstrapTable
-          hover
-          striped
-          condensed
-          keyField="id"
-          data={this.formatResult(data)}
-          columns={columns}
-          filter={filterFactory()}
-          defaultSorted={defaultSorted}
-          onTableChange={onTableChange}
-        />
-        <UsersModal id={editId} show={showModalUser} onHide={this.hideModal} />
-      </div>
+  const onTableChange = (type, {
+    filters,
+    sortField,
+    sortOrder,
+  }) => {
+    const curatedFilters = filterUtils.curateSearchFilters(
+      filters,
     );
-  }
-}
+    const newWhere = helperUtils.makeWhere(curatedFilters);
+
+    const curatedSortField = filterUtils.curateSortFields(sortField);
+    const newOrder = helperUtils.makeOrder(curatedSortField, sortOrder);
+
+    setOrder(newOrder);
+    setWhere(newWhere);
+  };
+
+  return (
+    <div id="all-users">
+      <Panel id="functions">
+        <Panel.Body>
+          <Button bsStyle="success" onClick={() => handleShowModal(undefined)}>
+            <Glyphicon glyph="plus" />
+            {' '}
+            Add new user
+          </Button>
+        </Panel.Body>
+      </Panel>
+      <BootstrapTable
+        hover
+        striped
+        condensed
+        keyField="id"
+        data={formatResult(data)}
+        columns={columns}
+        filter={filterFactory()}
+        defaultSorted={defaultSorted}
+        onTableChange={onTableChange}
+      />
+      <UsersModal
+        id={editId}
+        show={showModal}
+        onHide={() => setShowModal(false)}
+      />
+    </div>
+  );
+};
 
 const mapStateToProps = (state) => ({
   accessToken: state.authentication.accessToken,
 });
 
-export default connect(mapStateToProps)(
-  TabledPage({
-    getAll: config.uris.usersUri.getAllWOrderUri,
-    getCount: config.uris.usersUri.countUri,
-  })(AllUsers),
-);
+export default connect(mapStateToProps)(AllUsers);
 
 AllUsers.propTypes = {
-  data: PropTypes.arrayOf(UserType.type).isRequired,
-  onTableChange: PropTypes.func.isRequired,
-  paginationOptions: PropTypes.shape({
-    page: PropTypes.number.isRequired,
-    sizePerPage: PropTypes.number.isRequired,
-  }).isRequired,
+  accessToken: PropTypes.string.isRequired,
 };

@@ -150,7 +150,11 @@ export default connect(mapStateToProps)(FamiliesApgModal);
 
 FamiliesApgModal.propTypes = {
   show: PropTypes.bool.isRequired,
-  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   accessToken: PropTypes.string.isRequired,
   onHide: PropTypes.func.isRequired,
+};
+
+FamiliesApgModal.defaultProps = {
+  id: undefined,
 };

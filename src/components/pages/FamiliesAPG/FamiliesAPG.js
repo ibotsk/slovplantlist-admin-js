@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -9,15 +9,19 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import PropTypes from 'prop-types';
 import LoggedUserType from 'components/propTypes/loggedUser';
-import FamilyType from 'components/propTypes/family';
 
-import TabledPage from 'components/wrappers/TabledPageParent';
 import Can from 'components/segments/auth/Can';
 import RemotePagination from 'components/segments/RemotePagination';
 
 import config from 'config/config';
+import { helperUtils, filterUtils } from 'utils';
+
+import common from 'components/segments/hooks';
 
 import FamiliesApgModal from './Modals/FamiliesApgModal';
+
+const getAllUri = config.uris.familiesApgUri.getAllWFilterUri;
+const getCountUri = config.uris.familiesApgUri.countUri;
 
 const columns = [
   {
@@ -48,152 +52,129 @@ const defaultSorted = [{
   order: 'asc',
 }];
 
-class FamiliesAPG extends React.Component {
-  constructor(props) {
-    super(props);
+const FamiliesAPG = ({ user, accessToken }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [editId, setEditId] = useState(undefined);
+  const [page, setPage] = useState(1);
+  const [sizePerPage, setSizePerPage] = useState(25);
+  const [where, setWhere] = useState({});
+  const [order, setOrder] = useState('id ASC');
 
-    this.state = {
-      showModalFamilyApg: false,
-      editId: 0,
-    };
-  }
+  const offset = (page - 1) * sizePerPage;
 
-  showModal = (id) => {
-    this.setState({
-      showModalFamilyApg: true,
-      editId: id,
-    });
-  }
+  const { data, isFetching, totalSize } = common.useTableData(
+    getCountUri, getAllUri, accessToken, where, offset,
+    sizePerPage, order, showModal,
+  );
 
-  hideModal = () => {
-    const {
-      onTableChange, paginationOptions, filters, sorting,
-    } = this.props;
-    const { sortField, sortOrder } = sorting || {};
-    const { page, sizePerPage } = paginationOptions || {};
+  const handleShowModal = (id) => {
+    setEditId(id);
+    setShowModal(true);
+  };
 
-    onTableChange(undefined, {
-      page,
-      sizePerPage,
-      filters,
-      sortField,
-      sortOrder,
-    });
-    this.setState({ showModalFamilyApg: false });
-  }
+  const formatResult = (records) => records.map((d) => ({
+    id: d.id,
+    action: (
+      <Can
+        role={user.role}
+        perform="familyAPG:edit"
+        yes={() => (
+          <Button
+            bsSize="xsmall"
+            bsStyle="warning"
+            onClick={() => handleShowModal(d.id)}
+          >
+            Edit
+          </Button>
+        )}
+      />
+    ),
+    name: d.name,
+    vernacular: d.vernacular,
+  }));
 
-  formatResult = (data) => data.map((d) => {
-    const { user } = this.props;
-    return {
-      id: d.id,
-      action: (
-        <Can
-          role={user.role}
-          perform="familyAPG:edit"
-          yes={() => (
-            <Button
-              bsSize="xsmall"
-              bsStyle="warning"
-              onClick={() => this.showModal(d.id)}
-            >
-              Edit
-            </Button>
-          )}
-        />
-      ),
-      name: d.name,
-      vernacular: d.vernacular,
-    };
-  })
+  const onTableChange = (type, {
+    page: pageTable,
+    sizePerPage: sizePerPageTable,
+    filters,
+    sortField,
+    sortOrder,
+  }) => {
+    const ownerId = user ? user.id : undefined;
 
-  render() {
-    const {
-      user, data, onTableChange, paginationOptions,
-    } = this.props;
-    const { editId, showModalFamilyApg } = this.state;
-    return (
-      <div id="families-apg">
-        <Grid id="functions-panel">
-          <div id="functions">
-            <Can
-              role={user.role}
-              perform="familyAPG:edit"
-              yes={() => (
-                <Button bsStyle="success" onClick={() => this.showModal('')}>
-                  <Glyphicon glyph="plus" />
-                  {' '}
-                  Add new
-                </Button>
-              )}
-            />
-          </div>
-        </Grid>
-        <hr />
-        <Grid>
-          <h2>Families APG</h2>
-          <p>All filters are case sensitive</p>
-        </Grid>
-        <Grid fluid>
-          <RemotePagination
-            hover
-            striped
-            condensed
-            remote
-            keyField="id"
-            data={this.formatResult(data)}
-            columns={columns}
-            defaultSorted={defaultSorted}
-            filter={filterFactory()}
-            onTableChange={onTableChange}
-            paginationOptions={paginationOptions}
-          />
-        </Grid>
-        <FamiliesApgModal
-          id={editId}
-          show={showModalFamilyApg}
-          onHide={this.hideModal}
-        />
-      </div>
+    const curatedFilters = filterUtils.curateSearchFilters(
+      filters, { ownerId },
     );
-  }
-}
+    const newWhere = helperUtils.makeWhere(curatedFilters);
+
+    const curatedSortField = filterUtils.curateSortFields(sortField);
+    const newOrder = helperUtils.makeOrder(curatedSortField, sortOrder);
+
+    setPage(pageTable);
+    setSizePerPage(sizePerPageTable);
+    setOrder(newOrder);
+    setWhere(newWhere);
+  };
+
+  const paginationOptions = { page, sizePerPage, totalSize };
+
+  return (
+    <div id="families-apg">
+      <Grid id="functions-panel">
+        <div id="functions">
+          <Can
+            role={user.role}
+            perform="familyAPG:edit"
+            yes={() => (
+              <Button
+                bsStyle="success"
+                onClick={() => handleShowModal(undefined)}
+              >
+                <Glyphicon glyph="plus" />
+                {' '}
+                Add new
+              </Button>
+            )}
+          />
+        </div>
+      </Grid>
+      <hr />
+      <Grid>
+        <h2>Families APG</h2>
+        <p>All filters are case sensitive</p>
+      </Grid>
+      <Grid fluid>
+        <RemotePagination
+          hover
+          striped
+          condensed
+          remote
+          keyField="id"
+          data={formatResult(data)}
+          columns={columns}
+          defaultSorted={defaultSorted}
+          filter={filterFactory()}
+          onTableChange={onTableChange}
+          paginationOptions={paginationOptions}
+        />
+      </Grid>
+      <FamiliesApgModal
+        id={editId}
+        show={showModal}
+        onHide={() => setShowModal(false)}
+      />
+    </div>
+  );
+};
 
 const mapStateToProps = (state) => ({
   accessToken: state.authentication.accessToken,
   user: state.user,
 });
 
-export default connect(mapStateToProps)(
-  TabledPage({
-    getAll: config.uris.familiesApgUri.getAllWFilterUri,
-    getCount: config.uris.familiesApgUri.countUri,
-  })(FamiliesAPG),
-);
+export default connect(mapStateToProps)(FamiliesAPG);
 
 FamiliesAPG.propTypes = {
   user: LoggedUserType.type.isRequired,
-  data: PropTypes.arrayOf(FamilyType.type).isRequired,
-  onTableChange: PropTypes.func.isRequired,
-  paginationOptions: PropTypes.shape({
-    page: PropTypes.number.isRequired,
-    sizePerPage: PropTypes.number.isRequired,
-  }).isRequired,
-  filters: PropTypes.objectOf(PropTypes.shape({
-    caseSensitive: PropTypes.bool.isRequired,
-    comparator: PropTypes.string.isRequired,
-    filterType: PropTypes.string.isRequired,
-    filterVal: PropTypes.oneOfType([
-      PropTypes.array,
-      PropTypes.string,
-    ]).isRequired,
-  })),
-  sorting: PropTypes.shape({
-    sortField: PropTypes.string,
-    sortOrder: PropTypes.string,
-  }),
-};
-
-FamiliesAPG.defaultProps = {
-  filters: undefined,
-  sorting: undefined,
+  accessToken: PropTypes.string.isRequired,
 };
