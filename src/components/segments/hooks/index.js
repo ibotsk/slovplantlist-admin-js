@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 
 import { tablesFacade } from 'facades';
+import { helperUtils, filterUtils } from 'utils';
+
+import config from 'config/config';
+
+const { pagination: { sizePerPageList } } = config;
+const sizePerPageDefault = sizePerPageList[0].value;
 
 function useTableData(
   countUri, getAllUri, accessToken, whereString, offset, limit,
@@ -39,6 +45,47 @@ function useTableData(
   };
 }
 
+function useTableChange(
+  ownerId, pageInit = 1, sizePerPageInit = sizePerPageDefault,
+) {
+  const [page, setPage] = useState(pageInit);
+  const [sizePerPage, setSizePerPage] = useState(sizePerPageInit);
+  const [where, setWhere] = useState(undefined);
+  const [order, setOrder] = useState(undefined);
+
+  const setValues = ({
+    page: pageNew,
+    sizePerPage: sizePerPageNew,
+    filters,
+    sortField,
+    sortOrder,
+  }) => {
+    const curatedFilters = filterUtils.curateSearchFilters(
+      filters, { ownerId },
+    );
+    const newWhere = helperUtils.makeWhere(curatedFilters);
+
+    const curatedSortField = filterUtils.curateSortFields(sortField);
+    const newOrder = helperUtils.makeOrder(curatedSortField, sortOrder);
+
+    // some tables might not have pagination
+    // for undefined page and sizePerPage use default or initialized values
+    setPage(pageNew || pageInit);
+    setSizePerPage(sizePerPageNew || sizePerPageInit);
+    setOrder(JSON.stringify(newOrder));
+    setWhere(JSON.stringify(newWhere));
+  };
+
+  return {
+    page,
+    sizePerPage,
+    where,
+    order,
+    setValues,
+  };
+}
+
 export default {
   useTableData,
+  useTableChange,
 };

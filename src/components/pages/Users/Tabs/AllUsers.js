@@ -11,9 +11,9 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import PropTypes from 'prop-types';
 
 import config from 'config/config';
-import { helperUtils, filterUtils, formatterUtils } from 'utils';
+import { formatterUtils } from 'utils';
 
-import common from 'components/segments/hooks';
+import commonHooks from 'components/segments/hooks';
 
 import UsersModal from './Modals/UsersModal';
 
@@ -55,10 +55,12 @@ const defaultSorted = [{
 const AllUsers = ({ accessToken }) => {
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(undefined);
-  const [where, setWhere] = useState('{}');
-  const [order, setOrder] = useState('["id ASC"]');
 
-  const { data } = common.useTableData(
+  const {
+    where, order, setValues,
+  } = commonHooks.useTableChange();
+
+  const { data } = commonHooks.useTableData(
     getCountUri, getAllUri, accessToken, where, 0,
     undefined, order, showModal,
   );
@@ -88,18 +90,13 @@ const AllUsers = ({ accessToken }) => {
     filters,
     sortField,
     sortOrder,
-  }) => {
-    const curatedFilters = filterUtils.curateSearchFilters(
+  }) => (
+    setValues({
       filters,
-    );
-    const newWhere = helperUtils.makeWhere(curatedFilters);
-
-    const curatedSortField = filterUtils.curateSortFields(sortField);
-    const newOrder = helperUtils.makeOrder(curatedSortField, sortOrder);
-
-    setOrder(JSON.stringify(newOrder));
-    setWhere(JSON.stringify(newWhere));
-  };
+      sortField,
+      sortOrder,
+    })
+  );
 
   return (
     <div id="all-users">

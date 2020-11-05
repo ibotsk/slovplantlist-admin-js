@@ -1,7 +1,7 @@
 import { getRequest } from 'services/backend';
 
 async function getAll(
-  uri, offset, whereString, orderString, limit, accessToken,
+  uri, offset, whereString = '{}', orderString = '["id ASC"]', limit, accessToken,
 ) {
   const params = {
     offset,

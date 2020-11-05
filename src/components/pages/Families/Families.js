@@ -14,9 +14,8 @@ import Can from 'components/segments/auth/Can';
 import RemotePagination from 'components/segments/RemotePagination';
 
 import config from 'config/config';
-import { helperUtils, filterUtils } from 'utils';
 
-import common from 'components/segments/hooks';
+import commonHooks from 'components/segments/hooks';
 
 import FamiliesModal from './Modals/FamiliesModal';
 
@@ -55,14 +54,15 @@ const defaultSorted = [{
 const Families = ({ user, accessToken }) => {
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(undefined);
-  const [page, setPage] = useState(1);
-  const [sizePerPage, setSizePerPage] = useState(25);
-  const [where, setWhere] = useState('{}');
-  const [order, setOrder] = useState('["id ASC"]');
+
+  const ownerId = user ? user.id : undefined;
+  const {
+    page, sizePerPage, where, order, setValues,
+  } = commonHooks.useTableChange(ownerId, 1);
 
   const offset = (page - 1) * sizePerPage;
 
-  const { data, totalSize } = common.useTableData(
+  const { data, totalSize } = commonHooks.useTableData(
     getCountUri, getAllUri, accessToken, where, offset,
     sizePerPage, order, showModal,
   );
@@ -99,22 +99,15 @@ const Families = ({ user, accessToken }) => {
     filters,
     sortField,
     sortOrder,
-  }) => {
-    const ownerId = user ? user.id : undefined;
-
-    const curatedFilters = filterUtils.curateSearchFilters(
-      filters, { ownerId },
-    );
-    const newWhere = helperUtils.makeWhere(curatedFilters);
-
-    const curatedSortField = filterUtils.curateSortFields(sortField);
-    const newOrder = helperUtils.makeOrder(curatedSortField, sortOrder);
-
-    setPage(pageTable);
-    setSizePerPage(sizePerPageTable);
-    setOrder(JSON.stringify(newOrder));
-    setWhere(JSON.stringify(newWhere));
-  };
+  }) => (
+    setValues({
+      page: pageTable,
+      sizePerPage: sizePerPageTable,
+      filters,
+      sortField,
+      sortOrder,
+    })
+  );
 
   const paginationOptions = { page, sizePerPage, totalSize };
 

@@ -13,9 +13,8 @@ import PropTypes from 'prop-types';
 import GeneraList from 'components/segments/GeneraList';
 
 import config from 'config/config';
-import { helperUtils, filterUtils } from 'utils';
 
-import common from 'components/segments/hooks';
+import commonHooks from 'components/segments/hooks';
 
 import UsersGeneraModal from './Modals/UsersGeneraModal';
 
@@ -59,10 +58,12 @@ const GenusButtonAddEdit = ({ onClick }) => (
 const GeneraUsers = ({ accessToken }) => {
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(undefined);
-  const [where, setWhere] = useState('{}');
-  const [order, setOrder] = useState('["id ASC"]');
 
-  const { data } = common.useTableData(
+  const {
+    where, order, setValues,
+  } = commonHooks.useTableChange();
+
+  const { data } = commonHooks.useTableData(
     getCountUri, getAllUri, accessToken, where, 0,
     undefined, order, showModal,
   );
@@ -87,18 +88,13 @@ const GeneraUsers = ({ accessToken }) => {
     filters,
     sortField,
     sortOrder,
-  }) => {
-    const curatedFilters = filterUtils.curateSearchFilters(
+  }) => (
+    setValues({
       filters,
-    );
-    const newWhere = helperUtils.makeWhere(curatedFilters);
-
-    const curatedSortField = filterUtils.curateSortFields(sortField);
-    const newOrder = helperUtils.makeOrder(curatedSortField, sortOrder);
-
-    setOrder(JSON.stringify(newOrder));
-    setWhere(JSON.stringify(newWhere));
-  };
+      sortField,
+      sortOrder,
+    })
+  );
 
   return (
     <div>
