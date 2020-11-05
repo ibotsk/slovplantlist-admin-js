@@ -59,10 +59,10 @@ const GenusButtonAddEdit = ({ onClick }) => (
 const GeneraUsers = ({ accessToken }) => {
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(undefined);
-  const [where, setWhere] = useState({});
-  const [order, setOrder] = useState('id ASC');
+  const [where, setWhere] = useState('{}');
+  const [order, setOrder] = useState('["id ASC"]');
 
-  const { data, isFetching } = common.useTableData(
+  const { data } = common.useTableData(
     getCountUri, getAllUri, accessToken, where, 0,
     undefined, order, showModal,
   );
@@ -96,8 +96,8 @@ const GeneraUsers = ({ accessToken }) => {
     const curatedSortField = filterUtils.curateSortFields(sortField);
     const newOrder = helperUtils.makeOrder(curatedSortField, sortOrder);
 
-    setOrder(newOrder);
-    setWhere(newWhere);
+    setOrder(JSON.stringify(newOrder));
+    setWhere(JSON.stringify(newWhere));
   };
 
   return (

@@ -145,6 +145,7 @@ RemotePagination.propTypes = {
   cellEdit: PropTypes.object,
   filter: PropTypes.object,
   defaultSorted: PropTypes.arrayOf(PropTypes.object),
+  loading: PropTypes.bool,
 };
 
 RemotePagination.defaultProps = {
@@ -159,6 +160,7 @@ RemotePagination.defaultProps = {
   cellEdit: undefined,
   filter: undefined,
   defaultSorted: undefined,
+  loading: false,
 };
 
 TotalAndPaginator.propTypes = {

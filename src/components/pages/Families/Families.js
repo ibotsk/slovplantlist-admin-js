@@ -57,12 +57,12 @@ const Families = ({ user, accessToken }) => {
   const [editId, setEditId] = useState(undefined);
   const [page, setPage] = useState(1);
   const [sizePerPage, setSizePerPage] = useState(25);
-  const [where, setWhere] = useState({});
-  const [order, setOrder] = useState('id ASC');
+  const [where, setWhere] = useState('{}');
+  const [order, setOrder] = useState('["id ASC"]');
 
   const offset = (page - 1) * sizePerPage;
 
-  const { data, isFetching, totalSize } = common.useTableData(
+  const { data, totalSize } = common.useTableData(
     getCountUri, getAllUri, accessToken, where, offset,
     sizePerPage, order, showModal,
   );
@@ -112,8 +112,8 @@ const Families = ({ user, accessToken }) => {
 
     setPage(pageTable);
     setSizePerPage(sizePerPageTable);
-    setOrder(newOrder);
-    setWhere(newWhere);
+    setOrder(JSON.stringify(newOrder));
+    setWhere(JSON.stringify(newWhere));
   };
 
   const paginationOptions = { page, sizePerPage, totalSize };
