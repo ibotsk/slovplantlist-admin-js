@@ -595,7 +595,11 @@ export default connect(mapStateToProps)(SpeciesNameModal);
 
 SpeciesNameModal.propTypes = {
   show: PropTypes.bool.isRequired,
-  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   accessToken: PropTypes.string.isRequired,
   onHide: PropTypes.func.isRequired,
+};
+
+SpeciesNameModal.defaultProps = {
+  id: undefined,
 };

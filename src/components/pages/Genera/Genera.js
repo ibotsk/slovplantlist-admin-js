@@ -5,20 +5,22 @@ import {
   Grid, Button, Glyphicon,
 } from 'react-bootstrap';
 
-import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
-import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import PropTypes from 'prop-types';
 import LoggedUserType from 'components/propTypes/loggedUser';
-import GenusType from 'components/propTypes/genus';
 
-import TabledPage from 'components/wrappers/TabledPageParent';
+import RemotePagination from 'components/segments/RemotePagination';
 import Can from 'components/segments/auth/Can';
 
 import config from 'config/config';
 
+import commonHooks from 'components/segments/hooks';
+
 import GeneraModal from './Modals/GeneraModal';
+
+const getAllUri = config.uris.generaUri.getAllWFilterUri;
+const getCountUri = config.uris.generaUri.countUri;
 
 const columns = [
   {
@@ -63,131 +65,122 @@ const defaultSorted = [{
   order: 'asc',
 }];
 
-class Genera extends React.Component {
-  constructor(props) {
-    super(props);
+const Genera = ({ user, accessToken }) => {
+  const {
+    showModal, editId,
+    handleShowModal, handleHideModal,
+  } = commonHooks.useModal();
 
-    this.state = {
-      showModalGenera: false,
-      editId: 0,
-    };
-  }
+  const ownerId = user ? user.id : undefined;
+  const {
+    page, sizePerPage, where, order, setValues,
+  } = commonHooks.useTableChange(ownerId, 1);
 
-  showModal = (id) => {
-    this.setState({
-      showModalGenera: true,
-      editId: id,
-    });
-  }
+  const offset = (page - 1) * sizePerPage;
 
-  hideModal = () => {
-    const { onTableChange, paginationOptions } = this.props;
-    onTableChange(undefined, {
-      page: paginationOptions.page,
-      sizePerPage: paginationOptions.sizePerPage,
-      filters: {},
-      sortField: 'name',
-      sortOrder: 'asc',
-    });
-    this.setState({ showModalGenera: false });
-  }
+  const { data, totalSize } = commonHooks.useTableData(
+    getCountUri, getAllUri, accessToken, where, offset,
+    sizePerPage, order, showModal,
+  );
 
-  formatResult = (data) => data.map((g) => {
-    const { user } = this.props;
-    return {
-      id: g.id,
-      action: (
-        <Can
-          role={user.role}
-          perform="genus:edit"
-          yes={() => (
-            <Button
-              bsSize="xsmall"
-              bsStyle="warning"
-              onClick={() => this.showModal(g.id)}
-            >
-              Edit
-            </Button>
-          )}
-        />),
-      name: g.name,
-      authors: g.authors,
-      vernacular: g.vernacular,
-      familyApg: g['family-apg'] ? g['family-apg'].name : '',
-      family: g.family ? g.family.name : '',
-    };
-  })
+  const formatResult = (records) => records.map((g) => ({
+    id: g.id,
+    action: (
+      <Can
+        role={user.role}
+        perform="genus:edit"
+        yes={() => (
+          <Button
+            bsSize="xsmall"
+            bsStyle="warning"
+            onClick={() => handleShowModal(g.id)}
+          >
+            Edit
+          </Button>
+        )}
+      />),
+    name: g.name,
+    authors: g.authors,
+    vernacular: g.vernacular,
+    familyApg: g['family-apg'] ? g['family-apg'].name : '',
+    family: g.family ? g.family.name : '',
+  }));
 
-  render() {
-    const {
-      user, data, onTableChange, paginationOptions,
-    } = this.props;
-    const { editId, showModalGenera } = this.state;
-    return (
-      <div id="genera">
-        <Grid id="functions-panel">
-          <div id="functions">
-            <Can
-              role={user.role}
-              perform="genus:edit"
-              yes={() => (
-                <Button bsStyle="success" onClick={() => this.showModal('')}>
-                  <Glyphicon glyph="plus" />
-                  {' '}
-                  Add new
-                </Button>
-              )}
-            />
-          </div>
-        </Grid>
-        <hr />
-        <Grid>
-          <h2>Genera</h2>
-          <p>All filters are case sensitive</p>
-        </Grid>
-        <Grid fluid>
-          <BootstrapTable
-            hover
-            striped
-            condensed
-            remote={{ filter: true, pagination: true }}
-            keyField="id"
-            data={this.formatResult(data)}
-            columns={columns}
-            defaultSorted={defaultSorted}
-            filter={filterFactory()}
-            onTableChange={onTableChange}
-            pagination={paginationFactory(paginationOptions)}
+  const onTableChange = (type, {
+    page: pageTable,
+    sizePerPage: sizePerPageTable,
+    filters,
+    sortField,
+    sortOrder,
+  }) => (
+    setValues({
+      page: pageTable,
+      sizePerPage: sizePerPageTable,
+      filters,
+      sortField,
+      sortOrder,
+    })
+  );
+
+  const paginationOptions = { page, sizePerPage, totalSize };
+
+  return (
+    <div id="genera">
+      <Grid id="functions-panel">
+        <div id="functions">
+          <Can
+            role={user.role}
+            perform="genus:edit"
+            yes={() => (
+              <Button
+                bsStyle="success"
+                onClick={() => handleShowModal(undefined)}
+              >
+                <Glyphicon glyph="plus" />
+                {' '}
+                Add new
+              </Button>
+            )}
           />
-        </Grid>
-        <GeneraModal
-          id={editId}
-          show={showModalGenera}
-          onHide={this.hideModal}
+        </div>
+      </Grid>
+      <hr />
+      <Grid>
+        <h2>Genera</h2>
+        <p>All filters are case sensitive</p>
+      </Grid>
+      <Grid fluid>
+        <RemotePagination
+          hover
+          striped
+          condensed
+          remote
+          keyField="id"
+          data={formatResult(data)}
+          columns={columns}
+          defaultSorted={defaultSorted}
+          filter={filterFactory()}
+          onTableChange={onTableChange}
+          paginationOptions={paginationOptions}
         />
-      </div>
-    );
-  }
-}
+      </Grid>
+      <GeneraModal
+        id={editId}
+        show={showModal}
+        onHide={() => handleHideModal()}
+      />
+    </div>
+  );
+};
 
 const mapStateToProps = (state) => ({
   accessToken: state.authentication.accessToken,
   user: state.user,
 });
 
-export default connect(mapStateToProps)(
-  TabledPage({
-    getAll: config.uris.generaUri.getAllWFilterUri,
-    getCount: config.uris.generaUri.countUri,
-  })(Genera),
-);
+export default connect(mapStateToProps)(Genera);
 
 Genera.propTypes = {
   user: LoggedUserType.type.isRequired,
-  data: PropTypes.arrayOf(GenusType.type).isRequired,
-  onTableChange: PropTypes.func.isRequired,
-  paginationOptions: PropTypes.shape({
-    page: PropTypes.number.isRequired,
-    sizePerPage: PropTypes.number.isRequired,
-  }).isRequired,
+  accessToken: PropTypes.string.isRequired,
 };

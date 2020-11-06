@@ -253,7 +253,11 @@ export default connect(mapStateToProps)(GeneraModal);
 
 GeneraModal.propTypes = {
   show: PropTypes.bool.isRequired,
-  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   accessToken: PropTypes.string.isRequired,
   onHide: PropTypes.func.isRequired,
+};
+
+GeneraModal.defaultProps = {
+  id: undefined,
 };

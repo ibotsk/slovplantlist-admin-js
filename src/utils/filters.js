@@ -72,7 +72,7 @@ const curateOwnershipFilter = (filters, ownerId) => {
  * filterVal = [{ field, value }] where field is for every value from the config nad value is original filterVal.
  * @param {*} filters
  */
-function curateSearchFilters(filters, { ownerId }) {
+function curateSearchFilters(filters, { ownerId } = {}) {
   let curatedFilters = { ...filters };
   // const keys = Object.keys(curatedFilters);
   // for (const key of keys) { //listofspecies
