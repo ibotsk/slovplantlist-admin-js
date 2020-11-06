@@ -9,14 +9,17 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import PropTypes from 'prop-types';
-import UserType from 'components/propTypes/user';
 
-import TabledPage from 'components/wrappers/TabledPageParent';
 import GeneraList from 'components/segments/GeneraList';
 
 import config from 'config/config';
 
+import commonHooks from 'components/segments/hooks';
+
 import UsersGeneraModal from './Modals/UsersGeneraModal';
+
+const getAllUri = config.uris.usersUri.getAllWGeneraUri;
+const getCountUri = config.uris.usersUri.countUri;
 
 const columns = [
   {
@@ -52,93 +55,76 @@ const GenusButtonAddEdit = ({ onClick }) => (
   </Button>
 );
 
-class GeneraUsers extends React.Component {
-  constructor(props) {
-    super(props);
+const GeneraUsers = ({ accessToken }) => {
+  const {
+    showModal, editId,
+    handleShowModal, handleHideModal,
+  } = commonHooks.useModal();
 
-    this.state = {
-      showModalUsersGenera: false,
-      editId: undefined,
-    };
-  }
+  const {
+    where, order, setValues,
+  } = commonHooks.useTableChange();
 
-  showModal = (id) => {
-    this.setState({
-      showModalUsersGenera: true,
-      editId: id,
-    });
-  }
+  const { data } = commonHooks.useTableData(
+    getCountUri, getAllUri, accessToken, where, 0,
+    undefined, order, showModal,
+  );
 
-  hideModal = () => {
-    const { onTableChange, paginationOptions } = this.props;
-    onTableChange(undefined, {
-      page: paginationOptions.page,
-      sizePerPage: paginationOptions.sizePerPage,
-      filters: {},
-      sortField: 'username',
-      sortOrder: 'asc',
-    });
-    this.setState({ showModalUsersGenera: false });
-  }
-
-  formatResult = (data) => data.map((u) => ({
+  const formatResult = (records) => records.map((u) => ({
     id: u.id,
     username: u.username,
     genera: (
       <div>
         <GeneraList key={u.id} data={u.genera} />
-        <GenusButtonAddEdit onClick={() => this.showModal(u.id)} />
+        <GenusButtonAddEdit onClick={() => handleShowModal(u.id)} />
       </div>
     ),
-  }))
+  }));
 
-  render() {
-    const { data, onTableChange } = this.props;
-    const { editId, showModalUsersGenera } = this.state;
+  const onTableChange = (type, {
+    filters,
+    sortField,
+    sortOrder,
+  }) => (
+    setValues({
+      filters,
+      sortField,
+      sortOrder,
+    })
+  );
 
-    return (
-      <div>
-        <BootstrapTable
-          hover
-          striped
-          condensed
-          keyField="id"
-          data={this.formatResult(data)}
-          columns={columns}
-          filter={filterFactory()}
-          defaultSorted={defaultSorted}
-          onTableChange={onTableChange}
-        />
-        <UsersGeneraModal
-          user={data.find((u) => u.id === editId)}
-          show={showModalUsersGenera}
-          onHide={this.hideModal}
-        />
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <BootstrapTable
+        hover
+        striped
+        condensed
+        keyField="id"
+        data={formatResult(data)}
+        columns={columns}
+        filter={filterFactory()}
+        defaultSorted={defaultSorted}
+        onTableChange={onTableChange}
+      />
+      <UsersGeneraModal
+        user={data.find((u) => u.id === editId)}
+        show={showModal}
+        onHide={() => handleHideModal()}
+      />
+    </div>
+  );
+};
 
 const mapStateToProps = (state) => ({
   accessToken: state.authentication.accessToken,
 });
 
-export default connect(mapStateToProps)(
-  TabledPage({
-    getAll: config.uris.usersUri.getAllWGeneraUri,
-    getCount: config.uris.usersUri.countUri,
-  })(GeneraUsers),
-);
+export default connect(mapStateToProps)(GeneraUsers);
 
 GenusButtonAddEdit.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
 GeneraUsers.propTypes = {
-  data: PropTypes.arrayOf(UserType.type).isRequired,
-  onTableChange: PropTypes.func.isRequired,
-  paginationOptions: PropTypes.shape({
-    page: PropTypes.number.isRequired,
-    sizePerPage: PropTypes.number.isRequired,
-  }).isRequired,
+  accessToken: PropTypes.string.isRequired,
 };
