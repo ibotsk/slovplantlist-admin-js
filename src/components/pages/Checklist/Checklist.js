@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -96,8 +96,10 @@ const defaultSorted = [{
 }];
 
 const Checklist = ({ user, accessToken }) => {
-  const [showModal, setShowModal] = useState(false);
-  const [editId, setEditId] = useState(undefined);
+  const {
+    showModal, editId,
+    handleShowModal, handleHideModal,
+  } = commonHooks.useModal();
 
   const ownerId = user ? user.id : undefined;
   const {
@@ -110,11 +112,6 @@ const Checklist = ({ user, accessToken }) => {
     getCountUri, getAllUri, accessToken, where, offset,
     sizePerPage, order, showModal,
   );
-
-  const handleShowModal = (id) => {
-    setEditId(id);
-    setShowModal(true);
-  };
 
   const rowEvents = {
     onDoubleClick: (e, row) => {
@@ -277,7 +274,7 @@ const Checklist = ({ user, accessToken }) => {
       <SpeciesNameModal
         id={editId}
         show={showModal}
-        onHide={() => setShowModal(false)}
+        onHide={() => handleHideModal()}
       />
     </div>
   );

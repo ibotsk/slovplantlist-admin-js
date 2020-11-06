@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -52,8 +52,10 @@ const defaultSorted = [{
 }];
 
 const Families = ({ user, accessToken }) => {
-  const [showModal, setShowModal] = useState(false);
-  const [editId, setEditId] = useState(undefined);
+  const {
+    showModal, editId,
+    handleShowModal, handleHideModal,
+  } = commonHooks.useModal();
 
   const ownerId = user ? user.id : undefined;
   const {
@@ -66,11 +68,6 @@ const Families = ({ user, accessToken }) => {
     getCountUri, getAllUri, accessToken, where, offset,
     sizePerPage, order, showModal,
   );
-
-  const handleShowModal = (id) => {
-    setEditId(id);
-    setShowModal(true);
-  };
 
   const formatResult = (records) => records.map((d) => ({
     id: d.id,
@@ -154,7 +151,7 @@ const Families = ({ user, accessToken }) => {
       <FamiliesModal
         id={editId}
         show={showModal}
-        onHide={() => setShowModal(false)}
+        onHide={() => handleHideModal()}
       />
     </div>
   );

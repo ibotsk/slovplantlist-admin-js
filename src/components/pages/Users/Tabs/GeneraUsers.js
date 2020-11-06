@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -56,8 +56,10 @@ const GenusButtonAddEdit = ({ onClick }) => (
 );
 
 const GeneraUsers = ({ accessToken }) => {
-  const [showModal, setShowModal] = useState(false);
-  const [editId, setEditId] = useState(undefined);
+  const {
+    showModal, editId,
+    handleShowModal, handleHideModal,
+  } = commonHooks.useModal();
 
   const {
     where, order, setValues,
@@ -67,11 +69,6 @@ const GeneraUsers = ({ accessToken }) => {
     getCountUri, getAllUri, accessToken, where, 0,
     undefined, order, showModal,
   );
-
-  const handleShowModal = (id) => {
-    setEditId(id);
-    setShowModal(true);
-  };
 
   const formatResult = (records) => records.map((u) => ({
     id: u.id,
@@ -112,7 +109,7 @@ const GeneraUsers = ({ accessToken }) => {
       <UsersGeneraModal
         user={data.find((u) => u.id === editId)}
         show={showModal}
-        onHide={() => setShowModal(false)}
+        onHide={() => handleHideModal()}
       />
     </div>
   );
