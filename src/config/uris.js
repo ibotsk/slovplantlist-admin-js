@@ -58,6 +58,7 @@ export default {
     baseUri: `${backendBase}/api/families?access_token=<%accessToken%>`,
     getAllWFilterUri: `${backendBase}/api/families?access_token=<%accessToken%>&filter={"offset":<%offset%>,"where":<%&where%>,"limit":<%limit%>,"order":<%&order%>}`,
     getAllWOrderUri: `${backendBase}/api/families?access_token=<%accessToken%>&filter={"order":["name","id"]}`,
+    getAllBySearchTermUri: `${backendBase}/api/families?access_token=<%accessToken%>&filter={"where":{"name":{"like":"%25<%term%>%25"}},"order":["name","id"]}`,
     getByIdUri: `${backendBase}/api/families/<%id%>?access_token=<%accessToken%>`,
     countUri: `${backendBase}/api/families/count?access_token=<%accessToken%>&where=<%&whereString%>`,
   },
