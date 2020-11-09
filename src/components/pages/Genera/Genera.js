@@ -8,7 +8,7 @@ import {
 import filterFactory, {
   textFilter, multiSelectFilter, Comparator,
 } from 'react-bootstrap-table2-filter';
-import cellEditFactory from 'react-bootstrap-table2-editor';
+import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 
 import PropTypes from 'prop-types';
 import LoggedUserType from 'components/propTypes/loggedUser';
@@ -26,8 +26,9 @@ import { genusFacade } from 'facades';
 
 import GeneraModal from './Modals/GeneraModal';
 
-const { mappings: { losType: { A, S } } } = config;
-const ntypesOptions = helperUtils.buildOptionsFromKeys({ A, S });
+const { mappings: { genusType: { A, S } } } = config;
+const ntypesFilterOptions = helperUtils.buildFilterOptionsFromKeys({ A, S });
+const ntypesSelectOptions = [A, S];
 
 const getAllUri = config.uris.generaUri.getAllWFilterUri;
 const getCountUri = config.uris.generaUri.countUri;
@@ -48,10 +49,14 @@ const columns = [
     dataField: 'ntype',
     text: 'Type',
     filter: multiSelectFilter({
-      options: ntypesOptions,
+      options: ntypesFilterOptions,
       comparator: Comparator.EQ,
     }),
     sort: true,
+    editor: {
+      type: Type.SELECT,
+      options: ntypesSelectOptions,
+    },
   },
   {
     dataField: 'name',
@@ -74,16 +79,25 @@ const columns = [
   {
     dataField: 'familyApg',
     text: 'Family APG',
+    formatter: (cell) => (cell ? cell.name : undefined),
     editable: false,
+    // TODO: figure out how to patch selected attribute - use custom renderer (TypeaheadCellEditRenderer)
+    // this cell contains { id: 123, name: "abc", etc... }, we need to patch genus { idFamily: 123 }
   },
   {
     dataField: 'family',
     text: 'Family',
+    formatter: (cell) => (cell ? cell.name : undefined),
     editable: false,
   },
   {
     dataField: 'acceptedName',
     text: 'Accepted name',
+    formatter: (cell) => (
+      cell
+        ? formatterUtils.genus(cell.accepted.name, cell.accepted.authors)
+        : ''
+    ),
     editable: false,
   },
 ];
@@ -114,11 +128,9 @@ const formatResult = (records, userRole, handleShowModal) => (
     name: g.name,
     authors: g.authors,
     vernacular: g.vernacular,
-    familyApg: g['family-apg'] ? g['family-apg'].name : '',
-    family: g.family ? g.family.name : '',
-    acceptedName: g.accepted
-      ? formatterUtils.genus(g.accepted.name, g.accepted.authors)
-      : '',
+    familyApg: g['family-apg'],
+    family: g.family,
+    acceptedName: g.accepted,
   }))
 );
 
