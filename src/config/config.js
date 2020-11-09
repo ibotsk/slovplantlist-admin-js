@@ -86,6 +86,16 @@ export default {
         colour: '#bb9d00',
       },
     },
+    genusType: {
+      A: {
+        label: 'Accepted name',
+        value: 'A',
+      },
+      S: {
+        label: 'Synonym',
+        value: 'S',
+      },
+    },
     synonym: {
       nomenclatoric: {
         numType: 3,

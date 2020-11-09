@@ -63,7 +63,7 @@ const AllUsers = ({ accessToken }) => {
   } = commonHooks.useTableChange();
 
   const { data } = commonHooks.useTableData(
-    getCountUri, getAllUri, accessToken, where, 0,
+    getCountUri, getAllUri, accessToken, where, 1,
     undefined, order, showModal,
   );
 

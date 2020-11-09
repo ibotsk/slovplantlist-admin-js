@@ -253,10 +253,11 @@ function makeOrder(sortFields, sortOrder = 'ASC') {
   return [`${sortFields} ${soUpperCase}`];
 }
 
-function buildOptionsFromKeys(keys) {
+function buildFilterOptionsFromKeys(keys) {
   const obj = {};
   Object.keys(keys).forEach((t) => {
-    obj[t] = keys[t].text;
+    const { text, label } = keys[t];
+    obj[t] = text || label;
     // obj[t] = t;
   });
   return obj;
@@ -379,7 +380,7 @@ export default {
   losToTypeaheadSelected,
   makeWhere,
   makeOrder,
-  buildOptionsFromKeys,
+  buildFilterOptionsFromKeys,
   // curateSearchFilters,
   // curateSortFields,
   listOfSpeciesSorterLex,
