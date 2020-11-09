@@ -6,6 +6,15 @@ const nullToEmpty = (obj) => Object.keys(obj).reduce(
   {},
 );
 
+/**
+ * true, false, false, true => '1001'
+ * @param  {...boolean} bits
+ */
+const boolsToStr = (...bits) => (
+  bits.map((b) => `${+b}`).join()
+);
+
 export default {
   nullToEmpty,
+  boolsToStr,
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -8,6 +8,7 @@ import {
 import filterFactory, {
   textFilter, multiSelectFilter, Comparator,
 } from 'react-bootstrap-table2-filter';
+import cellEditFactory from 'react-bootstrap-table2-editor';
 
 import PropTypes from 'prop-types';
 import LoggedUserType from 'components/propTypes/loggedUser';
@@ -16,9 +17,12 @@ import RemotePagination from 'components/segments/RemotePagination';
 import Can from 'components/segments/auth/Can';
 
 import config from 'config/config';
-import { helperUtils } from 'utils';
+import {
+  formatterUtils, helperUtils, notifications, miscUtils,
+} from 'utils';
 
 import commonHooks from 'components/segments/hooks';
+import { genusFacade } from 'facades';
 
 import GeneraModal from './Modals/GeneraModal';
 
@@ -33,10 +37,12 @@ const columns = [
     dataField: 'id',
     text: 'ID',
     sort: true,
+    editable: false,
   },
   {
     dataField: 'action',
     text: 'Actions',
+    editable: false,
   },
   {
     dataField: 'ntype',
@@ -68,14 +74,17 @@ const columns = [
   {
     dataField: 'familyApg',
     text: 'Family APG',
+    editable: false,
   },
   {
     dataField: 'family',
     text: 'Family',
+    editable: false,
   },
   {
     dataField: 'acceptedName',
     text: 'Accepted name',
+    editable: false,
   },
 ];
 
@@ -84,29 +93,12 @@ const defaultSorted = [{
   order: 'asc',
 }];
 
-const Genera = ({ user, accessToken }) => {
-  const {
-    showModal, editId,
-    handleShowModal, handleHideModal,
-  } = commonHooks.useModal();
-
-  const ownerId = user ? user.id : undefined;
-  const {
-    page, sizePerPage, where, order, setValues,
-  } = commonHooks.useTableChange(ownerId, 1);
-
-  const offset = (page - 1) * sizePerPage;
-
-  const { data, totalSize } = commonHooks.useTableData(
-    getCountUri, getAllUri, accessToken, where, offset,
-    sizePerPage, order, showModal,
-  );
-
-  const formatResult = (records) => records.map((g) => ({
+const formatResult = (records, userRole, handleShowModal) => (
+  records.map((g) => ({
     id: g.id,
     action: (
       <Can
-        role={user.role}
+        role={userRole}
         perform="genus:edit"
         yes={() => (
           <Button
@@ -118,12 +110,36 @@ const Genera = ({ user, accessToken }) => {
           </Button>
         )}
       />),
+    ntype: g.ntype,
     name: g.name,
     authors: g.authors,
     vernacular: g.vernacular,
     familyApg: g['family-apg'] ? g['family-apg'].name : '',
     family: g.family ? g.family.name : '',
-  }));
+    acceptedName: g.accepted
+      ? formatterUtils.genus(g.accepted.name, g.accepted.authors)
+      : '',
+  }))
+);
+
+const Genera = ({ user, accessToken }) => {
+  const [forceChange, setForceChange] = useState(false);
+
+  const {
+    showModal, editId, handleShowModal, handleHideModal,
+  } = commonHooks.useModal();
+
+  const ownerId = user ? user.id : undefined;
+  const {
+    page, sizePerPage, where, order, setValues,
+  } = commonHooks.useTableChange(ownerId, 1);
+
+  const forceFetch = miscUtils.boolsToStr(showModal, forceChange);
+
+  const { data, totalSize } = commonHooks.useTableData(
+    getCountUri, getAllUri, accessToken, where, page,
+    sizePerPage, order, forceFetch,
+  );
 
   const onTableChange = (type, {
     page: pageTable,
@@ -131,15 +147,31 @@ const Genera = ({ user, accessToken }) => {
     filters,
     sortField,
     sortOrder,
-  }) => (
-    setValues({
-      page: pageTable,
-      sizePerPage: sizePerPageTable,
-      filters,
-      sortField,
-      sortOrder,
-    })
-  );
+    cellEdit = {},
+  }) => {
+    const { rowId, dataField, newValue } = cellEdit;
+    const patch = async () => {
+      try {
+        if (rowId && dataField && newValue) {
+          await genusFacade.patchGenus(rowId, dataField, newValue, accessToken);
+          setForceChange(!forceChange);
+        }
+
+        setValues({
+          page: pageTable,
+          sizePerPage: sizePerPageTable,
+          filters,
+          sortField,
+          sortOrder,
+        });
+      } catch (error) {
+        notifications.error('Error saving');
+        throw error;
+      }
+    };
+
+    patch();
+  };
 
   const paginationOptions = { page, sizePerPage, totalSize };
 
@@ -175,12 +207,13 @@ const Genera = ({ user, accessToken }) => {
           condensed
           remote
           keyField="id"
-          data={formatResult(data)}
+          data={formatResult(data, user.role, handleShowModal)}
           columns={columns}
           defaultSorted={defaultSorted}
           filter={filterFactory()}
           onTableChange={onTableChange}
           paginationOptions={paginationOptions}
+          cellEdit={cellEditFactory({ mode: 'dbclick' })}
         />
       </Grid>
       <GeneraModal

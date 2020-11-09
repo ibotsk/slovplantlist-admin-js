@@ -17,6 +17,11 @@ export async function putRequest(uri, data, params, accessToken) {
   return axios.put(parsedUri, data);
 }
 
+export async function patchRequest(uri, data, params, accessToken) {
+  const parsedUri = Mustache.render(uri, { ...params, accessToken });
+  return axios.patch(parsedUri, data);
+}
+
 export async function deleteRequest(uri, params, accessToken) {
   const parsedUri = Mustache.render(uri, { ...params, accessToken });
   return axios.delete(parsedUri);

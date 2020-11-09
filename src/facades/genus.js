@@ -1,4 +1,4 @@
-import { getRequest, putRequest } from 'services/backend';
+import { getRequest, putRequest, patchRequest } from 'services/backend';
 
 import config from 'config/config';
 
@@ -47,9 +47,17 @@ async function saveGenus(data, accessToken) {
   return putRequest(generaUri.baseUri, data, undefined, accessToken);
 }
 
+async function patchGenus(id, dataField, newValue, accessToken) {
+  const data = {
+    [dataField]: newValue,
+  };
+  return patchRequest(generaUri.byIdUri, data, { id }, accessToken);
+}
+
 export default {
   getAllGeneraBySearchTerm,
   getAllGeneraWithFamilies,
   getGenusByIdWithFamilies,
   saveGenus,
+  patchGenus,
 };
