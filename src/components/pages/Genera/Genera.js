@@ -229,7 +229,7 @@ const Genera = ({ user, accessToken }) => {
         />
       </Grid>
       <GeneraModal
-        id={editId}
+        editId={editId}
         show={showModal}
         onHide={() => handleHideModal()}
       />
