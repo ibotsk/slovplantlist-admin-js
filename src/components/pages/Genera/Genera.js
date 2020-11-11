@@ -95,7 +95,7 @@ const columns = [
     text: 'Accepted name',
     formatter: (cell) => (
       cell
-        ? formatterUtils.genus(cell.accepted.name, cell.accepted.authors)
+        ? formatterUtils.genus(cell.name, cell.authors)
         : ''
     ),
     editable: false,
