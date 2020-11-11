@@ -51,6 +51,7 @@ export default {
     baseUri: `${backendBase}/api/family-apgs?access_token=<%accessToken%>`,
     getAllWFilterUri: `${backendBase}/api/family-apgs?access_token=<%accessToken%>&filter={"offset":<%offset%>,"where":<%&where%>,"limit":<%limit%>,"order":<%&order%>}`,
     getAllWOrderUri: `${backendBase}/api/family-apgs?access_token=<%accessToken%>&filter={"order":["name","id"]}`,
+    getAllBySearchTermUri: `${backendBase}/api/family-apgs?access_token=<%accessToken%>&filter={"where":{"name":{"like":"%25<%term%>%25"}},"order":["name","id"]}`,
     getByIdUri: `${backendBase}/api/family-apgs/<%id%>?access_token=<%accessToken%>`,
     countUri: `${backendBase}/api/family-apgs/count?access_token=<%accessToken%>&where=<%&whereString%>`,
   },

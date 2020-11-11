@@ -7,11 +7,12 @@ import {
   Form, FormGroup, FormControl, ControlLabel,
 } from 'react-bootstrap';
 
-import { Typeahead } from 'react-bootstrap-typeahead';
+import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
 import PropTypes from 'prop-types';
 
-import { notifications } from 'utils';
+import { notifications, miscUtils } from 'utils';
+import config from 'config/config';
 
 import { genusFacade, familiesFacade } from 'facades';
 
@@ -21,14 +22,24 @@ const VALIDATION_STATE_ERROR = 'error';
 const titleColWidth = 2;
 const mainColWidth = 10;
 
+const ntypes = config.mappings.genusType;
+
 const initialValues = {
   id: undefined,
+  ntype: '',
   name: '',
   authors: '',
   vernacular: '',
   idFamily: undefined,
   idFamilyApg: undefined,
 };
+
+const searchFamilies = (query, at) => (
+  familiesFacade.getAllFamiliesBySearchTerm(query, at)
+);
+const searchFamiliesApg = (query, at) => (
+  familiesFacade.getAllFamiliesApgBySearchTerm(query, at)
+);
 
 class GeneraModal extends Component {
   constructor(props) {
@@ -40,30 +51,25 @@ class GeneraModal extends Component {
       },
       families: [],
       familiesApg: [],
+      isLoading: false,
+      selectedFamily: [],
+      selectedFamilyApg: [],
     };
-  }
-
-  async componentDidMount() {
-    const { accessToken } = this.props;
-    const format = (f) => ({ id: f.id, label: f.name });
-    const families = await familiesFacade.getAllFamilies(accessToken, format);
-    const familiesApg = await familiesFacade.getAllFamiliesApg(
-      accessToken, format,
-    );
-    this.setState({
-      families,
-      familiesApg,
-    });
   }
 
   onEnter = async () => {
     const { id, accessToken } = this.props;
     if (id) {
-      const { genus } = await genusFacade.getGenusByIdWithFamilies(
+      const {
+        genus, family, familyApg,
+      } = await genusFacade.getGenusByIdWithFamilies(
         id, accessToken,
       );
+
       this.setState({
         genus,
+        selectedFamily: family ? [family] : [],
+        selectedFamilyApg: familyApg ? [familyApg] : [],
       });
     }
   }
@@ -112,23 +118,37 @@ class GeneraModal extends Component {
     }
   }
 
-  handleChangeTypeahead = (selected, prop) => {
-    const id = selected[0] ? selected[0].id : undefined;
-    this.setState((state) => {
-      const { genus } = state;
-      genus[prop] = id;
-      return {
-        genus,
-      };
+  handleSearch = async (query, func, listProp) => {
+    this.setState({ isLoading: true });
+    const { accessToken } = this.props;
+    const results = await func(query, accessToken);
+    this.setState({
+      isLoading: false,
+      [listProp]: results,
     });
   }
+
+  handleOnChangeTypeahead = (selected, prop) => (
+    this.setState((state) => {
+      const { genus } = state;
+      const capProp = miscUtils.capitalize(prop);
+      genus[`id${capProp}`] = selected[0] ? selected[0].id : undefined;
+
+      return {
+        genus,
+        [`selected${capProp}`]: selected,
+      };
+    })
+  );
 
   render() {
     const { show, id } = this.props;
     const {
+      isLoading,
       families, familiesApg,
+      selectedFamily, selectedFamilyApg,
       genus: {
-        name, authors, idFamily, idFamilyApg,
+        ntype, name, authors,
         vernacular,
       },
     } = this.state;
@@ -141,6 +161,23 @@ class GeneraModal extends Component {
         </Modal.Header>
         <Modal.Body>
           <Form horizontal>
+            <FormGroup controlId="ntype" bsSize="sm">
+              <Col componentClass={ControlLabel} sm={titleColWidth}>
+                Type
+              </Col>
+              <Col sm={mainColWidth}>
+                <FormControl
+                  componentClass="select"
+                  placeholder="select"
+                  value={ntype || ''}
+                  onChange={this.handleChangeInput}
+                >
+                  {Object.keys(ntypes).map((t) => (
+                    <option value={t} key={t}>{ntypes[t].label}</option>
+                  ))}
+                </FormControl>
+              </Col>
+            </FormGroup>
             <FormGroup
               controlId="name"
               bsSize="sm"
@@ -178,25 +215,6 @@ class GeneraModal extends Component {
               </Col>
             </FormGroup>
             <FormGroup
-              controlId="family"
-              bsSize="sm"
-            >
-              <Col componentClass={ControlLabel} sm={titleColWidth}>
-                Family
-              </Col>
-              <Col sm={mainColWidth}>
-                <Typeahead
-                  id="family-autocomplete"
-                  options={families}
-                  selected={families.filter((f) => f.id === idFamily)}
-                  onChange={(selected) => (
-                    this.handleChangeTypeahead(selected, 'idFamily')
-                  )}
-                  placeholder="Start by typing a family in the database"
-                />
-              </Col>
-            </FormGroup>
-            <FormGroup
               controlId="family-apg"
               bsSize="sm"
             >
@@ -204,14 +222,43 @@ class GeneraModal extends Component {
                 Family APG
               </Col>
               <Col sm={mainColWidth}>
-                <Typeahead
-                  id="family-autocomplete"
-                  options={familiesApg}
-                  selected={familiesApg.filter((f) => f.id === idFamilyApg)}
-                  onChange={(selected) => (
-                    this.handleChangeTypeahead(selected, 'idFamilyApg')
+                <AsyncTypeahead
+                  id="family-apg-autocomplete"
+                  labelKey="name"
+                  isLoading={isLoading}
+                  onSearch={(query) => this.handleSearch(
+                    query, searchFamiliesApg, 'familiesApg',
                   )}
-                  placeholder="Start by typing a family APG in the database"
+                  options={familiesApg}
+                  selected={selectedFamilyApg}
+                  onChange={(selected) => this.handleOnChangeTypeahead(
+                    selected, 'familyApg',
+                  )}
+                  placeholder="Start by typing (case sensitive)"
+                />
+              </Col>
+            </FormGroup>
+            <FormGroup
+              controlId="family"
+              bsSize="sm"
+            >
+              <Col componentClass={ControlLabel} sm={titleColWidth}>
+                Family
+              </Col>
+              <Col sm={mainColWidth}>
+                <AsyncTypeahead
+                  id="family-autocomplete"
+                  labelKey="name"
+                  isLoading={isLoading}
+                  onSearch={(query) => this.handleSearch(
+                    query, searchFamilies, 'families',
+                  )}
+                  options={families}
+                  selected={selectedFamily}
+                  onChange={(selected) => this.handleOnChangeTypeahead(
+                    selected, 'family',
+                  )}
+                  placeholder="Start by typing (case sensitive)"
                 />
               </Col>
             </FormGroup>
