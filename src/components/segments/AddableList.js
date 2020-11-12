@@ -16,7 +16,7 @@ class AddableList extends Component {
     super(props);
 
     this.state = {
-      selected: undefined,
+      selected: [],
       options: [],
       isLoading: false,
     };
@@ -35,9 +35,9 @@ class AddableList extends Component {
       if (selected) {
         onAddItemToList(selected[0]);
 
-        this.typeahead.getInstance().clear();
+        this.typeahead.clear();
         return {
-          selected: undefined,
+          selected: [],
         };
       }
       return undefined;
@@ -55,13 +55,14 @@ class AddableList extends Component {
   }
 
   renderTypeahead = (async) => {
-    const { id, options: propsOptions } = this.props;
+    const { id, optionsLabelKey, options: propsOptions } = this.props;
     const { isLoading, options: stateOptions, selected } = this.state;
     if (async) {
       return (
         <AsyncTypeahead
           id={id}
-          bsSize="sm"
+          labelKey={optionsLabelKey}
+          size="sm"
           ref={(typeahead) => { this.typeahead = typeahead; }}
           isLoading={isLoading}
           options={stateOptions}
@@ -75,7 +76,7 @@ class AddableList extends Component {
     return (
       <Typeahead
         id={id}
-        bsSize="sm"
+        size="sm"
         ref={(typeahead) => { this.typeahead = typeahead; }}
         options={propsOptions}
         onChange={this.onChange}
@@ -147,6 +148,7 @@ export default AddableList;
 
 AddableList.propTypes = {
   id: PropTypes.string,
+  optionsLabelKey: PropTypes.string,
   data: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number,
   })),
@@ -161,6 +163,7 @@ AddableList.propTypes = {
 
 AddableList.defaultProps = {
   id: undefined,
+  optionsLabelKey: 'label',
   data: [],
   options: undefined,
   async: false,

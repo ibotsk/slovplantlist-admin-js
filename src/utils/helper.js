@@ -225,6 +225,14 @@ function losToTypeaheadSelected(data) {
   }];
 }
 
+function genusString(genus) {
+  if (!genus) {
+    return undefined;
+  }
+  const { name, authors } = genus;
+  return [name, authors].filter((e) => e).join(' ');
+}
+
 function makeWhere(filters) {
   const whereItems = [];
   const keys = Object.keys(filters);
@@ -294,95 +302,14 @@ function buildFilterOptionsFromKeys(keys) {
 //     return sortField;
 // }
 
-function listOfSpeciesSorterLex(losA, losB) {
-  // a > b = 1
-  if (losA.genus > losB.genus) {
-    return 1;
-  } if (losA.genus < losB.genus) {
-    return -1;
-  }
-  if (losA.species > losB.species) {
-    return 1;
-  } if (losA.species < losB.species) {
-    return -1;
-  }
-  if (losA.subsp > losB.subsp) {
-    return 1;
-  } if (losA.subsp < losB.subsp) {
-    return -1;
-  }
-  if (losA.var > losB.var) {
-    return 1;
-  } if (losA.var < losB.var) {
-    return -1;
-  }
-  if (losA.forma > losB.forma) {
-    return 1;
-  } if (losA.forma < losB.forma) {
-    return -1;
-  }
-  if (losA.subvar > losB.subvar) {
-    return 1;
-  } if (losA.subvar < losB.subvar) {
-    return -1;
-  }
-  if (losA.authors > losB.authors) {
-    return 1;
-  } if (losA.authors < losB.authors) {
-    return -1;
-  }
-  // hybrid fields next
-  if (losA.genusH > losB.genusH) {
-    return 1;
-  } if (losA.genusH < losB.genusH) {
-    return -1;
-  }
-  if (losA.speciesH > losB.speciesH) {
-    return 1;
-  } if (losA.speciesH < losB.speciesH) {
-    return -1;
-  }
-  if (losA.subspH > losB.subspH) {
-    return 1;
-  } if (losA.subspH < losB.subspH) {
-    return -1;
-  }
-  if (losA.varH > losB.varH) {
-    return 1;
-  } if (losA.varH < losB.varH) {
-    return -1;
-  }
-  if (losA.formaH > losB.formaH) {
-    return 1;
-  } if (losA.formaH < losB.formaH) {
-    return -1;
-  }
-  if (losA.subvarH > losB.subvarH) {
-    return 1;
-  } if (losA.subvarH < losB.subvarH) {
-    return -1;
-  }
-  if (losA.authorsH > losB.authorsH) {
-    return 1;
-  } if (losA.authorsH < losB.authorsH) {
-    return -1;
-  }
-  return 0;
-}
-
-function synonymSorterLex(synA, synB) {
-  return listOfSpeciesSorterLex(synA.synonym, synB.synonym);
-}
-
 export default {
   listOfSpeciesForComponent,
   listOfSpeciesString,
   losToTypeaheadSelected,
+  genusString,
   makeWhere,
   makeOrder,
   buildFilterOptionsFromKeys,
   // curateSearchFilters,
   // curateSortFields,
-  listOfSpeciesSorterLex,
-  synonymSorterLex,
 };

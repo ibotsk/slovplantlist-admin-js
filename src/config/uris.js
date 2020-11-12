@@ -44,7 +44,8 @@ export default {
     getAllBySearchTermUri: `${backendBase}/api/genera?access_token=<%accessToken%>&filter={"where":{"name":{"like":"%25<%term%>%25"}}}`,
     getAllWithFamiliesUri: `${backendBase}/api/genera?access_token=<%accessToken%>&filter={"include":["family-apg","family"]}`,
     byIdUri: `${backendBase}/api/genera/<%id%>?access_token=<%accessToken%>`,
-    getByIdWithFamilies: `${backendBase}/api/genera/<%id%>?access_token=<%accessToken%>&filter={"include":["family-apg","family"]}`,
+    getByIdWRelations: `${backendBase}/api/genera/<%id%>?access_token=<%accessToken%>&filter={"include":["family-apg","family","synonyms"]}`,
+    getSynonymsOfParent: `${backendBase}/api/genera/<%id%>/synonyms-no-include?access_token=<%accessToken%>`,
     countUri: `${backendBase}/api/genera/count?access_token=<%accessToken%>&where=<%&whereString%>`,
   },
   familiesApgUri: {
@@ -66,6 +67,10 @@ export default {
   synonymsUri: {
     baseUri: `${backendBase}/api/synonyms?access_token=<%accessToken%>`,
     synonymsByIdUri: `${backendBase}/api/synonyms/<%id%>?access_token=<%accessToken%>`,
+  },
+  synonymsGeneraUri: {
+    baseUri: `${backendBase}/api/synonyms-generas?access_token=<%accessToken%>`,
+    synonymsByIdUri: `${backendBase}/api/synonyms-generas/<%id%>?access_token=<%accessToken%>`,
   },
   usersUri: {
     loginUri: `${backendBase}/api/user-lbs/login`,

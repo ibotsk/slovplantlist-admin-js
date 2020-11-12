@@ -1,9 +1,15 @@
 import { getRequest, putRequest, patchRequest } from 'services/backend';
 
 import config from 'config/config';
+import { sorterUtils } from 'utils';
+
+import common from './common/common';
 
 const {
-  uris: { generaUri },
+  uris: {
+    generaUri,
+    synonymsGeneraUri,
+  },
 } = config;
 
 async function getAllGeneraBySearchTerm(term, accessToken, format = undefined) {
@@ -26,25 +32,55 @@ async function getAllGeneraWithFamilies(accessToken, format = undefined) {
   return genera.map(format);
 }
 
-async function getGenusByIdWithFamilies(id, accessToken, format = undefined) {
-  const genus = await getRequest(
-    generaUri.getByIdWithFamilies, { id }, accessToken,
+async function getGenusById(id, accessToken) {
+  return getRequest(
+    generaUri.byIdUri, { id }, accessToken,
   );
-  const { family, 'family-apg': familyApg } = genus;
+}
+
+async function getGenusByIdWithRelations(id, accessToken, format = undefined) {
+  const genus = await getRequest(
+    generaUri.getByIdWRelations, { id }, accessToken,
+  );
+  const {
+    family,
+    'family-apg': familyApg,
+    synonyms,
+  } = genus;
 
   delete genus.family;
   delete genus['family-apg'];
+  delete genus.synonyms;
 
   let toReturn = genus;
   if (format) {
     toReturn = format(genus);
   }
 
-  return { genus: toReturn, family, familyApg };
+  synonyms.sort(sorterUtils.generaSynonymSorterLex);
+
+  return {
+    genus: toReturn,
+    family,
+    familyApg,
+    synonyms,
+  };
 }
 
 async function saveGenus(data, accessToken) {
   return putRequest(generaUri.baseUri, data, undefined, accessToken);
+}
+
+async function saveGenusAndSynonyms(genus, synonyms, accessToken) {
+  return Promise.all([
+    saveGenus(genus, accessToken),
+    common.submitSynonyms(genus.id, synonyms, {
+      getCurrentSynonymsUri: generaUri.getSynonymsOfParent,
+      deleteSynonymsByIdUri: synonymsGeneraUri.synonymsByIdUri,
+      updateSynonymsUri: synonymsGeneraUri.baseUri,
+    }, accessToken),
+    // add patch idAcceptedName of synonym genera
+  ]);
 }
 
 async function patchGenus(id, dataField, newValue, accessToken) {
@@ -54,10 +90,21 @@ async function patchGenus(id, dataField, newValue, accessToken) {
   return patchRequest(generaUri.byIdUri, data, { id }, accessToken);
 }
 
+function createSynonym(idParent, idSynonym, syntype) {
+  return {
+    idParent: parseInt(idParent, 10),
+    idSynonym: parseInt(idSynonym, 10),
+    syntype,
+  };
+}
+
 export default {
   getAllGeneraBySearchTerm,
   getAllGeneraWithFamilies,
-  getGenusByIdWithFamilies,
+  getGenusById,
+  getGenusByIdWithRelations,
   saveGenus,
+  saveGenusAndSynonyms,
   patchGenus,
+  createSynonym,
 };

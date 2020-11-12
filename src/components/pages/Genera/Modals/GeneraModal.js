@@ -11,15 +11,30 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
 import PropTypes from 'prop-types';
 
-import { notifications } from 'utils';
+import AddableList from 'components/segments/AddableList';
+
+import { helperUtils, notifications, sorterUtils } from 'utils';
 import config from 'config/config';
 
 import { genusFacade, familiesFacade } from 'facades';
 
+import GenusSynonymListItem
+  from './items/GenusSynonymListItem';
+
+const {
+  getGenusById,
+  getGenusByIdWithRelations,
+  saveGenusAndSynonyms,
+  getAllGeneraBySearchTerm,
+} = genusFacade;
 const {
   getAllFamiliesBySearchTerm,
   getAllFamiliesApgBySearchTerm,
 } = familiesFacade;
+
+const genusIdLabelFormat = (g) => (
+  { id: g.id, label: helperUtils.genusString(g) }
+);
 
 const VALIDATION_STATE_SUCCESS = 'success';
 const VALIDATION_STATE_ERROR = 'error';
@@ -39,6 +54,27 @@ const initialValues = {
   idFamilyApg: undefined,
 };
 
+const createNewSynonymToList = async (
+  selected,
+  idParent,
+  type,
+  accessToken,
+) => {
+  // when adding synonyms to a new record, idParent is undefined
+  const { id: selectedId } = selected;
+  const synonymObj = genusFacade.createSynonym(idParent, selectedId, type);
+  const genusSyn = await getGenusById(selectedId, accessToken);
+  return {
+    ...synonymObj,
+    synonym: genusSyn,
+  };
+};
+
+const synonymsChanged = (list) => {
+  list.sort(sorterUtils.generaSynonymSorterLex);
+  return list.map((item, i) => ({ ...item, rorder: i + 1 }));
+};
+
 const GeneraModal = ({
   editId, show, onHide, accessToken,
 }) => {
@@ -48,18 +84,20 @@ const GeneraModal = ({
   const [isLoading, setLoading] = useState(false);
   const [selectedFamily, setSelectedFamily] = useState([]);
   const [selectedFamilyApg, setSelectedFamilyApg] = useState([]);
+  const [synonyms, setSynonyms] = useState([]);
 
   const onEnter = async () => {
     if (editId) {
       const {
-        genus: dbGenus, family, familyApg,
-      } = await genusFacade.getGenusByIdWithFamilies(
+        genus: dbGenus, family, familyApg, synonyms: syns,
+      } = await getGenusByIdWithRelations(
         editId, accessToken,
       );
 
       setGenus(dbGenus);
       setSelectedFamily(family ? [family] : []);
       setSelectedFamilyApg(familyApg ? [familyApg] : []);
+      setSynonyms(syns);
     }
   };
 
@@ -86,7 +124,7 @@ const GeneraModal = ({
   const handleSave = async () => {
     if (getValidationState() === VALIDATION_STATE_SUCCESS) {
       try {
-        await genusFacade.saveGenus(genus, accessToken);
+        await saveGenusAndSynonyms(genus, synonyms, accessToken);
         notifications.success('Saved');
         handleHide();
       } catch (error) {
@@ -126,6 +164,29 @@ const GeneraModal = ({
       ...genus,
       idFamilyApg: selected[0] ? selected[0].id : undefined,
     });
+  };
+
+  const handleSynonymAddRow = async (selectedSpecies, type) => {
+    if (selectedSpecies) {
+      if (synonyms.find((s) => s.synonym.id === selectedSpecies.id)) {
+        notifications.warning('The item already exists in the list');
+        return;
+      }
+
+      const newSynonym = await createNewSynonymToList(
+        selectedSpecies, editId, type, accessToken,
+      );
+      synonyms.push(newSynonym);
+      const sorted = synonymsChanged(synonyms);
+
+      setSynonyms(sorted);
+    }
+  };
+
+  const handleSynonymRemoveRow = (rowId) => {
+    const synonymsWithoutRemoved = synonyms.filter((_, i) => i !== rowId);
+    const sorted = synonymsChanged(synonymsWithoutRemoved);
+    setSynonyms(sorted);
   };
 
   const {
@@ -249,6 +310,33 @@ const GeneraModal = ({
                 onChange={handleChangeInput}
               />
               <FormControl.Feedback />
+            </Col>
+          </FormGroup>
+          <hr />
+          <FormGroup
+            controlId="synonyms"
+            bsSize="sm"
+          >
+            <Col componentClass={ControlLabel} sm={titleColWidth}>
+              Synonyms
+            </Col>
+            <Col sm={mainColWidth}>
+              <AddableList
+                id="nomenclatoric-synonyms-autocomplete"
+                async
+                data={synonyms}
+                onSearch={(query) => getAllGeneraBySearchTerm(
+                  query, accessToken, genusIdLabelFormat,
+                )}
+                onAddItemToList={(selected) => handleSynonymAddRow(
+                  selected,
+                  config.mappings.synonym.taxonomic.numType,
+                )}
+                onRowDelete={(rowId) => handleSynonymRemoveRow(
+                  rowId,
+                )}
+                itemComponent={GenusSynonymListItem}
+              />
             </Col>
           </FormGroup>
         </Form>

@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import SynonymType from 'components/propTypes/synonym';
 
 import SynonymListItem from 'components/segments/SynonymListItem';
+import LosName from 'components/segments/Checklist/LosName';
 
 import config from 'config/config';
 
@@ -22,6 +23,7 @@ const MisidentifiedSynonymListItem = ({
     <SynonymListItem
       rowId={rowId}
       data={data}
+      nameComponent={LosName}
       prefix={config.mappings.synonym.misidentification.prefix}
       onRowDelete={onRowDelete}
     >
