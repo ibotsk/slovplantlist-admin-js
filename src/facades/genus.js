@@ -78,8 +78,8 @@ async function saveGenusAndSynonyms(genus, synonyms, accessToken) {
       getCurrentSynonymsUri: generaUri.getSynonymsOfParent,
       deleteSynonymsByIdUri: synonymsGeneraUri.synonymsByIdUri,
       updateSynonymsUri: synonymsGeneraUri.baseUri,
+      patchSynonymRefUri: generaUri.byIdUri,
     }, accessToken),
-    // add patch idAcceptedName of synonym genera
   ]);
 }
 

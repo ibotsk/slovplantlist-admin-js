@@ -1,7 +1,9 @@
 import differenceWith from 'lodash.differencewith';
 import intersectionWith from 'lodash.intersectionwith';
 
-import { getRequest, deleteRequest, putRequest } from 'services/backend';
+import {
+  getRequest, deleteRequest, putRequest, patchRequest,
+} from 'services/backend';
 
 const synonymComparator = (value, other) => (
   value.idParent === other.idParent
@@ -22,7 +24,7 @@ const synonymComparator = (value, other) => (
  * @param {number} syntype
  * @param {string} accessToken
  */
-const synonymsToUpsert = (
+const getSynonymsToUpsert = (
   currentList, newList,
 ) => {
   // in newList that are not in currentList
@@ -45,43 +47,72 @@ const synonymsToUpsert = (
  * Compare by idParent && idPynonym
  * @param {array} currentList
  * @param {array} newList
- * @returns {array} of ids
+ * @returns {array}
  */
-const synonymIdsToBeDeleted = (currentList, newList) => {
-  const toDelete = differenceWith(currentList, newList, synonymComparator);
-  return toDelete.map(({ id }) => id);
+const getSynonymsToBeDeleted = (currentList, newList) => (
+  differenceWith(currentList, newList, synonymComparator)
+);
+
+const updateAcceptedNameOfSynonyms = async (
+  synonymsForUpdate,
+  synonymsForDelete,
+  patchUri,
+  accessToken,
+  idPropName = 'idAcceptedName',
+) => {
+  // set [idPropName] of the synonym referent as idParent
+  const updatePromises = synonymsForUpdate.map(({ idParent, idSynonym }) => {
+    const data = { [idPropName]: idParent };
+    return patchRequest(patchUri, data, { id: idSynonym }, accessToken);
+  });
+  // set [idPropName] to undefined
+  const deletePromises = synonymsForDelete.map(({ idSynonym }) => {
+    const data = { [idPropName]: null };
+    return patchRequest(patchUri, data, { id: idSynonym }, accessToken);
+  });
+
+  return [...updatePromises, ...deletePromises];
 };
 
-const submitSynonyms = async (
+async function submitSynonyms(
   idParent,
   allNewSynonyms,
   {
     getCurrentSynonymsUri,
     deleteSynonymsByIdUri,
     updateSynonymsUri,
+    patchSynonymRefUri,
   },
   accessToken,
-) => {
+) {
   // get synonyms to be deleted
   const originalSynonyms = await getRequest(
     getCurrentSynonymsUri, { id: idParent }, accessToken,
   );
 
-  const toBeDeleted = synonymIdsToBeDeleted(originalSynonyms, allNewSynonyms);
-  const toBeUpserted = synonymsToUpsert(originalSynonyms, allNewSynonyms);
+  const toBeDeleted = getSynonymsToBeDeleted(
+    originalSynonyms, allNewSynonyms,
+  );
+  const idsToBeDeleted = toBeDeleted.map(({ id }) => id);
+  const toBeUpserted = getSynonymsToUpsert(originalSynonyms, allNewSynonyms);
 
-  const deletePromises = toBeDeleted.map((synId) => (
+  const deletePromises = idsToBeDeleted.map((synId) => (
     deleteRequest(deleteSynonymsByIdUri, { id: synId }, accessToken)
   ));
   const upsertPromises = toBeUpserted.map((synonym) => (
     putRequest(updateSynonymsUri, synonym, {}, accessToken)
   ));
 
+  const patchPromises = await updateAcceptedNameOfSynonyms(
+    toBeUpserted, toBeDeleted, patchSynonymRefUri, accessToken,
+  );
+
   return Promise.all([
     ...deletePromises,
     ...upsertPromises,
+    ...patchPromises,
   ]);
-};
+}
 
 export default {
   submitSynonyms,
