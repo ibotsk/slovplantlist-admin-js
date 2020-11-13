@@ -79,9 +79,11 @@ const GeneraModal = ({
   editId, show, onHide, accessToken,
 }) => {
   const [genus, setGenus] = useState(initialValues);
+  const [acceptedOptions, setAcceptedOptions] = useState([]);
   const [families, setFamilies] = useState([]);
   const [familiesApg, setFamiliesApg] = useState([]);
   const [isLoading, setLoading] = useState(false);
+  const [selectedAccepted, setSelectedAccepted] = useState([]); // stored as { id, label }
   const [selectedFamily, setSelectedFamily] = useState([]);
   const [selectedFamilyApg, setSelectedFamilyApg] = useState([]);
   const [synonyms, setSynonyms] = useState([]);
@@ -89,12 +91,13 @@ const GeneraModal = ({
   const onEnter = async () => {
     if (editId) {
       const {
-        genus: dbGenus, family, familyApg, synonyms: syns,
+        genus: dbGenus, accepted, family, familyApg, synonyms: syns,
       } = await getGenusByIdWithRelations(
         editId, accessToken,
       );
 
       setGenus(dbGenus);
+      setSelectedAccepted(accepted ? [genusIdLabelFormat(accepted)] : []);
       setSelectedFamily(family ? [family] : []);
       setSelectedFamilyApg(familyApg ? [familyApg] : []);
       setSynonyms(syns);
@@ -136,6 +139,15 @@ const GeneraModal = ({
     }
   };
 
+  const handleSearchAccepted = async (query) => {
+    setLoading(true);
+    const results = await getAllGeneraBySearchTerm(
+      query, accessToken, genusIdLabelFormat,
+    );
+    setLoading(false);
+    setAcceptedOptions(results);
+  };
+
   const handleSearchFamily = async (query) => {
     setLoading(true);
     const results = await getAllFamiliesBySearchTerm(query, accessToken);
@@ -148,6 +160,14 @@ const GeneraModal = ({
     const results = await getAllFamiliesApgBySearchTerm(query, accessToken);
     setLoading(false);
     setFamiliesApg(results);
+  };
+
+  const handleOnChangeTypeaheadAccepted = (selected) => {
+    setSelectedAccepted(selected);
+    setGenus({
+      ...genus,
+      idAcceptedName: selected[0] ? selected[0].id : undefined,
+    });
   };
 
   const handleOnChangeTypeaheadFamily = (selected) => {
@@ -312,6 +332,26 @@ const GeneraModal = ({
               <FormControl.Feedback />
             </Col>
           </FormGroup>
+          <FormGroup
+            controlId="accepted"
+            bsSize="sm"
+          >
+            <Col componentClass={ControlLabel} sm={titleColWidth}>
+              Accepted name
+            </Col>
+            <Col sm={mainColWidth}>
+              <AsyncTypeahead
+                id="accepted-autocomplete"
+                labelKey="label"
+                isLoading={isLoading}
+                onSearch={handleSearchAccepted}
+                options={acceptedOptions}
+                selected={selectedAccepted}
+                onChange={handleOnChangeTypeaheadAccepted}
+                placeholder="Start by typing (case sensitive)"
+              />
+            </Col>
+          </FormGroup>
           <hr />
           <FormGroup
             controlId="synonyms"
@@ -322,7 +362,7 @@ const GeneraModal = ({
             </Col>
             <Col sm={mainColWidth}>
               <AddableList
-                id="nomenclatoric-synonyms-autocomplete"
+                id="synonyms-autocomplete"
                 async
                 data={synonyms}
                 onSearch={(query) => getAllGeneraBySearchTerm(

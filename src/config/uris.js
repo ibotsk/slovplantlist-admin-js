@@ -44,7 +44,7 @@ export default {
     getAllBySearchTermUri: `${backendBase}/api/genera?access_token=<%accessToken%>&filter={"where":{"name":{"like":"%25<%term%>%25"}}}`,
     getAllWithFamiliesUri: `${backendBase}/api/genera?access_token=<%accessToken%>&filter={"include":["family-apg","family"]}`,
     byIdUri: `${backendBase}/api/genera/<%id%>?access_token=<%accessToken%>`,
-    getByIdWRelations: `${backendBase}/api/genera/<%id%>?access_token=<%accessToken%>&filter={"include":["family-apg","family","synonyms"]}`,
+    getByIdWRelations: `${backendBase}/api/genera/<%id%>?access_token=<%accessToken%>&filter={"include":["accepted","family-apg","family","synonyms"]}`,
     getSynonymsOfParent: `${backendBase}/api/genera/<%id%>/synonyms-no-include?access_token=<%accessToken%>`,
     countUri: `${backendBase}/api/genera/count?access_token=<%accessToken%>&where=<%&whereString%>`,
   },

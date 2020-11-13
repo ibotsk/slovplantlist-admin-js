@@ -43,11 +43,13 @@ async function getGenusByIdWithRelations(id, accessToken, format = undefined) {
     generaUri.getByIdWRelations, { id }, accessToken,
   );
   const {
+    accepted,
     family,
     'family-apg': familyApg,
     synonyms,
   } = genus;
 
+  delete genus.accepted;
   delete genus.family;
   delete genus['family-apg'];
   delete genus.synonyms;
@@ -61,6 +63,7 @@ async function getGenusByIdWithRelations(id, accessToken, format = undefined) {
 
   return {
     genus: toReturn,
+    accepted,
     family,
     familyApg,
     synonyms,
