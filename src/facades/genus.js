@@ -10,6 +10,7 @@ const {
     generaUri,
     synonymsGeneraUri,
   },
+  mappings: { synonym: synonymConfig },
 } = config;
 
 async function getAllGeneraBySearchTerm(term, accessToken, format = undefined) {
@@ -83,6 +84,15 @@ async function saveGenusAndSynonyms(genus, synonyms, accessToken) {
       updateSynonymsUri: synonymsGeneraUri.baseUri,
       patchSynonymRefUri: generaUri.byIdUri,
     }, accessToken),
+    common.manageAcceptedNameRelations(
+      genus.id, genus.idAcceptedName, synonymConfig.taxonomic.numType,
+      {
+        getSynonymsByIdSynonymUri: synonymsGeneraUri.synonymsByIdSynonymUri,
+        upsertSynonymsUri: synonymsGeneraUri.baseUri,
+        deleteSynonymUri: synonymsGeneraUri.synonymsByIdUri,
+      },
+      accessToken,
+    ),
   ]);
 }
 
@@ -94,11 +104,7 @@ async function patchGenus(id, dataField, newValue, accessToken) {
 }
 
 function createSynonym(idParent, idSynonym, syntype) {
-  return {
-    idParent: parseInt(idParent, 10),
-    idSynonym: parseInt(idSynonym, 10),
-    syntype,
-  };
+  return common.createSynonym(idParent, idSynonym, syntype);
 }
 
 export default {

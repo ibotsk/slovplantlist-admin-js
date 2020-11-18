@@ -71,6 +71,7 @@ export default {
   synonymsGeneraUri: {
     baseUri: `${backendBase}/api/synonyms-generas?access_token=<%accessToken%>`,
     synonymsByIdUri: `${backendBase}/api/synonyms-generas/<%id%>?access_token=<%accessToken%>`,
+    synonymsByIdSynonymUri: `${backendBase}/api/synonyms-generas?access_token=<%accessToken%>&filter={"where":{"idSynonym":<%idSynonym%>}}`,
   },
   usersUri: {
     loginUri: `${backendBase}/api/user-lbs/login`,

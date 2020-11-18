@@ -74,6 +74,21 @@ const updateAcceptedNameOfSynonyms = async (
   return [...updatePromises, ...deletePromises];
 };
 
+function createSynonym(idParent, idSynonym, syntype) {
+  return {
+    idParent: parseInt(idParent, 10),
+    idSynonym: parseInt(idSynonym, 10),
+    syntype,
+  };
+}
+
+/**
+ * Manages synonyms of given parent
+ * @param {number} idParent
+ * @param {array} allNewSynonyms
+ * @param {object} uris
+ * @param {string} accessToken
+ */
 async function submitSynonyms(
   idParent,
   allNewSynonyms,
@@ -114,6 +129,43 @@ async function submitSynonyms(
   ]);
 }
 
+/**
+ * Manages synonyms by given idSynonym
+ */
+async function manageAcceptedNameRelations(
+  idSynonym, newIdParent, syntype, {
+    getSynonymsByIdSynonymUri,
+    upsertSynonymsUri,
+    deleteSynonymUri,
+  },
+  accessToken,
+) {
+  const synonyms = await getRequest(
+    getSynonymsByIdSynonymUri, { idSynonym }, accessToken,
+  );
+
+  if (newIdParent) {
+    // create or update
+    let synonymsToSave = [];
+    if (!synonyms || synonyms.length === 0) {
+      const newSynonym = createSynonym(newIdParent, idSynonym, syntype);
+      synonymsToSave.push(newSynonym);
+    } else {
+      synonymsToSave = synonyms.map((s) => ({ ...s, idParent: newIdParent }));
+    }
+    return synonymsToSave.map(
+      (s) => putRequest(upsertSynonymsUri, s, {}, accessToken),
+    );
+  }
+
+  // delete because newIdParent is falsy
+  return synonyms.map(
+    ({ id }) => deleteRequest(deleteSynonymUri, { id }, accessToken),
+  );
+}
+
 export default {
+  createSynonym,
+  manageAcceptedNameRelations,
   submitSynonyms,
 };
