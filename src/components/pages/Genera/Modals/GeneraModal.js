@@ -18,14 +18,14 @@ import config from 'config/config';
 
 import { genusFacade, familiesFacade } from 'facades';
 
-import GenusSynonymListItem
-  from './items/GenusSynonymListItem';
+import GenusSynonymListItem from './items/GenusSynonymListItem';
+import GenusSynonymMenu from './items/GenusSynonymMenu';
 
 const {
-  getGenusById,
   getGenusByIdWithRelations,
   saveGenusAndSynonyms,
   getAllGeneraBySearchTerm,
+  getAllGeneraBySearchTermWithAccepted,
 } = genusFacade;
 const {
   getAllFamiliesBySearchTerm,
@@ -35,6 +35,17 @@ const {
 const genusIdLabelFormat = (g) => (
   { id: g.id, label: helperUtils.genusString(g) }
 );
+const genusIdLabelAcceptedFormat = (g) => {
+  const idLabel = genusIdLabelFormat(g);
+  let accepted;
+  if (g.accepted) {
+    accepted = g.accepted;
+  }
+  return {
+    ...idLabel,
+    accepted,
+  };
+};
 
 const VALIDATION_STATE_SUCCESS = 'success';
 const VALIDATION_STATE_ERROR = 'error';
@@ -63,10 +74,15 @@ const createNewSynonymToList = async (
   // when adding synonyms to a new record, idParent is undefined
   const { id: selectedId } = selected;
   const synonymObj = genusFacade.createSynonym(idParent, selectedId, type);
-  const genusSyn = await getGenusById(selectedId, accessToken);
+  const { genus: genusSyn, accepted } = await getGenusByIdWithRelations(
+    selectedId, accessToken,
+  );
   return {
     ...synonymObj,
-    synonym: genusSyn,
+    synonym: {
+      ...genusSyn,
+      accepted,
+    },
   };
 };
 
@@ -365,8 +381,8 @@ const GeneraModal = ({
                 id="synonyms-autocomplete"
                 async
                 data={synonyms}
-                onSearch={(query) => getAllGeneraBySearchTerm(
-                  query, accessToken, genusIdLabelFormat,
+                onSearch={(query) => getAllGeneraBySearchTermWithAccepted(
+                  query, accessToken, genusIdLabelAcceptedFormat,
                 )}
                 onAddItemToList={(selected) => handleSynonymAddRow(
                   selected,
@@ -375,7 +391,21 @@ const GeneraModal = ({
                 onRowDelete={(rowId) => handleSynonymRemoveRow(
                   rowId,
                 )}
-                itemComponent={GenusSynonymListItem}
+                itemComponent={({ rowId, data, onRowDelete }) => (
+                  <GenusSynonymListItem
+                    rowId={rowId}
+                    data={data}
+                    onRowDelete={onRowDelete}
+                    assignedToName={genus}
+                  />
+                )}
+                renderMenu={(results, menuProps) => (
+                  <GenusSynonymMenu
+                    results={results}
+                    menuProps={menuProps}
+                    assignedToName={genus}
+                  />
+                )}
               />
             </Col>
           </FormGroup>

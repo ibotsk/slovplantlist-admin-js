@@ -230,7 +230,7 @@ function genusString(genus) {
     return undefined;
   }
   const { name, authors } = genus;
-  return [name, authors].filter((e) => e).join(' ');
+  return [name, authors].filter((e) => e).map((e) => e.trim()).join(' ');
 }
 
 function makeWhere(filters) {

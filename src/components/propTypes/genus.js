@@ -6,5 +6,6 @@ export default {
     name: PropTypes.string.isRequired,
     authors: PropTypes.string,
     vernacular: PropTypes.string,
+    idAcceptedName: PropTypes.number,
   }),
 };

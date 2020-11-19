@@ -55,7 +55,9 @@ class AddableList extends Component {
   }
 
   renderTypeahead = (async) => {
-    const { id, optionsLabelKey, options: propsOptions } = this.props;
+    const {
+      id, optionsLabelKey, options: propsOptions, renderMenu,
+    } = this.props;
     const { isLoading, options: stateOptions, selected } = this.state;
     if (async) {
       return (
@@ -70,6 +72,7 @@ class AddableList extends Component {
           selected={selected}
           onSearch={this.handleSearchAsync}
           placeholder="Start by typing (case sensitive)"
+          renderMenu={renderMenu}
         />
       );
     }
@@ -82,6 +85,7 @@ class AddableList extends Component {
         onChange={this.onChange}
         selected={selected}
         placeholder="Start by typing"
+        renderMenu={renderMenu}
       />
     );
   }
@@ -154,6 +158,7 @@ AddableList.propTypes = {
   })),
   options: PropTypes.arrayOf(PropTypes.object),
   itemComponent: PropTypes.func.isRequired,
+  renderMenu: PropTypes.func,
   getRowId: PropTypes.func,
   onAddItemToList: PropTypes.func.isRequired,
   onRowDelete: PropTypes.func.isRequired,
@@ -168,5 +173,6 @@ AddableList.defaultProps = {
   options: undefined,
   async: false,
   onSearch: undefined,
+  renderMenu: undefined,
   getRowId: undefined,
 };

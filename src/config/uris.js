@@ -42,6 +42,7 @@ export default {
     baseUri: `${backendBase}/api/genera?access_token=<%accessToken%>`,
     getAllWFilterUri: `${backendBase}/api/genera?access_token=<%accessToken%>&filter={"offset":<%offset%>,"where":<%&where%>,"limit":<%limit%>,"include":["family-apg","family","accepted"],"order":<%&order%>}`,
     getAllBySearchTermUri: `${backendBase}/api/genera?access_token=<%accessToken%>&filter={"where":{"name":{"like":"%25<%term%>%25"}}}`,
+    getAllBySearchTermWithAcceptedUri: `${backendBase}/api/genera?access_token=<%accessToken%>&filter={"where":{"name":{"like":"%25<%term%>%25"}},"include":"accepted"}`,
     getAllWithFamiliesUri: `${backendBase}/api/genera?access_token=<%accessToken%>&filter={"include":["family-apg","family"]}`,
     byIdUri: `${backendBase}/api/genera/<%id%>?access_token=<%accessToken%>`,
     getByIdWRelations: `${backendBase}/api/genera/<%id%>?access_token=<%accessToken%>&filter={"include":["accepted","family-apg","family","synonyms"]}`,

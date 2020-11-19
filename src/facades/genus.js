@@ -23,6 +23,18 @@ async function getAllGeneraBySearchTerm(term, accessToken, format = undefined) {
   return genera.map(format);
 }
 
+async function getAllGeneraBySearchTermWithAccepted(
+  term, accessToken, format = undefined,
+) {
+  const genera = await getRequest(
+    generaUri.getAllBySearchTermWithAcceptedUri, { term }, accessToken,
+  );
+  if (!format) {
+    return genera;
+  }
+  return genera.map(format);
+}
+
 async function getAllGeneraWithFamilies(accessToken, format = undefined) {
   const genera = await getRequest(
     generaUri.getAllWithFamiliesUri, {}, accessToken,
@@ -109,6 +121,7 @@ function createSynonym(idParent, idSynonym, syntype) {
 
 export default {
   getAllGeneraBySearchTerm,
+  getAllGeneraBySearchTermWithAccepted,
   getAllGeneraWithFamilies,
   getGenusById,
   getGenusByIdWithRelations,
