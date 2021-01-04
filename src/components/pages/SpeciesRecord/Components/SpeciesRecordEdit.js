@@ -8,6 +8,7 @@ import {
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 import PropTypes from 'prop-types';
 
@@ -20,7 +21,7 @@ import PlainListOfSpeciesNames from
 
 import { speciesFacade, genusFacade } from 'facades';
 
-import { notifications, helperUtils } from 'utils';
+import { notifications, helperUtils, sorterUtils } from 'utils';
 import config from 'config/config';
 
 import 'styles/custom.css';
@@ -99,7 +100,7 @@ const createNewSynonymToList = async (
 };
 
 const synonymsChanged = (list) => {
-  list.sort(helperUtils.synonymSorterLex);
+  list.sort(sorterUtils.synonymSorterLex);
   return list.map((item, i) => ({ ...item, rorder: i + 1 }));
 };
 
@@ -193,7 +194,7 @@ class SpeciesRecord extends Component {
     const { accessToken } = this.props;
     const id = selected[0] ? selected[0].id : undefined;
     if (id) {
-      const { family, familyApg } = await genusFacade.getGenusByIdWithFamilies(
+      const { family, familyApg } = await genusFacade.getGenusByIdWithRelations(
         id, accessToken,
       );
       this.setState({

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 import { tablesFacade } from 'facades';
 import { helperUtils, filterUtils } from 'utils';
@@ -8,8 +8,18 @@ import config from 'config/config';
 const { pagination: { sizePerPageList } } = config;
 const sizePerPageDefault = sizePerPageList[0].value;
 
+/**
+ * @param {string} countUri
+ * @param {string} getAllUri
+ * @param {string} accessToken
+ * @param {string} whereString
+ * @param {number} page
+ * @param {number} limit
+ * @param {string} orderString
+ * @param {string|number|boolean} forceChange any primitive
+ */
 function useTableData(
-  countUri, getAllUri, accessToken, whereString, offset, limit,
+  countUri, getAllUri, accessToken, whereString, page, limit,
   orderString, forceChange,
 ) {
   const [isLoading, setLoading] = useState(false);
@@ -24,6 +34,8 @@ function useTableData(
       );
 
       const lim = limit || size; // use all records if limit is undefined
+      const offset = (page - 1) * limit;
+
       const records = await tablesFacade.getAll(
         getAllUri, offset, whereString, orderString, lim, accessToken,
       );
@@ -36,7 +48,7 @@ function useTableData(
     fetch();
   },
   [countUri, getAllUri, accessToken, whereString,
-    offset, limit, orderString, forceChange]);
+    page, limit, orderString, forceChange]);
 
   return {
     data,
@@ -104,8 +116,17 @@ function useModal() {
   };
 }
 
+function useForceUpdate() {
+  const [, forceUpdate] = useState();
+
+  return useCallback(() => {
+    forceUpdate((s) => !s);
+  }, []);
+}
+
 export default {
   useTableData,
   useTableChange,
   useModal,
+  useForceUpdate,
 };

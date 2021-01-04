@@ -102,6 +102,7 @@ class SpeciesRecordView extends React.Component {
             prefix={prefix}
             key={s.id}
             additions={adt}
+            nameComponent={LosName}
           />
         );
       });

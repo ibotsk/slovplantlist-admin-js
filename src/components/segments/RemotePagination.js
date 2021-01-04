@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 
-import { Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory,
@@ -36,7 +36,7 @@ const customTotal = (from, to, size) => (
 );
 
 const TotalAndPaginator = ({ paginationProps }) => (
-  <div>
+  <Row>
     <Col md={6}>
       <PaginationTotalStandalone
         // eslint-disable-next-line react/jsx-props-no-spreading
@@ -49,7 +49,7 @@ const TotalAndPaginator = ({ paginationProps }) => (
         {...paginationProps}
       />
     </Col>
-  </div>
+  </Row>
 );
 
 const RemotePagination = ({

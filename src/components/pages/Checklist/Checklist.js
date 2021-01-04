@@ -35,8 +35,8 @@ const {
   mappings,
 } = config;
 
-const ntypesOptions = helperUtils.buildOptionsFromKeys(mappings.losType);
-const ownershipOptionsAdmin = helperUtils.buildOptionsFromKeys(
+const ntypesOptions = helperUtils.buildFilterOptionsFromKeys(mappings.losType);
+const ownershipOptionsAdmin = helperUtils.buildFilterOptionsFromKeys(
   mappings.ownership,
 );
 const { unassigned, others, ...ownershipOptionsAuthor } = ownershipOptionsAdmin;
@@ -106,10 +106,8 @@ const Checklist = ({ user, accessToken }) => {
     page, sizePerPage, where, order, setValues,
   } = commonHooks.useTableChange(ownerId, 1);
 
-  const offset = (page - 1) * sizePerPage;
-
   const { data, totalSize } = commonHooks.useTableData(
-    getCountUri, getAllUri, accessToken, where, offset,
+    getCountUri, getAllUri, accessToken, where, page,
     sizePerPage, order, showModal,
   );
 

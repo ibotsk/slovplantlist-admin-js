@@ -62,10 +62,8 @@ const Families = ({ user, accessToken }) => {
     page, sizePerPage, where, order, setValues,
   } = commonHooks.useTableChange(ownerId, 1);
 
-  const offset = (page - 1) * sizePerPage;
-
   const { data, totalSize } = commonHooks.useTableData(
-    getCountUri, getAllUri, accessToken, where, offset,
+    getCountUri, getAllUri, accessToken, where, page,
     sizePerPage, order, showModal,
   );
 

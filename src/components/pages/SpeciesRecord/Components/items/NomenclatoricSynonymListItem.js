@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import SynonymType from 'components/propTypes/synonym';
 
 import SynonymListItem from 'components/segments/SynonymListItem';
+import LosName from 'components/segments/Checklist/LosName';
 
 import config from 'config/config';
 
@@ -54,6 +55,7 @@ const NomenclatoricSynonymListItem = ({
     <SynonymListItem
       rowId={rowId}
       data={data}
+      nameComponent={LosName}
       prefix={config.mappings.synonym.nomenclatoric.prefix}
       additions={Additions}
       showSubNomenclatoric

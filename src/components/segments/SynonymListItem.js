@@ -37,18 +37,19 @@ const SynonymListItem = ({
   data,
   prefix,
   additions: Additions,
+  nameComponent: NameComponent,
   showSubNomenclatoric = false,
   children,
   onRowDelete,
 }) => {
-  const { synonym: speciesName } = data;
+  const { synonym: subject } = data;
   return (
     <ListGroupItem bsSize="sm">
       <Row>
         <Col xs={12}>
           {prefix}
           {' '}
-          <LosName data={speciesName} />
+          <NameComponent data={subject} />
           <span className="pull-right">
             {Additions && <Additions />}
             {onRowDelete
@@ -70,7 +71,7 @@ const SynonymListItem = ({
       {children}
       {showSubNomenclatoric
         && constructSubNomenlatoric(
-          speciesName['synonyms-nomenclatoric-through'],
+          subject['synonyms-nomenclatoric-through'],
         )
       }
     </ListGroupItem>
@@ -84,6 +85,7 @@ SynonymListItem.propTypes = {
   data: PropTypes.shape({
     synonym: SpeciesType.isRequired,
   }).isRequired,
+  nameComponent: PropTypes.func.isRequired,
   prefix: PropTypes.string.isRequired,
   additions: PropTypes.func,
   onRowDelete: PropTypes.func,

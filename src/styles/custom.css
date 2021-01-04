@@ -45,6 +45,10 @@
     display: flex;
 }
 
+.filter-label {
+    display: block;
+}
+
 .gray-text {
     color: #bdbdbd;
 }
@@ -60,4 +64,9 @@
     -moz-user-select: none; /* Firefox 2+ */
     -ms-user-select: none; /* IE 10+ */
     user-select: none; /* Standard syntax */
+}
+
+.react-bootstrap-table-pagination-total {
+    margin: 20px 0px;
+    display: inline-block;
 }

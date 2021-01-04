@@ -1,95 +1,16 @@
-import differenceWith from 'lodash.differencewith';
-import intersectionWith from 'lodash.intersectionwith';
-
 import {
   getRequest,
-  deleteRequest,
   putRequest,
 } from 'services/backend';
-import { helperUtils } from 'utils';
 
+import { helperUtils, sorterUtils } from 'utils';
 import config from 'config/config';
+
+import common from './common/common';
 
 const {
   uris: { nomenclaturesUri, synonymsUri },
 } = config;
-
-const synonymComparator = (value, other) => (
-  value.idParent === other.idParent
-  && value.idSynonym === other.idSynonym
-);
-
-/**
- * Upsert synonyms:
- *  - that are in currentList and are in newList
- *  - use id from currentList (an item can be removed and then added to the list -> it does not have id anymore)
- *  - everything else from newList (e.g. rorder, syntype might have changed)
- * Insert synonyms:
- *  - that are not in currentList and are in newList
- *  - they do not have id
- * Compare by idParent and idPynonym.
- * @param {array} currentList
- * @param {array} newList
- * @param {number} syntype
- * @param {string} accessToken
- */
-const synonymsToUpsert = (
-  currentList, newList,
-) => {
-  // in newList that are not in currentList
-  const toCreate = differenceWith(newList, currentList, synonymComparator);
-  const toUpdate = intersectionWith(currentList, newList, synonymComparator) // find items that are in both arrays
-    .map((cItem) => { // find those items in newList and use everything except id
-      const newItem = newList.find((l) => synonymComparator(cItem, l));
-      return {
-        ...newItem,
-        id: cItem.id,
-      };
-    });
-
-  return [...toCreate, ...toUpdate];
-};
-
-/**
- * Synonyms that:
- *  are in currentList but are not in newList.
- * Compare by idParent && idPynonym
- * @param {array} currentList
- * @param {array} newList
- * @returns {array} of ids
- */
-const synonymIdsToBeDeleted = (currentList, newList) => {
-  const toDelete = differenceWith(currentList, newList, synonymComparator);
-  return toDelete.map(({ id }) => id);
-};
-
-const submitSynonyms = async (
-  id,
-  allNewSynonyms,
-  accessToken,
-) => {
-  // get synonyms to be deleted
-  const originalSynonyms = await getRequest(
-    nomenclaturesUri.getSynonymsOfParent, { id }, accessToken,
-  );
-
-  const toBeDeleted = synonymIdsToBeDeleted(originalSynonyms, allNewSynonyms);
-  const toBeUpserted = synonymsToUpsert(originalSynonyms, allNewSynonyms);
-
-  const deletePromises = toBeDeleted.map((synId) => (
-    deleteRequest(synonymsUri.synonymsByIdUri, { id: synId }, accessToken)
-  ));
-  const upsertPromises = toBeUpserted.map((synonym) => (
-    putRequest(synonymsUri.baseUri, synonym, {}, accessToken)
-  ));
-
-  return Promise.all([
-    ...deletePromises,
-    ...upsertPromises,
-  ]);
-};
-
-// ----- PUBLIC ----- //
 
 async function getRecordById(id, accessToken) {
   const speciesRecord = await getRequest(
@@ -159,17 +80,17 @@ async function getSynonyms(id, accessToken) {
   const nomenclatoricSynonyms = await getRequest(
     nomenclaturesUri.getNomenclatoricSynonymsUri, { id }, accessToken,
   );
-  nomenclatoricSynonyms.sort(helperUtils.listOfSpeciesSorterLex);
+  nomenclatoricSynonyms.sort(sorterUtils.listOfSpeciesSorterLex);
 
   const taxonomicSynonyms = await getRequest(
     nomenclaturesUri.getTaxonomicSynonymsUri, { id }, accessToken,
   );
-  taxonomicSynonyms.sort(helperUtils.listOfSpeciesSorterLex);
+  taxonomicSynonyms.sort(sorterUtils.listOfSpeciesSorterLex);
 
   const invalidDesignations = await getRequest(
     nomenclaturesUri.getInvalidSynonymsUri, { id }, accessToken,
   );
-  invalidDesignations.sort(helperUtils.listOfSpeciesSorterLex);
+  invalidDesignations.sort(sorterUtils.listOfSpeciesSorterLex);
 
   const misidentifications = await getRequest(
     nomenclaturesUri.getMisidentificationsUri, { id }, accessToken,
@@ -221,7 +142,11 @@ async function saveSpeciesAndSynonyms({
 
   return Promise.all([
     saveSpecies(species, accessToken),
-    submitSynonyms(species.id, allNewSynonyms, accessToken),
+    common.submitSynonyms(species.id, allNewSynonyms, {
+      getCurrentSynonymsUri: nomenclaturesUri.getSynonymsOfParent,
+      deleteSynonymsByIdUri: synonymsUri.synonymsByIdUri,
+      updateSynonymsUri: synonymsUri.baseUri,
+    }, accessToken),
   ]);
 }
 
