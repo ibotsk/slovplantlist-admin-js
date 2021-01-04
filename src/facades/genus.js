@@ -87,25 +87,46 @@ async function saveGenus(data, accessToken) {
   return putRequest(generaUri.baseUri, data, undefined, accessToken);
 }
 
-async function saveGenusAndSynonyms(genus, synonyms, accessToken) {
-  return Promise.all([
+/**
+ *
+ * @param {*} genus
+ * @param {*} synonyms
+ * @param {*} accessToken
+ * @param {boolean} isManageAcceptedNames if true, change of accepted name also updates synonyms relations
+ */
+async function saveGenusAndSynonyms(
+  genus, synonyms, accessToken, isManageAcceptedNames = false,
+) {
+  const promises = [
     saveGenus(genus, accessToken),
-    common.submitSynonyms(genus.id, synonyms, {
-      getCurrentSynonymsUri: generaUri.getSynonymsOfParent,
-      deleteSynonymsByIdUri: synonymsGeneraUri.synonymsByIdUri,
-      updateSynonymsUri: synonymsGeneraUri.baseUri,
-      patchSynonymRefUri: generaUri.byIdUri,
-    }, accessToken),
-    common.manageAcceptedNameRelations(
-      genus.id, genus.idAcceptedName, synonymConfig.taxonomic.numType,
+    common.submitSynonyms(
+      genus.id,
+      synonyms,
+      {
+        getCurrentSynonymsUri: generaUri.getSynonymsOfParent,
+        deleteSynonymsByIdUri: synonymsGeneraUri.synonymsByIdUri,
+        updateSynonymsUri: synonymsGeneraUri.baseUri,
+        patchSynonymRefUri: generaUri.byIdUri,
+      },
+      accessToken,
+      isManageAcceptedNames,
+    ),
+  ];
+  if (isManageAcceptedNames) {
+    const mngAcceptedNamePromise = common.manageAcceptedNameRelations(
+      genus.id,
+      genus.idAcceptedName,
+      synonymConfig.taxonomic.numType,
       {
         getSynonymsByIdSynonymUri: synonymsGeneraUri.synonymsByIdSynonymUri,
         upsertSynonymsUri: synonymsGeneraUri.baseUri,
         deleteSynonymUri: synonymsGeneraUri.synonymsByIdUri,
       },
       accessToken,
-    ),
-  ]);
+    );
+    promises.push(mngAcceptedNamePromise);
+  }
+  return Promise.all(promises);
 }
 
 async function patchGenus(id, dataField, newValue, accessToken) {

@@ -88,6 +88,7 @@ function createSynonym(idParent, idSynonym, syntype) {
  * @param {array} allNewSynonyms
  * @param {object} uris
  * @param {string} accessToken
+ * @param {boolean} isUpdateAcceptedNames
  */
 async function submitSynonyms(
   idParent,
@@ -99,8 +100,9 @@ async function submitSynonyms(
     patchSynonymRefUri,
   },
   accessToken,
+  isUpdateAcceptedNames = false,
 ) {
-  // get synonyms to be deleted
+  // get current synonyms
   const originalSynonyms = await getRequest(
     getCurrentSynonymsUri, { id: idParent }, accessToken,
   );
@@ -118,19 +120,27 @@ async function submitSynonyms(
     putRequest(updateSynonymsUri, synonym, {}, accessToken)
   ));
 
-  const patchPromises = await updateAcceptedNameOfSynonyms(
-    toBeUpserted, toBeDeleted, patchSynonymRefUri, accessToken,
-  );
-
-  return Promise.all([
+  const promises = [
     ...deletePromises,
     ...upsertPromises,
-    ...patchPromises,
-  ]);
+  ];
+
+  if (isUpdateAcceptedNames) {
+    const patchPromises = await updateAcceptedNameOfSynonyms(
+      toBeUpserted, toBeDeleted, patchSynonymRefUri, accessToken,
+    );
+    promises.push(...patchPromises);
+  }
+
+  return Promise.all(promises);
 }
 
 /**
- * Manages synonyms by given idSynonym
+ * This function takes care of synonyms relations, when accepted name of an entity is changed.
+ * The entity is identified by idSynonym.
+ * If Accepted name is added and there was none before, synonym relation is created: idParent = newIdParent, idSynonym = idSynonym.
+ * If Accepted name has changed and is not empty, existing synonym relation is updated.
+ * If Accepted name is empty and was not before, existing synonym relation is deleted.
  */
 async function manageAcceptedNameRelations(
   idSynonym, newIdParent, syntype, {

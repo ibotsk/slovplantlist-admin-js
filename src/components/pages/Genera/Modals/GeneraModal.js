@@ -143,7 +143,7 @@ const GeneraModal = ({
   const handleSave = async () => {
     if (getValidationState() === VALIDATION_STATE_SUCCESS) {
       try {
-        await saveGenusAndSynonyms(genus, synonyms, accessToken);
+        await saveGenusAndSynonyms(genus, synonyms, accessToken, false);
         notifications.success('Saved');
         handleHide();
       } catch (error) {
