@@ -1,1 +1,1 @@
-Slovplantlist admin
+Moved to [https://github.com/ibotsk/ibot-sas-react-apps](https://github.com/ibotsk/ibot-sas-react-apps)
